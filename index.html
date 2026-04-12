@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SwapSticker 2026 – World Cup Card Exchange</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root {
     --gold: #F5C518;
@@ -933,14 +932,6 @@ function toggleCard(num) {
     accounts[currentUserId].cards = cardStates;
     try { localStorage.setItem('ss_accounts', JSON.stringify(accounts)); } catch(e){}
   }
-  // Save to Supabase async
-  if (sb && currentUserId) {
-    if (cardStates[num]) {
-      supaFetch('cromos', { method: 'UPSERT', body: { user_id: currentUserId, num: num, estado: cardStates[num] } });
-    } else {
-      supaFetch('cromos', { method: 'DELETE', eq: { user_id: currentUserId, num: num } });
-    }
-  }
   renderCollection();
 }
 
@@ -1073,40 +1064,15 @@ function copyUrl(url, name) {
   });
 }
 
-async function renderTraders() {
+function renderTraders() {
   const grid = document.getElementById('traders-grid');
   const status = document.getElementById('city-status');
   if (!grid) return;
 
-  grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="empty-icon">⏳</div><div>Cargando coleccionistas...</div></div>';
-
-  // Load real users from Supabase
-  let realUsers = [];
-  if (sb) {
-    const data = await supaFetch('perfiles', { method: 'SELECT' });
-    if (data && data.length > 0) {
-      realUsers = data.map(p => ({
-        name: p.nombre || p.username,
-        username: p.username,
-        emoji: p.emoji || '⚽',
-        city: p.punto || 'Quito',
-        cities: ['quito','ecuador'],
-        punto: p.punto || 'Quicentro Shopping – Quito',
-        haveNums: [], wantNums: [],
-        have: [], want: [], match: 0,
-        isReal: true, supaId: p.id
-      }));
-    }
-  }
-
-  // Combine real users with test users (avoid duplicates)
-  const realUsernames = realUsers.map(u => u.username);
-  const filteredTest = TRADERS.filter(t => !realUsernames.includes(t.username));
-  let list = [...realUsers, ...filteredTest];
-
+  let list = TRADERS;
   if (activeCity) {
     const q = activeCity.toLowerCase();
-    list = list.filter(t => (t.city||'').toLowerCase().includes(q) || (t.cities||[]).some(c => c.toLowerCase().includes(q)));
+    list = TRADERS.filter(t => t.city.toLowerCase().includes(q) || t.cities.some(c => c.toLowerCase().includes(q)));
   }
 
   if (status) status.textContent = activeCity
@@ -1114,7 +1080,7 @@ async function renderTraders() {
     : 'Mostrando ' + list.length + ' coleccionistas';
 
   if (!list.length) {
-    grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🌍</div><div>No hay coleccionistas en <strong>' + activeCity + '</strong>.</div></div>';
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🌍</div><div>No hay coleccionistas en <strong>${activeCity}</strong>.<br><span style="font-size:12px;color:var(--gray)">Prueba con otra ciudad.</span></div></div>`;
     return;
   }
   grid.innerHTML = list.map(t => traderCard(t, true)).join('');
@@ -1270,36 +1236,6 @@ function showToast(msg) {
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'), 2800);
-}
-
-// ── SUPABASE ──
-const SUPA_URL = 'https://vmtpwxirzbroglucoea.supabase.co';
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZtdHB3eGlyemJyb2dsdWNvZWVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5NDg5MzQsImV4cCI6MjA5MDUyNDkzNH0.RSK_sSclccHs7paRn8F7L90jJfV9Uz7LuwkdQSEJCAc';
-let sb = null;
-try { sb = window.supabase ? window.supabase.createClient(SUPA_URL, SUPA_KEY) : null; } catch(e) { sb = null; }
-
-async function supaFetch(table, options = {}) {
-  if (!sb) return null;
-  try {
-    if (options.method === 'INSERT') {
-      const { data, error } = await sb.from(table).upsert(options.body, { onConflict: 'id' });
-      return error ? null : data;
-    }
-    if (options.method === 'SELECT') {
-      let q = sb.from(table).select('*');
-      if (options.eq) Object.entries(options.eq).forEach(([k,v]) => { q = q.eq(k, v); });
-      const { data, error } = await q;
-      return error ? null : data;
-    }
-    if (options.method === 'DELETE') {
-      const { error } = await sb.from(table).delete().match(options.eq);
-      return error ? null : true;
-    }
-    if (options.method === 'UPSERT') {
-      const { data, error } = await sb.from(table).upsert(options.body);
-      return error ? null : data;
-    }
-  } catch(e) { return null; }
 }
 
 // ── AUTH (localStorage) ──
@@ -1458,7 +1394,7 @@ function selectPunto(punto) {
   if(p2){ p2.style.borderColor = !isQ ? 'var(--gold)' : 'rgba(255,255,255,.1)'; p2.style.background = !isQ ? 'rgba(245,197,24,.07)' : 'transparent'; }
 }
 
-async function saveProfile() {
+function saveProfile() {
   const name = document.getElementById('p-name').value.trim();
   const username = document.getElementById('p-username').value.trim();
   const punto = document.getElementById('p-punto') ? document.getElementById('p-punto').value : 'Quicentro Shopping – Quito';
@@ -1467,14 +1403,6 @@ async function saveProfile() {
   if (currentUserId && accounts[currentUserId]) {
     accounts[currentUserId].profile = userProfile;
     try { localStorage.setItem('ss_accounts', JSON.stringify(accounts)); } catch(e){}
-  }
-  // Save to Supabase
-  if (sb && currentUserId) {
-    const email = localStorage.getItem('ss_current');
-    await supaFetch('perfiles', {
-      method: 'INSERT',
-      body: { id: currentUserId, username, nombre: name, emoji: selectedEmoji, punto, email: email || '' }
-    });
   }
   document.getElementById('profile-overlay').style.display = 'none';
   updateNavProfile();
