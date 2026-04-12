@@ -1456,12 +1456,26 @@ async function saveProfile() {
     try { localStorage.setItem('ss_accounts', JSON.stringify(accounts)); } catch(e){}
   }
   // Save to Supabase
-  if (sb && currentUserId) {
-    const email = localStorage.getItem('ss_current');
-    await supaFetch('perfiles', {
-      method: 'INSERT',
-      body: { id: currentUserId, username, nombre: name, emoji: selectedEmoji, punto, email: email || '' }
-    });
+  if (sb) {
+    try {
+      // Get fresh session to make sure we have the right user ID
+      const { data: { session } } = await sb.auth.getSession();
+      const uid = session?.user?.id || currentUserId;
+      if (uid) {
+        currentUserId = uid;
+        const { error } = await sb.from('perfiles').upsert({
+          id: uid,
+          username: username,
+          nombre: name,
+          emoji: selectedEmoji,
+          punto: punto
+        });
+        if (error) console.log('Error guardando perfil:', error);
+        else console.log('Perfil guardado ✓');
+      } else {
+        console.log('No hay sesión activa');
+      }
+    } catch(e) { console.log('Error en saveProfile:', e); }
   }
   document.getElementById('profile-overlay').style.display = 'none';
   updateNavProfile();
