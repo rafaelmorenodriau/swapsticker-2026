@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SwapSticker 2026 – World Cup Card Exchange</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
   :root {
     --gold: #F5C518;
@@ -1250,7 +1250,21 @@ function showToast(msg) {
 const SUPA_URL = 'https://vmtpwxirzbroglucoea.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZtdHB3eGlyemJyb2dsdWNvZWVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5NDg5MzQsImV4cCI6MjA5MDUyNDkzNH0.RSK_sSclccHs7paRn8F7L90jJfV9Uz7LuwkdQSEJCAc';
 let sb = null;
-try { sb = window.supabase ? window.supabase.createClient(SUPA_URL, SUPA_KEY) : null; } catch(e) { sb = null; }
+function initSupabase() {
+  try {
+    if (window.supabase && window.supabase.createClient) {
+      sb = window.supabase.createClient(SUPA_URL, SUPA_KEY, {
+        auth: { persistSession: true, autoRefreshToken: true }
+      });
+      console.log('Supabase inicializado ✓');
+    } else {
+      console.log('Supabase no disponible');
+    }
+  } catch(e) { console.log('Error Supabase:', e); sb = null; }
+}
+// Try to init immediately, retry after load
+initSupabase();
+window.addEventListener('load', function() { if (!sb) initSupabase(); });
 
 async function supaFetch(table, options = {}) {
   if (!sb) return null;
