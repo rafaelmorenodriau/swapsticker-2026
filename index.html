@@ -897,23 +897,32 @@ function renderCollection() {
   updateStats();
 }
 
-function toggleCard(num) {
+async function toggleCard(num) {
   const s = cardStates[num];
   if (!s) cardStates[num] = 'have';
   else if (s === 'have') cardStates[num] = 'want';
   else delete cardStates[num];
-  // Save to localStorage
-  if (currentUserId && accounts[currentUserId]) {
-    accounts[currentUserId].cards = cardStates;
-    try { localStorage.setItem('ss_accounts', JSON.stringify(accounts)); } catch(e){}
-  }
-  // Save to Supabase async
-  if (sb && currentUserId) {
-    if (cardStates[num]) {
-      supaFetch('cromos', { method: 'UPSERT', body: { user_id: currentUserId, num: num, estado: cardStates[num] } });
-    } else {
-      supaFetch('cromos', { method: 'DELETE', eq: { user_id: currentUserId, num: num } });
-    }
+
+  // Save to Supabase
+  if (sb) {
+    try {
+      const { data: { session } } = await sb.auth.getSession();
+      const uid = session?.user?.id || currentUserId;
+      if (uid) {
+        currentUserId = uid;
+        if (cardStates[num]) {
+          const { error } = await sb.from('cromos').upsert({
+            user_id: uid,
+            num: num,
+            estado: cardStates[num]
+          }, { onConflict: 'user_id,num' });
+          if (error) console.log('Error guardando cromo:', error);
+        } else {
+          const { error } = await sb.from('cromos').delete().eq('user_id', uid).eq('num', num);
+          if (error) console.log('Error borrando cromo:', error);
+        }
+      }
+    } catch(e) { console.log('Error en toggleCard:', e); }
   }
   renderCollection();
 }
@@ -1059,17 +1068,26 @@ async function renderTraders() {
   if (sb) {
     const data = await supaFetch('perfiles', { method: 'SELECT' });
     if (data && data.length > 0) {
-      realUsers = data.map(p => ({
-        name: p.nombre || p.username,
-        username: p.username,
-        emoji: p.emoji || '⚽',
-        city: p.punto || 'Quito',
-        cities: ['quito','ecuador'],
-        punto: p.punto || 'Quicentro Shopping – Quito',
-        haveNums: [], wantNums: [],
-        have: [], want: [], match: 0,
-        isReal: true, supaId: p.id
-      }));
+      // Load cromos for each user
+      const cromos = await supaFetch('cromos', { method: 'SELECT' });
+      realUsers = data.map(p => {
+        const userCromos = cromos ? cromos.filter(c => c.user_id === p.id) : [];
+        const haveNums = userCromos.filter(c => c.estado === 'have').map(c => c.num);
+        const wantNums = userCromos.filter(c => c.estado === 'want').map(c => c.num);
+        const haveLabels = haveNums.slice(0,6).map(n => { const s = STICKERS.find(x => x.num===n); return s ? '#'+n+' '+s.name : '#'+n; });
+        const wantLabels = wantNums.slice(0,5).map(n => { const s = STICKERS.find(x => x.num===n); return s ? '#'+n+' '+s.name : '#'+n; });
+        return {
+          name: p.nombre || p.username,
+          username: p.username,
+          emoji: p.emoji || '⚽',
+          city: p.punto || 'Quito',
+          cities: ['quito','ecuador'],
+          punto: p.punto || 'Quicentro Shopping – Quito',
+          haveNums, wantNums,
+          have: haveLabels, want: wantLabels,
+          match: 0, isReal: true, supaId: p.id
+        };
+      });
     }
   }
 
