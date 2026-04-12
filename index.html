@@ -2345,7 +2345,22 @@ function showSection(id, btn) {
   if (id === 'buscador') runSearch();
 }
 
-function runSearch() {
+async function runSearch() {
+  // Load users into cache if not yet loaded
+  if (!window._lastTraderList && sb) {
+    const data = await supaFetch('perfiles', { method: 'SELECT' });
+    const cromos = await supaFetch('cromos', { method: 'SELECT' });
+    if (data) {
+      window._lastTraderList = data.map(p => {
+        const userCromos = cromos ? cromos.filter(c => c.user_id === p.id) : [];
+        const haveNums = userCromos.filter(c => c.estado === 'have').map(c => c.num);
+        const wantNums = userCromos.filter(c => c.estado === 'want').map(c => c.num);
+        const haveLabels = haveNums.slice(0,6).map(n => { const s = STICKERS.find(x => x.num===n); return s ? '#'+n+' '+s.name : '#'+n; });
+        const wantLabels = wantNums.slice(0,5).map(n => { const s = STICKERS.find(x => x.num===n); return s ? '#'+n+' '+s.name : '#'+n; });
+        return { name: p.nombre||p.username, username: p.username, emoji: p.emoji||'⚽', city: p.punto||'Quito', cities:['quito','ecuador'], punto: p.punto||'Quicentro', haveNums, wantNums, have: haveLabels, want: wantLabels, match: 0, isReal: true, supaId: p.id };
+      });
+    }
+  }
   const raw = (document.getElementById('search-input') ? document.getElementById('search-input').value : '').trim().toLowerCase().replace(/^[@#]/,'');
   const out = document.getElementById('search-results');
   if (!out) return;
@@ -2390,15 +2405,18 @@ function runSearch() {
     }
   }
 
-  // ── Search by username ──
-  const userMatches = TRADERS.filter(t =>
-    t.name.toLowerCase().includes(raw) ||
-    (t.username && t.username.toLowerCase().includes(raw))
+  // ── Search by username (real users from Supabase cache) ──
+  const allUsers = window._lastTraderList || [];
+  const userMatches = allUsers.filter(t =>
+    (t.name || '').toLowerCase().includes(raw) ||
+    (t.username || '').toLowerCase().includes(raw)
   );
 
   if (userMatches.length) {
     html += '<div style="font-family:Bebas Neue,sans-serif;font-size:20px;margin:20px 0 12px;color:var(--gold);">Coleccionistas encontrados</div>';
     html += '<div class="traders-grid">' + userMatches.map(t => traderCard(t, true)).join('') + '</div>';
+  } else if (raw.length > 1 && !isNaN(parseInt(raw)) === false) {
+    html += '<div style="font-size:13px;color:var(--gray);margin-top:16px;">No se encontró ningún coleccionista con ese nombre.</div>';
   }
 
   if (!html) {
