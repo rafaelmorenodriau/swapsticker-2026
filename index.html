@@ -134,35 +134,56 @@
 
   .card-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 10px;
   }
   .sticker-card {
     background: var(--card-bg);
-    border: 1px solid rgba(255,255,255,.08);
-    border-radius: var(--radius);
-    padding: 14px 10px 12px;
+    border: 1.5px solid rgba(255,255,255,.08);
+    border-radius: 14px;
+    padding: 0;
     text-align: center;
     cursor: pointer;
-    transition: .2s;
+    transition: transform .15s, border-color .15s, box-shadow .15s;
     position: relative;
     user-select: none;
+    overflow: hidden;
+    aspect-ratio: 2/3;
+    display: flex;
+    flex-direction: column;
   }
-  .sticker-card:hover { border-color: var(--gold); transform: translateY(-2px); }
-  .sticker-card.have { border-color: var(--success); background: rgba(82,224,156,.07); }
-  .sticker-card.want { border-color: var(--gold); background: rgba(245,197,24,.07); }
+  .sticker-card:hover { border-color: var(--gold); transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 24px rgba(0,0,0,.4); }
+  .sticker-card.have { border-color: var(--success); }
+  .sticker-card.want { border-color: var(--gold); }
+  .sticker-card-top {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 8px 6px 4px;
+    position: relative;
+  }
+  .sticker-card.have .sticker-card-top { background: rgba(82,224,156,.08); }
+  .sticker-card.want .sticker-card-top { background: rgba(245,197,24,.08); }
+  .sticker-card-bottom {
+    padding: 5px 4px;
+    background: rgba(0,0,0,.2);
+    border-top: 1px solid rgba(255,255,255,.05);
+  }
   .sticker-num {
-    font-family: 'Bebas Neue', sans-serif; font-size: 22px;
-    color: var(--gray);
+    font-family: 'Bebas Neue', sans-serif; font-size: 13px;
+    color: var(--gray); letter-spacing: 1px;
   }
   .sticker-card.have .sticker-num { color: var(--success); }
   .sticker-card.want .sticker-num { color: var(--gold); }
-  .sticker-name { font-size: 11px; color: var(--gray); margin-top: 4px; line-height: 1.3; }
-  .sticker-flag { font-size: 28px; margin-bottom: 4px; font-family: "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif; }
+  .sticker-name { font-size: 9px; color: var(--gray); line-height: 1.2; margin-top: 1px; }
+  .sticker-flag { font-size: 32px; font-family: "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif; line-height: 1; }
+  .sticker-code { font-size: 10px; font-weight: 700; color: rgba(255,255,255,.3); margin-top: 2px; letter-spacing: 1px; }
   .sticker-badge {
-    position: absolute; top: 6px; right: 6px;
-    font-size: 10px; font-weight: 700;
-    padding: 2px 6px; border-radius: 999px;
+    position: absolute; top: 4px; right: 4px;
+    font-size: 9px; font-weight: 700;
+    padding: 2px 5px; border-radius: 999px; line-height: 1.4;
   }
   .have .sticker-badge { background: var(--success); color: var(--pitch); }
   .want .sticker-badge { background: var(--gold); color: var(--pitch); }
@@ -363,7 +384,7 @@
 
   @media (max-width: 600px) {
     .stats-bar { gap: 20px; }
-    .card-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+    .card-grid { grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); }
   }
 </style>
 </head>
@@ -488,7 +509,7 @@
       <button class="filter-btn" onclick="filterByGroup('Grupo L',this)" style="font-size:11px;padding:4px 10px;">Grupo L</button>
     </div>
     <div style="font-size:12px;color:var(--gray);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;">Filtrar por país</div>
-      <div id="country-filter-bar" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+      <div id="country-filter-bar" style="display:flex;flex-wrap:wrap;gap:6px;max-height:80px;overflow-y:auto;padding-bottom:4px;"></div>
     </div>
 
     <div id="collection-count" style="font-size:12px;color:var(--gray);margin-bottom:12px;"></div>
@@ -1823,12 +1844,21 @@ function renderCollection() {
   if (countEl) countEl.textContent = 'Mostrando ' + filtered.length + ' cromo' + (filtered.length!==1?'s':'') + (currentCountry!=='Todos'?' de '+currentCountry:'');
   grid.innerHTML = filtered.map(s => {
     const state = cardStates[s.num] || '';
-    return `<div class="sticker-card ${state}" onclick="toggleCard(${s.num})">
-      ${state ? `<div class="sticker-badge">${state==='have'?'✓ REPETIDO':'★ ME FALTA'}</div>` : ''}
-      <div class="sticker-flag">${s.flag}</div>
-      <div class="sticker-num">#${String(s.num).padStart(3,'0')}</div>
-      <div class="sticker-name">${s.name}</div>
-    </div>`;
+    const num3 = String(s.num).padStart(3,'0');
+    const codeParts = s.name ? s.name.split(' ') : [];
+    const code = codeParts[0] || '';
+    const posName = codeParts.slice(1).join(' ');
+    return '<div class="sticker-card ' + state + '" onclick="toggleCard(' + s.num + ')">' +
+      '<div class="sticker-card-top">' +
+      (state ? '<div class="sticker-badge">' + (state==='have'?'✓':'★') + '</div>' : '') +
+      '<div class="sticker-flag">' + s.flag + '</div>' +
+      '<div class="sticker-code">' + code + '</div>' +
+      '</div>' +
+      '<div class="sticker-card-bottom">' +
+      '<div class="sticker-num">#' + num3 + '</div>' +
+      '<div class="sticker-name">' + posName + '</div>' +
+      '</div>' +
+      '</div>';
   }).join('');
   if (!filtered.length) grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🔍</div><div>No hay cromos con este filtro.</div></div>';
   updateStats();
