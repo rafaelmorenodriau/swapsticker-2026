@@ -412,11 +412,9 @@
     <div class="logo">⚽ Swap<span>Sticker</span> 2026</div>
     <div class="nav-links">
       <button class="active" onclick="showSection('collection', this)">Mis Cromos</button>
-      <button onclick="showSection('repetidos', this)">🔁 Repetidos</button>
-      <button onclick="showSection('faltantes', this)">⭐ Faltantes</button>
       <button onclick="showSection('traders', this)">Coleccionistas</button>
       <button onclick="showSection('buscador', this)">🔍 Buscador</button>
-      <button onclick="showSection('meetup', this)">📍 Encuentro</button>
+      <button onclick="showSection('meetup', this)">🤝 Intercambios</button>
     </div>
     <div id="nav-profile" onclick="document.getElementById('profile-overlay').style.display='flex';initProfileModal();"
       style="cursor:pointer;font-size:13px;padding:7px 14px;border-radius:999px;border:1px solid rgba(245,197,24,.25);display:flex;align-items:center;gap:6px;transition:.2s;"
@@ -424,22 +422,14 @@
       ⚽ <strong>Mi Perfil</strong>
     </div>
   </div>
-  <div class="hero-body">
-    <h1>Intercambia tus<br><em>Cromos del Mundial</em></h1>
-    <p>Encuentra coleccionistas cerca, intercambia repetidos y completa tu álbum.</p>
-    <div class="hero-actions">
-      <button class="btn-gold" onclick="showSection('traders', document.querySelectorAll('.nav-links button')[1])">Buscar Coleccionistas</button>
-      <button class="btn-outline" onclick="showSection('collection', document.querySelectorAll('.nav-links button')[0])">Mis Cromos</button>
-    </div>
-  </div>
+
 </div>
 
 <!-- STATS -->
 <div class="stats-bar">
-  <div class="stat"><div class="stat-num" id="stat-have">0</div><div class="stat-label">Repetidos</div></div>
-  <div class="stat"><div class="stat-num" id="stat-want">0</div><div class="stat-label">Cromos que me faltan</div></div>
-  <div class="stat"><div class="stat-num">248</div><div class="stat-label">Coleccionistas cercanos</div></div>
-  <div class="stat"><div class="stat-num">448</div><div class="stat-label">Total de cromos</div></div>
+  <div class="stat"><div class="stat-num" id="stat-have">0</div><div class="stat-label">Mis Repetidos</div></div>
+  <div class="stat"><div class="stat-num" id="stat-want">0</div><div class="stat-label">Me Faltan</div></div>
+  <div class="stat"><div class="stat-num" id="stat-traders">0</div><div class="stat-label">Coleccionistas</div></div>
 </div>
 
 <div class="app">
@@ -447,7 +437,7 @@
   <!-- ── SECTION: MY COLLECTION ── -->
   <div class="section active" id="section-collection">
     <div class="section-header">
-      <div class="section-title">Mi <span>Colección</span></div>
+      <div class="section-title">Mis <span>Cromos</span></div>
     </div>
     <p style="color:var(--gray);font-size:13px;margin-bottom:16px;">Toca un cromo una vez para marcarlo como <strong style="color:var(--success)">Repetido</strong>, dos veces si <strong style="color:var(--gold)">Me falta</strong>, y tres veces para borrar.</p>
     <div class="legend">
@@ -455,6 +445,24 @@
       <div class="legend-item"><div class="legend-dot want"></div> Me falta</div>
       <div class="legend-item"><div class="legend-dot none"></div> Sin marcar</div>
     </div>
+    <!-- TABS: Mis Cromos / Repetidos / Faltantes -->
+    <div style="display:flex;background:rgba(255,255,255,.05);border-radius:10px;padding:4px;margin-bottom:20px;gap:4px;">
+      <button id="tab-todos" onclick="switchCromosTab('todos',this)"
+        style="flex:1;padding:9px;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:.2s;background:var(--gold);color:var(--pitch);">
+        📋 Mis Cromos
+      </button>
+      <button id="tab-repetidos" onclick="switchCromosTab('repetidos',this)"
+        style="flex:1;padding:9px;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:.2s;background:none;color:var(--gray);">
+        🔁 Repetidos
+      </button>
+      <button id="tab-faltantes" onclick="switchCromosTab('faltantes',this)"
+        style="flex:1;padding:9px;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:.2s;background:none;color:var(--gray);">
+        ⭐ Faltantes
+      </button>
+    </div>
+
+    <!-- PANEL: Mis Cromos (todos/sin marcar) -->
+    <div id="panel-todos">
     <div class="filter-bar">
       <button class="filter-btn" onclick="filterCards('all', this)">Todos</button>
       <button class="filter-btn" onclick="filterCards('have', this)">Repetido</button>
@@ -464,34 +472,44 @@
 
     <!-- FILTRO POR PAÍS -->
     <div style="margin-bottom:16px;">
-      <div style="font-size:12px;color:var(--gray);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;">Filtrar por país</div>
+      <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;" id="group-filter-bar">
+      <button class="filter-btn active" onclick="filterByGroup('Todos',this)" style="font-size:11px;padding:4px 10px;">Todos</button>
+      <button class="filter-btn" onclick="filterByGroup('Grupo A',this)" style="font-size:11px;padding:4px 10px;">Grupo A</button>
+      <button class="filter-btn" onclick="filterByGroup('Grupo B',this)" style="font-size:11px;padding:4px 10px;">Grupo B</button>
+      <button class="filter-btn" onclick="filterByGroup('Grupo C',this)" style="font-size:11px;padding:4px 10px;">Grupo C</button>
+      <button class="filter-btn" onclick="filterByGroup('Grupo D',this)" style="font-size:11px;padding:4px 10px;">Grupo D</button>
+      <button class="filter-btn" onclick="filterByGroup('Grupo E',this)" style="font-size:11px;padding:4px 10px;">Grupo E</button>
+      <button class="filter-btn" onclick="filterByGroup('Grupo F',this)" style="font-size:11px;padding:4px 10px;">Grupo F</button>
+      <button class="filter-btn" onclick="filterByGroup('Grupo G',this)" style="font-size:11px;padding:4px 10px;">Grupo G</button>
+      <button class="filter-btn" onclick="filterByGroup('Grupo H',this)" style="font-size:11px;padding:4px 10px;">Grupo H</button>
+      <button class="filter-btn" onclick="filterByGroup('Grupo I',this)" style="font-size:11px;padding:4px 10px;">Grupo I</button>
+      <button class="filter-btn" onclick="filterByGroup('Grupo J',this)" style="font-size:11px;padding:4px 10px;">Grupo J</button>
+      <button class="filter-btn" onclick="filterByGroup('Grupo K',this)" style="font-size:11px;padding:4px 10px;">Grupo K</button>
+      <button class="filter-btn" onclick="filterByGroup('Grupo L',this)" style="font-size:11px;padding:4px 10px;">Grupo L</button>
+    </div>
+    <div style="font-size:12px;color:var(--gray);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;">Filtrar por país</div>
       <div id="country-filter-bar" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
     </div>
 
     <div id="collection-count" style="font-size:12px;color:var(--gray);margin-bottom:12px;"></div>
     <div class="card-grid" id="card-grid"></div>
-  </div>
+    </div><!-- /panel-todos -->
 
-  <!-- ── SECTION: REPETIDOS ── -->
-  <div class="section" id="section-repetidos">
-    <div class="section-header">
-      <div class="section-title">Mis <span>Repetidos</span></div>
+    <!-- PANEL: Repetidos -->
+    <div id="panel-repetidos" style="display:none;">
+      <p style="color:var(--gray);font-size:13px;margin-bottom:16px;">Cromos que tienes de más. Filtra por país.</p>
+      <div id="rep-country-bar" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;"></div>
+      <div id="rep-count" style="font-size:12px;color:var(--gray);margin-bottom:12px;"></div>
+      <div class="card-grid" id="rep-grid"></div>
     </div>
-    <p style="color:var(--gray);font-size:13px;margin-bottom:16px;">Cromos que tienes de más y puedes intercambiar. Filtra por país.</p>
-    <div id="rep-country-bar" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;"></div>
-    <div id="rep-count" style="font-size:12px;color:var(--gray);margin-bottom:12px;"></div>
-    <div class="card-grid" id="rep-grid"></div>
-  </div>
 
-  <!-- ── SECTION: FALTANTES ── -->
-  <div class="section" id="section-faltantes">
-    <div class="section-header">
-      <div class="section-title">Me <span>Faltan</span></div>
+    <!-- PANEL: Faltantes -->
+    <div id="panel-faltantes" style="display:none;">
+      <p style="color:var(--gray);font-size:13px;margin-bottom:16px;">Cromos que te faltan. Filtra por país.</p>
+      <div id="fal-country-bar" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;"></div>
+      <div id="fal-count" style="font-size:12px;color:var(--gray);margin-bottom:12px;"></div>
+      <div class="card-grid" id="fal-grid"></div>
     </div>
-    <p style="color:var(--gray);font-size:13px;margin-bottom:16px;">Cromos que aún necesitas para completar tu álbum. Filtra por país.</p>
-    <div id="fal-country-bar" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;"></div>
-    <div id="fal-count" style="font-size:12px;color:var(--gray);margin-bottom:12px;"></div>
-    <div class="card-grid" id="fal-grid"></div>
   </div>
 
   <!-- ── SECTION: FIND TRADERS ── -->
@@ -537,17 +555,10 @@
 
   <!-- ── SECTION: MEET UP ── -->
   <div class="section" id="section-meetup">
-    <div class="section-title" style="margin-bottom:8px;">Intercambios <span style="color:var(--gold)">📍</span></div>
+    <div class="section-title" style="margin-bottom:8px;">Mis <span>Intercambios</span></div>
     <p style="color:var(--gray);font-size:13px;margin-bottom:20px;">Propón un intercambio o responde a las propuestas que te llegaron.</p>
 
     <button class="btn-gold" style="padding:12px 24px;margin-bottom:24px;" onclick="openModal()">+ Proponer Intercambio</button>
-
-    <!-- TABS -->
-    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
-      <button class="filter-btn active" id="tab-pendientes" onclick="switchMeetTab('pendientes',this)">⏳ Pendientes</button>
-      <button class="filter-btn" id="tab-confirmados" onclick="switchMeetTab('confirmados',this)">✅ Confirmados</button>
-      <button class="filter-btn" id="tab-recibidos" onclick="switchMeetTab('recibidos',this)">📬 Recibidos</button>
-    </div>
 
     <div id="meetings-list"></div>
   </div>
@@ -717,66 +728,966 @@
 <script>
 // ── DATA ──
 const STICKERS = [
-  // 🇪🇨 ECUADOR
-  {num:1,name:'Escudo Ecuador',flag:'🇪🇨',country:'Ecuador'},{num:2,name:'Domínguez',flag:'🇪🇨',country:'Ecuador'},{num:3,name:'Preciado',flag:'🇪🇨',country:'Ecuador'},{num:4,name:'Hincapié',flag:'🇪🇨',country:'Ecuador'},{num:5,name:'Torres A.',flag:'🇪🇨',country:'Ecuador'},{num:6,name:'Caicedo M.',flag:'🇪🇨',country:'Ecuador'},{num:7,name:'Gruezo',flag:'🇪🇨',country:'Ecuador'},{num:8,name:'Cifuentes',flag:'🇪🇨',country:'Ecuador'},{num:9,name:'Ibarra J.',flag:'🇪🇨',country:'Ecuador'},{num:10,name:'Valencia E.',flag:'🇪🇨',country:'Ecuador'},{num:11,name:'Mena',flag:'🇪🇨',country:'Ecuador'},{num:12,name:'Palacios',flag:'🇪🇨',country:'Ecuador'},{num:13,name:'Bone',flag:'🇪🇨',country:'Ecuador'},{num:14,name:'Estupiñán',flag:'🇪🇨',country:'Ecuador'},{num:15,name:'Plaza',flag:'🇪🇨',country:'Ecuador'},
-  // 🇧🇷 BRASIL
-  {num:16,name:'Escudo Brasil',flag:'🇧🇷',country:'Brasil'},{num:17,name:'Alisson',flag:'🇧🇷',country:'Brasil'},{num:18,name:'Danilo',flag:'🇧🇷',country:'Brasil'},{num:19,name:'Marquinhos',flag:'🇧🇷',country:'Brasil'},{num:20,name:'Militão',flag:'🇧🇷',country:'Brasil'},{num:21,name:'Renan Lodi',flag:'🇧🇷',country:'Brasil'},{num:22,name:'Casemiro',flag:'🇧🇷',country:'Brasil'},{num:23,name:'Lucas Paquetá',flag:'🇧🇷',country:'Brasil'},{num:24,name:'Vinicius Jr',flag:'🇧🇷',country:'Brasil'},{num:25,name:'Rodrygo',flag:'🇧🇷',country:'Brasil'},{num:26,name:'Raphinha',flag:'🇧🇷',country:'Brasil'},{num:27,name:'Endrick',flag:'🇧🇷',country:'Brasil'},{num:28,name:'Gabriel Martinelli',flag:'🇧🇷',country:'Brasil'},{num:29,name:'Bruno Guimarães',flag:'🇧🇷',country:'Brasil'},{num:30,name:'Savinho',flag:'🇧🇷',country:'Brasil'},
-  // 🇦🇷 ARGENTINA
-  {num:31,name:'Escudo Argentina',flag:'🇦🇷',country:'Argentina'},{num:32,name:'E. Martínez',flag:'🇦🇷',country:'Argentina'},{num:33,name:'Molina',flag:'🇦🇷',country:'Argentina'},{num:34,name:'Romero C.',flag:'🇦🇷',country:'Argentina'},{num:35,name:'Lisandro Martínez',flag:'🇦🇷',country:'Argentina'},{num:36,name:'Tagliafico',flag:'🇦🇷',country:'Argentina'},{num:37,name:'De Paul',flag:'🇦🇷',country:'Argentina'},{num:38,name:'Mac Allister',flag:'🇦🇷',country:'Argentina'},{num:39,name:'Enzo Fernández',flag:'🇦🇷',country:'Argentina'},{num:40,name:'Di María',flag:'🇦🇷',country:'Argentina'},{num:41,name:'Dybala',flag:'🇦🇷',country:'Argentina'},{num:42,name:'Álvarez J.',flag:'🇦🇷',country:'Argentina'},{num:43,name:'Lautaro Martínez',flag:'🇦🇷',country:'Argentina'},{num:44,name:'Acuña',flag:'🇦🇷',country:'Argentina'},{num:45,name:'Lo Celso',flag:'🇦🇷',country:'Argentina'},
-  // 🇫🇷 FRANCIA
-  {num:46,name:'Escudo Francia',flag:'🇫🇷',country:'Francia'},{num:47,name:'Maignan',flag:'🇫🇷',country:'Francia'},{num:48,name:'Pavard',flag:'🇫🇷',country:'Francia'},{num:49,name:'Upamecano',flag:'🇫🇷',country:'Francia'},{num:50,name:'Konaté',flag:'🇫🇷',country:'Francia'},{num:51,name:'T. Hernández',flag:'🇫🇷',country:'Francia'},{num:52,name:'Tchouaméni',flag:'🇫🇷',country:'Francia'},{num:53,name:'Camavinga',flag:'🇫🇷',country:'Francia'},{num:54,name:'Rabiot',flag:'🇫🇷',country:'Francia'},{num:55,name:'Mbappé',flag:'🇫🇷',country:'Francia'},{num:56,name:'Griezmann',flag:'🇫🇷',country:'Francia'},{num:57,name:'Dembélé',flag:'🇫🇷',country:'Francia'},{num:58,name:'Giroud',flag:'🇫🇷',country:'Francia'},{num:59,name:'Thuram M.',flag:'🇫🇷',country:'Francia'},{num:60,name:'Coman',flag:'🇫🇷',country:'Francia'},
-  // 🏴󠁧󠁢󠁥󠁮󠁧󠁿 INGLATERRA
-  {num:61,name:'Escudo Inglaterra',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra'},{num:62,name:'Pickford',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra'},{num:63,name:'Alexander-Arnold',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra'},{num:64,name:'Stones',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra'},{num:65,name:'Maguire',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra'},{num:66,name:'Shaw',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra'},{num:67,name:'Bellingham',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra'},{num:68,name:'Rice D.',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra'},{num:69,name:'Henderson',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra'},{num:70,name:'Kane',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra'},{num:71,name:'Saka',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra'},{num:72,name:'Foden',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra'},{num:73,name:'Rashford',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra'},{num:74,name:'Trippier',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra'},{num:75,name:'Gordon',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra'},
-  // 🇪🇸 ESPAÑA
-  {num:76,name:'Escudo España',flag:'🇪🇸',country:'España'},{num:77,name:'Unai Simón',flag:'🇪🇸',country:'España'},{num:78,name:'Carvajal',flag:'🇪🇸',country:'España'},{num:79,name:'Nacho',flag:'🇪🇸',country:'España'},{num:80,name:'Laporte',flag:'🇪🇸',country:'España'},{num:81,name:'Gayà',flag:'🇪🇸',country:'España'},{num:82,name:'Rodri',flag:'🇪🇸',country:'España'},{num:83,name:'Pedri',flag:'🇪🇸',country:'España'},{num:84,name:'Gavi',flag:'🇪🇸',country:'España'},{num:85,name:'Lamine Yamal',flag:'🇪🇸',country:'España'},{num:86,name:'Morata',flag:'🇪🇸',country:'España'},{num:87,name:'Olmo',flag:'🇪🇸',country:'España'},{num:88,name:'Williams N.',flag:'🇪🇸',country:'España'},{num:89,name:'Cucurella',flag:'🇪🇸',country:'España'},{num:90,name:'Fabián Ruiz',flag:'🇪🇸',country:'España'},
-  // 🇩🇪 ALEMANIA
-  {num:91,name:'Escudo Alemania',flag:'🇩🇪',country:'Alemania'},{num:92,name:'Neuer',flag:'🇩🇪',country:'Alemania'},{num:93,name:'Kimmich',flag:'🇩🇪',country:'Alemania'},{num:94,name:'Rüdiger',flag:'🇩🇪',country:'Alemania'},{num:95,name:'Schlotterbeck',flag:'🇩🇪',country:'Alemania'},{num:96,name:'Raum',flag:'🇩🇪',country:'Alemania'},{num:97,name:'Kroos',flag:'🇩🇪',country:'Alemania'},{num:98,name:'Goretzka',flag:'🇩🇪',country:'Alemania'},{num:99,name:'Musiala',flag:'🇩🇪',country:'Alemania'},{num:100,name:'Wirtz',flag:'🇩🇪',country:'Alemania'},{num:101,name:'Havertz',flag:'🇩🇪',country:'Alemania'},{num:102,name:'Gnabry',flag:'🇩🇪',country:'Alemania'},{num:103,name:'Sané',flag:'🇩🇪',country:'Alemania'},{num:104,name:'Füllkrug',flag:'🇩🇪',country:'Alemania'},{num:105,name:'Mittelstädt',flag:'🇩🇪',country:'Alemania'},
-  // 🇵🇹 PORTUGAL
-  {num:106,name:'Escudo Portugal',flag:'🇵🇹',country:'Portugal'},{num:107,name:'Diogo Costa',flag:'🇵🇹',country:'Portugal'},{num:108,name:'Cancelo',flag:'🇵🇹',country:'Portugal'},{num:109,name:'Pepe',flag:'🇵🇹',country:'Portugal'},{num:110,name:'Danilo Pereira',flag:'🇵🇹',country:'Portugal'},{num:111,name:'Nuno Mendes',flag:'🇵🇹',country:'Portugal'},{num:112,name:'Vitinha',flag:'🇵🇹',country:'Portugal'},{num:113,name:'Bernardo Silva',flag:'🇵🇹',country:'Portugal'},{num:114,name:'Bruno Fernandes',flag:'🇵🇹',country:'Portugal'},{num:115,name:'Cristiano Ronaldo',flag:'🇵🇹',country:'Portugal'},{num:116,name:'Joao Félix',flag:'🇵🇹',country:'Portugal'},{num:117,name:'Rafael Leão',flag:'🇵🇹',country:'Portugal'},{num:118,name:'Gonçalo Ramos',flag:'🇵🇹',country:'Portugal'},{num:119,name:'Diogo Jota',flag:'🇵🇹',country:'Portugal'},{num:120,name:'Ruben Neves',flag:'🇵🇹',country:'Portugal'},
-  // 🇳🇱 PAÍSES BAJOS
-  {num:121,name:'Escudo Países Bajos',flag:'🇳🇱',country:'Países Bajos'},{num:122,name:'Flekken',flag:'🇳🇱',country:'Países Bajos'},{num:123,name:'Dumfries',flag:'🇳🇱',country:'Países Bajos'},{num:124,name:'De Vrij',flag:'🇳🇱',country:'Países Bajos'},{num:125,name:'Van Dijk',flag:'🇳🇱',country:'Países Bajos'},{num:126,name:'Blind',flag:'🇳🇱',country:'Países Bajos'},{num:127,name:'De Jong F.',flag:'🇳🇱',country:'Países Bajos'},{num:128,name:'Koopmeiners',flag:'🇳🇱',country:'Países Bajos'},{num:129,name:'Reijnders',flag:'🇳🇱',country:'Países Bajos'},{num:130,name:'Depay',flag:'🇳🇱',country:'Países Bajos'},{num:131,name:'Gakpo',flag:'🇳🇱',country:'Países Bajos'},{num:132,name:'Bergwijn',flag:'🇳🇱',country:'Países Bajos'},{num:133,name:'Weghorst',flag:'🇳🇱',country:'Países Bajos'},{num:134,name:'Timber',flag:'🇳🇱',country:'Países Bajos'},{num:135,name:'Malen',flag:'🇳🇱',country:'Países Bajos'},
-  // 🇮🇹 ITALIA
-  {num:136,name:'Escudo Italia',flag:'🇮🇹',country:'Italia'},{num:137,name:'Donnarumma',flag:'🇮🇹',country:'Italia'},{num:138,name:'Di Lorenzo',flag:'🇮🇹',country:'Italia'},{num:139,name:'Bastoni',flag:'🇮🇹',country:'Italia'},{num:140,name:'Bonucci',flag:'🇮🇹',country:'Italia'},{num:141,name:'Spinazzola',flag:'🇮🇹',country:'Italia'},{num:142,name:'Barella',flag:'🇮🇹',country:'Italia'},{num:143,name:'Verratti',flag:'🇮🇹',country:'Italia'},{num:144,name:'Jorginho',flag:'🇮🇹',country:'Italia'},{num:145,name:'Chiesa',flag:'🇮🇹',country:'Italia'},{num:146,name:'Immobile',flag:'🇮🇹',country:'Italia'},{num:147,name:'Raspadori',flag:'🇮🇹',country:'Italia'},{num:148,name:'Scamacca',flag:'🇮🇹',country:'Italia'},{num:149,name:'Zaccagni',flag:'🇮🇹',country:'Italia'},{num:150,name:'Retegui',flag:'🇮🇹',country:'Italia'},
-  // 🇺🇸 ESTADOS UNIDOS
-  {num:151,name:'Escudo EE.UU.',flag:'🇺🇸',country:'Estados Unidos'},{num:152,name:'Turner M.',flag:'🇺🇸',country:'Estados Unidos'},{num:153,name:'Dest',flag:'🇺🇸',country:'Estados Unidos'},{num:154,name:'Zimmermann',flag:'🇺🇸',country:'Estados Unidos'},{num:155,name:'Ream',flag:'🇺🇸',country:'Estados Unidos'},{num:156,name:'Robinson A.',flag:'🇺🇸',country:'Estados Unidos'},{num:157,name:'McKennie',flag:'🇺🇸',country:'Estados Unidos'},{num:158,name:'Adams T.',flag:'🇺🇸',country:'Estados Unidos'},{num:159,name:'Musah',flag:'🇺🇸',country:'Estados Unidos'},{num:160,name:'Pulisic',flag:'🇺🇸',country:'Estados Unidos'},{num:161,name:'Weah T.',flag:'🇺🇸',country:'Estados Unidos'},{num:162,name:'Reyna',flag:'🇺🇸',country:'Estados Unidos'},{num:163,name:'Ferreira J.',flag:'🇺🇸',country:'Estados Unidos'},{num:164,name:'Balogun',flag:'🇺🇸',country:'Estados Unidos'},{num:165,name:'Sargent',flag:'🇺🇸',country:'Estados Unidos'},
-  // 🇲🇽 MÉXICO
-  {num:166,name:'Escudo México',flag:'🇲🇽',country:'México'},{num:167,name:'Ochoa',flag:'🇲🇽',country:'México'},{num:168,name:'Sánchez J.',flag:'🇲🇽',country:'México'},{num:169,name:'Montes N.',flag:'🇲🇽',country:'México'},{num:170,name:'Moreno H.',flag:'🇲🇽',country:'México'},{num:171,name:'Gallardo',flag:'🇲🇽',country:'México'},{num:172,name:'Guardado',flag:'🇲🇽',country:'México'},{num:173,name:'Herrera H.',flag:'🇲🇽',country:'México'},{num:174,name:'Álvarez E.',flag:'🇲🇽',country:'México'},{num:175,name:'Lozano H.',flag:'🇲🇽',country:'México'},{num:176,name:'Jiménez R.',flag:'🇲🇽',country:'México'},{num:177,name:'Vega L.',flag:'🇲🇽',country:'México'},{num:178,name:'Antuna',flag:'🇲🇽',country:'México'},{num:179,name:'Martín J.',flag:'🇲🇽',country:'México'},{num:180,name:'Romo',flag:'🇲🇽',country:'México'},
-  // 🇨🇦 CANADÁ
-  {num:181,name:'Escudo Canadá',flag:'🇨🇦',country:'Canadá'},{num:182,name:'Borjan',flag:'🇨🇦',country:'Canadá'},{num:183,name:'Johnston A.',flag:'🇨🇦',country:'Canadá'},{num:184,name:'Miller S.',flag:'🇨🇦',country:'Canadá'},{num:185,name:'Vitória',flag:'🇨🇦',country:'Canadá'},{num:186,name:'Laryea',flag:'🇨🇦',country:'Canadá'},{num:187,name:'Eustáquio',flag:'🇨🇦',country:'Canadá'},{num:188,name:'Osorio M.',flag:'🇨🇦',country:'Canadá'},{num:189,name:'Ahmed S.',flag:'🇨🇦',country:'Canadá'},{num:190,name:'Davies A.',flag:'🇨🇦',country:'Canadá'},{num:191,name:'David J.',flag:'🇨🇦',country:'Canadá'},{num:192,name:'Buchanan T.',flag:'🇨🇦',country:'Canadá'},{num:193,name:'Ugbo I.',flag:'🇨🇦',country:'Canadá'},{num:194,name:'Larin C.',flag:'🇨🇦',country:'Canadá'},{num:195,name:'Hutchinson A.',flag:'🇨🇦',country:'Canadá'},
-  // 🇨🇴 COLOMBIA
-  {num:196,name:'Escudo Colombia',flag:'🇨🇴',country:'Colombia'},{num:197,name:'Vargas D.',flag:'🇨🇴',country:'Colombia'},{num:198,name:'Muñoz D.',flag:'🇨🇴',country:'Colombia'},{num:199,name:'Mina Y.',flag:'🇨🇴',country:'Colombia'},{num:200,name:'Lucumí',flag:'🇨🇴',country:'Colombia'},{num:201,name:'Mojica',flag:'🇨🇴',country:'Colombia'},{num:202,name:'Ríos J.',flag:'🇨🇴',country:'Colombia'},{num:203,name:'Lerma',flag:'🇨🇴',country:'Colombia'},{num:204,name:'Cuesta',flag:'🇨🇴',country:'Colombia'},{num:205,name:'James Rodríguez',flag:'🇨🇴',country:'Colombia'},{num:206,name:'Díaz L.',flag:'🇨🇴',country:'Colombia'},{num:207,name:'Córdoba',flag:'🇨🇴',country:'Colombia'},{num:208,name:'Borré',flag:'🇨🇴',country:'Colombia'},{num:209,name:'Cuadrado',flag:'🇨🇴',country:'Colombia'},{num:210,name:'Arango',flag:'🇨🇴',country:'Colombia'},
-  // 🇺🇾 URUGUAY
-  {num:211,name:'Escudo Uruguay',flag:'🇺🇾',country:'Uruguay'},{num:212,name:'Rochet',flag:'🇺🇾',country:'Uruguay'},{num:213,name:'Nández',flag:'🇺🇾',country:'Uruguay'},{num:214,name:'Giménez J.',flag:'🇺🇾',country:'Uruguay'},{num:215,name:'Godín',flag:'🇺🇾',country:'Uruguay'},{num:216,name:'Viña',flag:'🇺🇾',country:'Uruguay'},{num:217,name:'Bentancur',flag:'🇺🇾',country:'Uruguay'},{num:218,name:'Valverde F.',flag:'🇺🇾',country:'Uruguay'},{num:219,name:'Vecino',flag:'🇺🇾',country:'Uruguay'},{num:220,name:'Suárez',flag:'🇺🇾',country:'Uruguay'},{num:221,name:'Cavani',flag:'🇺🇾',country:'Uruguay'},{num:222,name:'Núñez D.',flag:'🇺🇾',country:'Uruguay'},{num:223,name:'Pellistri',flag:'🇺🇾',country:'Uruguay'},{num:224,name:'De Arrascaeta',flag:'🇺🇾',country:'Uruguay'},{num:225,name:'Ugarte M.',flag:'🇺🇾',country:'Uruguay'},
-  // 🇨🇱 CHILE
-  {num:226,name:'Escudo Chile',flag:'🇨🇱',country:'Chile'},{num:227,name:'Bravo C.',flag:'🇨🇱',country:'Chile'},{num:228,name:'Isla',flag:'🇨🇱',country:'Chile'},{num:229,name:'Maripán',flag:'🇨🇱',country:'Chile'},{num:230,name:'Medel',flag:'🇨🇱',country:'Chile'},{num:231,name:'Mena E.',flag:'🇨🇱',country:'Chile'},{num:232,name:'Vidal A.',flag:'🇨🇱',country:'Chile'},{num:233,name:'Aranguiz',flag:'🇨🇱',country:'Chile'},{num:234,name:'Pulgar',flag:'🇨🇱',country:'Chile'},{num:235,name:'Sánchez A.',flag:'🇨🇱',country:'Chile'},{num:236,name:'Vargas E.',flag:'🇨🇱',country:'Chile'},{num:237,name:'Brereton',flag:'🇨🇱',country:'Chile'},{num:238,name:'Palacios N.',flag:'🇨🇱',country:'Chile'},{num:239,name:'Mora B.',flag:'🇨🇱',country:'Chile'},{num:240,name:'Contreras P.',flag:'🇨🇱',country:'Chile'},
-  // 🇵🇪 PERÚ
-  {num:241,name:'Escudo Perú',flag:'🇵🇪',country:'Perú'},{num:242,name:'Gallese',flag:'🇵🇪',country:'Perú'},{num:243,name:'Advíncula',flag:'🇵🇪',country:'Perú'},{num:244,name:'Zambrano C.',flag:'🇵🇪',country:'Perú'},{num:245,name:'Abram',flag:'🇵🇪',country:'Perú'},{num:246,name:'Trauco',flag:'🇵🇪',country:'Perú'},{num:247,name:'Tapia R.',flag:'🇵🇪',country:'Perú'},{num:248,name:'Peña Y.',flag:'🇵🇪',country:'Perú'},{num:249,name:'Flores E.',flag:'🇵🇪',country:'Perú'},{num:250,name:'Cueva C.',flag:'🇵🇪',country:'Perú'},{num:251,name:'Guerrero',flag:'🇵🇪',country:'Perú'},{num:252,name:'Lapadula',flag:'🇵🇪',country:'Perú'},{num:253,name:'Cartagena',flag:'🇵🇪',country:'Perú'},{num:254,name:'Valera B.',flag:'🇵🇪',country:'Perú'},{num:255,name:'Polo A.',flag:'🇵🇪',country:'Perú'},
-  // 🇯🇵 JAPÓN
-  {num:256,name:'Escudo Japón',flag:'🇯🇵',country:'Japón'},{num:257,name:'Gonda',flag:'🇯🇵',country:'Japón'},{num:258,name:'Sakai',flag:'🇯🇵',country:'Japón'},{num:259,name:'Tomiyasu',flag:'🇯🇵',country:'Japón'},{num:260,name:'Yoshida',flag:'🇯🇵',country:'Japón'},{num:261,name:'Nagatomo',flag:'🇯🇵',country:'Japón'},{num:262,name:'Endo W.',flag:'🇯🇵',country:'Japón'},{num:263,name:'Kamada',flag:'🇯🇵',country:'Japón'},{num:264,name:'Kubo T.',flag:'🇯🇵',country:'Japón'},{num:265,name:'Doan',flag:'🇯🇵',country:'Japón'},{num:266,name:'Maeda D.',flag:'🇯🇵',country:'Japón'},{num:267,name:'Mitoma',flag:'🇯🇵',country:'Japón'},{num:268,name:'Asano',flag:'🇯🇵',country:'Japón'},{num:269,name:'Ueda A.',flag:'🇯🇵',country:'Japón'},{num:270,name:'Tanaka H.',flag:'🇯🇵',country:'Japón'},
-  // 🇰🇷 COREA DEL SUR
-  {num:271,name:'Escudo Corea',flag:'🇰🇷',country:'Corea del Sur'},{num:272,name:'Kim Seung-gyu',flag:'🇰🇷',country:'Corea del Sur'},{num:273,name:'Kim Moon-hwan',flag:'🇰🇷',country:'Corea del Sur'},{num:274,name:'Kim Min-jae',flag:'🇰🇷',country:'Corea del Sur'},{num:275,name:'Kim Young-gwon',flag:'🇰🇷',country:'Corea del Sur'},{num:276,name:'Hong Chul',flag:'🇰🇷',country:'Corea del Sur'},{num:277,name:'Jung Woo-young',flag:'🇰🇷',country:'Corea del Sur'},{num:278,name:'Lee Jae-sung',flag:'🇰🇷',country:'Corea del Sur'},{num:279,name:'Son Heung-min',flag:'🇰🇷',country:'Corea del Sur'},{num:280,name:'Hwang In-beom',flag:'🇰🇷',country:'Corea del Sur'},{num:281,name:'Lee Kang-in',flag:'🇰🇷',country:'Corea del Sur'},{num:282,name:'Hwang Hee-chan',flag:'🇰🇷',country:'Corea del Sur'},{num:283,name:'Cho Gue-sung',flag:'🇰🇷',country:'Corea del Sur'},{num:284,name:'Oh Hyeon-gyu',flag:'🇰🇷',country:'Corea del Sur'},{num:285,name:'Jeong Woo-yeong',flag:'🇰🇷',country:'Corea del Sur'},
-  // 🇸🇦 ARABIA SAUDITA
-  {num:286,name:'Escudo Arabia Saudita',flag:'🇸🇦',country:'Arabia Saudita'},{num:287,name:'Al-Owais',flag:'🇸🇦',country:'Arabia Saudita'},{num:288,name:'Al-Ghannam',flag:'🇸🇦',country:'Arabia Saudita'},{num:289,name:'Al-Amri',flag:'🇸🇦',country:'Arabia Saudita'},{num:290,name:'Al-Bulayhi',flag:'🇸🇦',country:'Arabia Saudita'},{num:291,name:'Al-Shahrani',flag:'🇸🇦',country:'Arabia Saudita'},{num:292,name:'Al-Malki',flag:'🇸🇦',country:'Arabia Saudita'},{num:293,name:'Al-Dawsari',flag:'🇸🇦',country:'Arabia Saudita'},{num:294,name:'Al-Faraj',flag:'🇸🇦',country:'Arabia Saudita'},{num:295,name:'Al-Shehri',flag:'🇸🇦',country:'Arabia Saudita'},{num:296,name:'Al-Buraikan',flag:'🇸🇦',country:'Arabia Saudita'},{num:297,name:'Kanno',flag:'🇸🇦',country:'Arabia Saudita'},{num:298,name:'Al-Qasem',flag:'🇸🇦',country:'Arabia Saudita'},{num:299,name:'Bahebri',flag:'🇸🇦',country:'Arabia Saudita'},{num:300,name:'Aljabir',flag:'🇸🇦',country:'Arabia Saudita'},
-  // 🇲🇦 MARRUECOS
-  {num:301,name:'Escudo Marruecos',flag:'🇲🇦',country:'Marruecos'},{num:302,name:'Bounou',flag:'🇲🇦',country:'Marruecos'},{num:303,name:'Hakimi',flag:'🇲🇦',country:'Marruecos'},{num:304,name:'Aguerd',flag:'🇲🇦',country:'Marruecos'},{num:305,name:'Saiss',flag:'🇲🇦',country:'Marruecos'},{num:306,name:'Mazraoui',flag:'🇲🇦',country:'Marruecos'},{num:307,name:'Ounahi',flag:'🇲🇦',country:'Marruecos'},{num:308,name:'Amrabat S.',flag:'🇲🇦',country:'Marruecos'},{num:309,name:'Amallah',flag:'🇲🇦',country:'Marruecos'},{num:310,name:'Ziyech',flag:'🇲🇦',country:'Marruecos'},{num:311,name:'En-Nesyri',flag:'🇲🇦',country:'Marruecos'},{num:312,name:'Boufal',flag:'🇲🇦',country:'Marruecos'},{num:313,name:'Sabiri',flag:'🇲🇦',country:'Marruecos'},{num:314,name:'Dari',flag:'🇲🇦',country:'Marruecos'},{num:315,name:'Aboukhlal',flag:'🇲🇦',country:'Marruecos'},
-  // 🇸🇳 SENEGAL
-  {num:316,name:'Escudo Senegal',flag:'🇸🇳',country:'Senegal'},{num:317,name:'Mendy E.',flag:'🇸🇳',country:'Senegal'},{num:318,name:'Sabaly',flag:'🇸🇳',country:'Senegal'},{num:319,name:'Koulibaly',flag:'🇸🇳',country:'Senegal'},{num:320,name:'Diallo A.',flag:'🇸🇳',country:'Senegal'},{num:321,name:'Ciss',flag:'🇸🇳',country:'Senegal'},{num:322,name:'Gueye I.',flag:'🇸🇳',country:'Senegal'},{num:323,name:'Kouyaté',flag:'🇸🇳',country:'Senegal'},{num:324,name:'Diatta L.',flag:'🇸🇳',country:'Senegal'},{num:325,name:'Mané',flag:'🇸🇳',country:'Senegal'},{num:326,name:'Dia B.',flag:'🇸🇳',country:'Senegal'},{num:327,name:'Diedhiou',flag:'🇸🇳',country:'Senegal'},{num:328,name:'Diagne M.',flag:'🇸🇳',country:'Senegal'},{num:329,name:'Sarr I.',flag:'🇸🇳',country:'Senegal'},{num:330,name:'Ndiaye P.',flag:'🇸🇳',country:'Senegal'},
-  // 🇳🇬 NIGERIA
-  {num:331,name:'Escudo Nigeria',flag:'🇳🇬',country:'Nigeria'},{num:332,name:'Uzoho',flag:'🇳🇬',country:'Nigeria'},{num:333,name:'Ola Aina',flag:'🇳🇬',country:'Nigeria'},{num:334,name:'Ekong',flag:'🇳🇬',country:'Nigeria'},{num:335,name:'Troost-Ekong',flag:'🇳🇬',country:'Nigeria'},{num:336,name:'Zaidu',flag:'🇳🇬',country:'Nigeria'},{num:337,name:'Ndidi',flag:'🇳🇬',country:'Nigeria'},{num:338,name:'Iwobi',flag:'🇳🇬',country:'Nigeria'},{num:339,name:'Lookman',flag:'🇳🇬',country:'Nigeria'},{num:340,name:'Osimhen',flag:'🇳🇬',country:'Nigeria'},{num:341,name:'Chukwueze',flag:'🇳🇬',country:'Nigeria'},{num:342,name:'Simon M.',flag:'🇳🇬',country:'Nigeria'},{num:343,name:'Aribo',flag:'🇳🇬',country:'Nigeria'},{num:344,name:'Awoniyi',flag:'🇳🇬',country:'Nigeria'},{num:345,name:'Bassey C.',flag:'🇳🇬',country:'Nigeria'},
-  // 🇧🇪 BÉLGICA
-  {num:346,name:'Escudo Bélgica',flag:'🇧🇪',country:'Bélgica'},{num:347,name:'Courtois',flag:'🇧🇪',country:'Bélgica'},{num:348,name:'Castagne',flag:'🇧🇪',country:'Bélgica'},{num:349,name:'Alderweireld',flag:'🇧🇪',country:'Bélgica'},{num:350,name:'Vertonghen',flag:'🇧🇪',country:'Bélgica'},{num:351,name:'Theate',flag:'🇧🇪',country:'Bélgica'},{num:352,name:'Witsel',flag:'🇧🇪',country:'Bélgica'},{num:353,name:'De Bruyne',flag:'🇧🇪',country:'Bélgica'},{num:354,name:'Tielemans',flag:'🇧🇪',country:'Bélgica'},{num:355,name:'Hazard E.',flag:'🇧🇪',country:'Bélgica'},{num:356,name:'Lukaku',flag:'🇧🇪',country:'Bélgica'},{num:357,name:'Doku',flag:'🇧🇪',country:'Bélgica'},{num:358,name:'Onana A.',flag:'🇧🇪',country:'Bélgica'},{num:359,name:'Carrasco',flag:'🇧🇪',country:'Bélgica'},{num:360,name:'Saelemaekers',flag:'🇧🇪',country:'Bélgica'},
-  // 🇵🇱 POLONIA
-  {num:361,name:'Escudo Polonia',flag:'🇵🇱',country:'Polonia'},{num:362,name:'Szczęsny',flag:'🇵🇱',country:'Polonia'},{num:363,name:'Cash M.',flag:'🇵🇱',country:'Polonia'},{num:364,name:'Glik',flag:'🇵🇱',country:'Polonia'},{num:365,name:'Kiwior',flag:'🇵🇱',country:'Polonia'},{num:366,name:'Bereszyński',flag:'🇵🇱',country:'Polonia'},{num:367,name:'Krychowiak',flag:'🇵🇱',country:'Polonia'},{num:368,name:'Zieliński P.',flag:'🇵🇱',country:'Polonia'},{num:369,name:'Frankowski',flag:'🇵🇱',country:'Polonia'},{num:370,name:'Lewandowski',flag:'🇵🇱',country:'Polonia'},{num:371,name:'Milik',flag:'🇵🇱',country:'Polonia'},{num:372,name:'Szymański S.',flag:'🇵🇱',country:'Polonia'},{num:373,name:'Kamiński M.',flag:'🇵🇱',country:'Polonia'},{num:374,name:'Świderski',flag:'🇵🇱',country:'Polonia'},{num:375,name:'Zalewski N.',flag:'🇵🇱',country:'Polonia'},
-  // 🇨🇷 COSTA RICA
-  {num:376,name:'Escudo Costa Rica',flag:'🇨🇷',country:'Costa Rica'},{num:377,name:'Navas K.',flag:'🇨🇷',country:'Costa Rica'},{num:378,name:'Duarte R.',flag:'🇨🇷',country:'Costa Rica'},{num:379,name:'Calvo O.',flag:'🇨🇷',country:'Costa Rica'},{num:380,name:'Waston',flag:'🇨🇷',country:'Costa Rica'},{num:381,name:'Oviedo B.',flag:'🇨🇷',country:'Costa Rica'},{num:382,name:'Tejeda Y.',flag:'🇨🇷',country:'Costa Rica'},{num:383,name:'Borges C.',flag:'🇨🇷',country:'Costa Rica'},{num:384,name:'Galo González',flag:'🇨🇷',country:'Costa Rica'},{num:385,name:'Campbell J.',flag:'🇨🇷',country:'Costa Rica'},{num:386,name:'Contreras A.',flag:'🇨🇷',country:'Costa Rica'},{num:387,name:'Ruiz B.',flag:'🇨🇷',country:'Costa Rica'},{num:388,name:'Torres A.',flag:'🇨🇷',country:'Costa Rica'},{num:389,name:'Aguilera',flag:'🇨🇷',country:'Costa Rica'},{num:390,name:'Esquivel',flag:'🇨🇷',country:'Costa Rica'},
-  // 🇵🇾 PARAGUAY
-  {num:391,name:'Escudo Paraguay',flag:'🇵🇾',country:'Paraguay'},{num:392,name:'Fernández A.',flag:'🇵🇾',country:'Paraguay'},{num:393,name:'Arzamendia',flag:'🇵🇾',country:'Paraguay'},{num:394,name:'Balbuena',flag:'🇵🇾',country:'Paraguay'},{num:395,name:'Gustavo Gómez',flag:'🇵🇾',country:'Paraguay'},{num:396,name:'Alderete',flag:'🇵🇾',country:'Paraguay'},{num:397,name:'Cubas R.',flag:'🇵🇾',country:'Paraguay'},{num:398,name:'Villasanti',flag:'🇵🇾',country:'Paraguay'},{num:399,name:'Enciso',flag:'🇵🇾',country:'Paraguay'},{num:400,name:'Almirón M.',flag:'🇵🇾',country:'Paraguay'},{num:401,name:'Sanabria A.',flag:'🇵🇾',country:'Paraguay'},{num:402,name:'Romero R.',flag:'🇵🇾',country:'Paraguay'},{num:403,name:'Benítez R.',flag:'🇵🇾',country:'Paraguay'},{num:404,name:'Campuzano',flag:'🇵🇾',country:'Paraguay'},{num:405,name:'Espínola',flag:'🇵🇾',country:'Paraguay'},
-  // 🇧🇴 BOLIVIA
-  {num:406,name:'Escudo Bolivia',flag:'🇧🇴',country:'Bolivia'},{num:407,name:'Viscarra C.',flag:'🇧🇴',country:'Bolivia'},{num:408,name:'Sagredo',flag:'🇧🇴',country:'Bolivia'},{num:409,name:'Jusino',flag:'🇧🇴',country:'Bolivia'},{num:410,name:'Quinteros',flag:'🇧🇴',country:'Bolivia'},{num:411,name:'Reyes C.',flag:'🇧🇴',country:'Bolivia'},{num:412,name:'Ramallo',flag:'🇧🇴',country:'Bolivia'},{num:413,name:'Saucedo',flag:'🇧🇴',country:'Bolivia'},{num:414,name:'Vaca R.',flag:'🇧🇴',country:'Bolivia'},{num:415,name:'Algarañaz',flag:'🇧🇴',country:'Bolivia'},{num:416,name:'Moreno M.',flag:'🇧🇴',country:'Bolivia'},{num:417,name:'Arce C.',flag:'🇧🇴',country:'Bolivia'},{num:418,name:'Fernández J.',flag:'🇧🇴',country:'Bolivia'},{num:419,name:'Erwin Saavedra',flag:'🇧🇴',country:'Bolivia'},{num:420,name:'Iriarte',flag:'🇧🇴',country:'Bolivia'},
-  // 🇻🇪 VENEZUELA
-  {num:421,name:'Escudo Venezuela',flag:'🇻🇪',country:'Venezuela'},{num:422,name:'Fariñez',flag:'🇻🇪',country:'Venezuela'},{num:423,name:'González A.',flag:'🇻🇪',country:'Venezuela'},{num:424,name:'Osorio R.',flag:'🇻🇪',country:'Venezuela'},{num:425,name:'Ferraresi',flag:'🇻🇪',country:'Venezuela'},{num:426,name:'Romero A.',flag:'🇻🇪',country:'Venezuela'},{num:427,name:'Herrera T.',flag:'🇻🇪',country:'Venezuela'},{num:428,name:'Machís',flag:'🇻🇪',country:'Venezuela'},{num:429,name:'Soteldo',flag:'🇻🇪',country:'Venezuela'},{num:430,name:'Bello Y.',flag:'🇻🇪',country:'Venezuela'},{num:431,name:'Rondón S.',flag:'🇻🇪',country:'Venezuela'},{num:432,name:'Flores Y.',flag:'🇻🇪',country:'Venezuela'},{num:433,name:'Peñaranda A.',flag:'🇻🇪',country:'Venezuela'},{num:434,name:'Murillo J.',flag:'🇻🇪',country:'Venezuela'},{num:435,name:'Martínez Y.',flag:'🇻🇪',country:'Venezuela'},
-  // Cromos especiales / Álbum
-  {num:436,name:'Logo Mundial 2026',flag:'🌍',country:'Especiales'},{num:437,name:'Estadio Azteca',flag:'🏟️',country:'Especiales'},{num:438,name:'SoFi Stadium',flag:'🏟️',country:'Especiales'},{num:439,name:'Arrowhead Stadium',flag:'🏟️',country:'Especiales'},{num:440,name:'MetLife Stadium',flag:'🏟️',country:'Especiales'},{num:441,name:'Estadio Akron',flag:'🏟️',country:'Especiales'},{num:442,name:'AT&T Stadium',flag:'🏟️',country:'Especiales'},{num:443,name:'NRG Stadium',flag:'🏟️',country:'Especiales'},{num:444,name:'Levis Stadium',flag:'🏟️',country:'Especiales'},{num:445,name:'Rose Bowl',flag:'🏟️',country:'Especiales'},{num:446,name:'Mercedes-Benz Stadium',flag:'🏟️',country:'Especiales'},{num:447,name:'Balón Oficial',flag:'⚽',country:'Especiales'},{num:448,name:'Trofeo FIFA',flag:'🏆',country:'Especiales'},
+  {num:1,name:'MEX-01 Portero 1',flag:'🇲🇽',country:'México',group:'Grupo A'},
+  {num:2,name:'MEX-02 Portero 2',flag:'🇲🇽',country:'México',group:'Grupo A'},
+  {num:3,name:'MEX-03 Defensa 1',flag:'🇲🇽',country:'México',group:'Grupo A'},
+  {num:4,name:'MEX-04 Defensa 2',flag:'🇲🇽',country:'México',group:'Grupo A'},
+  {num:5,name:'MEX-05 Defensa 3',flag:'🇲🇽',country:'México',group:'Grupo A'},
+  {num:6,name:'MEX-06 Defensa 4',flag:'🇲🇽',country:'México',group:'Grupo A'},
+  {num:7,name:'MEX-07 Mediocampista 1',flag:'🇲🇽',country:'México',group:'Grupo A'},
+  {num:8,name:'MEX-08 Mediocampista 2',flag:'🇲🇽',country:'México',group:'Grupo A'},
+  {num:9,name:'MEX-09 Mediocampista 3',flag:'🇲🇽',country:'México',group:'Grupo A'},
+  {num:10,name:'MEX-10 Mediocampista 4',flag:'🇲🇽',country:'México',group:'Grupo A'},
+  {num:11,name:'MEX-11 Delantero 1',flag:'🇲🇽',country:'México',group:'Grupo A'},
+  {num:12,name:'MEX-12 Delantero 2',flag:'🇲🇽',country:'México',group:'Grupo A'},
+  {num:13,name:'MEX-13 Delantero 3',flag:'🇲🇽',country:'México',group:'Grupo A'},
+  {num:14,name:'MEX-14 Capitán',flag:'🇲🇽',country:'México',group:'Grupo A'},
+  {num:15,name:'MEX-15 Figura',flag:'🇲🇽',country:'México',group:'Grupo A'},
+  {num:16,name:'MEX-16 Promesa',flag:'🇲🇽',country:'México',group:'Grupo A'},
+  {num:17,name:'MEX-17 Técnico',flag:'🇲🇽',country:'México',group:'Grupo A'},
+  {num:18,name:'MEX-18 Escudo',flag:'🇲🇽',country:'México',group:'Grupo A'},
+  {num:19,name:'MEX-19 Estadio',flag:'🇲🇽',country:'México',group:'Grupo A'},
+  {num:20,name:'MEX-20 Logo Grupo',flag:'🇲🇽',country:'México',group:'Grupo A'},
+  {num:21,name:'RSA-01 Portero 1',flag:'🇿🇦',country:'Sudáfrica',group:'Grupo A'},
+  {num:22,name:'RSA-02 Portero 2',flag:'🇿🇦',country:'Sudáfrica',group:'Grupo A'},
+  {num:23,name:'RSA-03 Defensa 1',flag:'🇿🇦',country:'Sudáfrica',group:'Grupo A'},
+  {num:24,name:'RSA-04 Defensa 2',flag:'🇿🇦',country:'Sudáfrica',group:'Grupo A'},
+  {num:25,name:'RSA-05 Defensa 3',flag:'🇿🇦',country:'Sudáfrica',group:'Grupo A'},
+  {num:26,name:'RSA-06 Defensa 4',flag:'🇿🇦',country:'Sudáfrica',group:'Grupo A'},
+  {num:27,name:'RSA-07 Mediocampista 1',flag:'🇿🇦',country:'Sudáfrica',group:'Grupo A'},
+  {num:28,name:'RSA-08 Mediocampista 2',flag:'🇿🇦',country:'Sudáfrica',group:'Grupo A'},
+  {num:29,name:'RSA-09 Mediocampista 3',flag:'🇿🇦',country:'Sudáfrica',group:'Grupo A'},
+  {num:30,name:'RSA-10 Mediocampista 4',flag:'🇿🇦',country:'Sudáfrica',group:'Grupo A'},
+  {num:31,name:'RSA-11 Delantero 1',flag:'🇿🇦',country:'Sudáfrica',group:'Grupo A'},
+  {num:32,name:'RSA-12 Delantero 2',flag:'🇿🇦',country:'Sudáfrica',group:'Grupo A'},
+  {num:33,name:'RSA-13 Delantero 3',flag:'🇿🇦',country:'Sudáfrica',group:'Grupo A'},
+  {num:34,name:'RSA-14 Capitán',flag:'🇿🇦',country:'Sudáfrica',group:'Grupo A'},
+  {num:35,name:'RSA-15 Figura',flag:'🇿🇦',country:'Sudáfrica',group:'Grupo A'},
+  {num:36,name:'RSA-16 Promesa',flag:'🇿🇦',country:'Sudáfrica',group:'Grupo A'},
+  {num:37,name:'RSA-17 Técnico',flag:'🇿🇦',country:'Sudáfrica',group:'Grupo A'},
+  {num:38,name:'RSA-18 Escudo',flag:'🇿🇦',country:'Sudáfrica',group:'Grupo A'},
+  {num:39,name:'RSA-19 Estadio',flag:'🇿🇦',country:'Sudáfrica',group:'Grupo A'},
+  {num:40,name:'RSA-20 Logo Grupo',flag:'🇿🇦',country:'Sudáfrica',group:'Grupo A'},
+  {num:41,name:'KOR-01 Portero 1',flag:'🇰🇷',country:'Corea del Sur',group:'Grupo A'},
+  {num:42,name:'KOR-02 Portero 2',flag:'🇰🇷',country:'Corea del Sur',group:'Grupo A'},
+  {num:43,name:'KOR-03 Defensa 1',flag:'🇰🇷',country:'Corea del Sur',group:'Grupo A'},
+  {num:44,name:'KOR-04 Defensa 2',flag:'🇰🇷',country:'Corea del Sur',group:'Grupo A'},
+  {num:45,name:'KOR-05 Defensa 3',flag:'🇰🇷',country:'Corea del Sur',group:'Grupo A'},
+  {num:46,name:'KOR-06 Defensa 4',flag:'🇰🇷',country:'Corea del Sur',group:'Grupo A'},
+  {num:47,name:'KOR-07 Mediocampista 1',flag:'🇰🇷',country:'Corea del Sur',group:'Grupo A'},
+  {num:48,name:'KOR-08 Mediocampista 2',flag:'🇰🇷',country:'Corea del Sur',group:'Grupo A'},
+  {num:49,name:'KOR-09 Mediocampista 3',flag:'🇰🇷',country:'Corea del Sur',group:'Grupo A'},
+  {num:50,name:'KOR-10 Mediocampista 4',flag:'🇰🇷',country:'Corea del Sur',group:'Grupo A'},
+  {num:51,name:'KOR-11 Delantero 1',flag:'🇰🇷',country:'Corea del Sur',group:'Grupo A'},
+  {num:52,name:'KOR-12 Delantero 2',flag:'🇰🇷',country:'Corea del Sur',group:'Grupo A'},
+  {num:53,name:'KOR-13 Delantero 3',flag:'🇰🇷',country:'Corea del Sur',group:'Grupo A'},
+  {num:54,name:'KOR-14 Capitán',flag:'🇰🇷',country:'Corea del Sur',group:'Grupo A'},
+  {num:55,name:'KOR-15 Figura',flag:'🇰🇷',country:'Corea del Sur',group:'Grupo A'},
+  {num:56,name:'KOR-16 Promesa',flag:'🇰🇷',country:'Corea del Sur',group:'Grupo A'},
+  {num:57,name:'KOR-17 Técnico',flag:'🇰🇷',country:'Corea del Sur',group:'Grupo A'},
+  {num:58,name:'KOR-18 Escudo',flag:'🇰🇷',country:'Corea del Sur',group:'Grupo A'},
+  {num:59,name:'KOR-19 Estadio',flag:'🇰🇷',country:'Corea del Sur',group:'Grupo A'},
+  {num:60,name:'KOR-20 Logo Grupo',flag:'🇰🇷',country:'Corea del Sur',group:'Grupo A'},
+  {num:61,name:'CZE-01 Portero 1',flag:'🇨🇿',country:'Rep. Checa',group:'Grupo A'},
+  {num:62,name:'CZE-02 Portero 2',flag:'🇨🇿',country:'Rep. Checa',group:'Grupo A'},
+  {num:63,name:'CZE-03 Defensa 1',flag:'🇨🇿',country:'Rep. Checa',group:'Grupo A'},
+  {num:64,name:'CZE-04 Defensa 2',flag:'🇨🇿',country:'Rep. Checa',group:'Grupo A'},
+  {num:65,name:'CZE-05 Defensa 3',flag:'🇨🇿',country:'Rep. Checa',group:'Grupo A'},
+  {num:66,name:'CZE-06 Defensa 4',flag:'🇨🇿',country:'Rep. Checa',group:'Grupo A'},
+  {num:67,name:'CZE-07 Mediocampista 1',flag:'🇨🇿',country:'Rep. Checa',group:'Grupo A'},
+  {num:68,name:'CZE-08 Mediocampista 2',flag:'🇨🇿',country:'Rep. Checa',group:'Grupo A'},
+  {num:69,name:'CZE-09 Mediocampista 3',flag:'🇨🇿',country:'Rep. Checa',group:'Grupo A'},
+  {num:70,name:'CZE-10 Mediocampista 4',flag:'🇨🇿',country:'Rep. Checa',group:'Grupo A'},
+  {num:71,name:'CZE-11 Delantero 1',flag:'🇨🇿',country:'Rep. Checa',group:'Grupo A'},
+  {num:72,name:'CZE-12 Delantero 2',flag:'🇨🇿',country:'Rep. Checa',group:'Grupo A'},
+  {num:73,name:'CZE-13 Delantero 3',flag:'🇨🇿',country:'Rep. Checa',group:'Grupo A'},
+  {num:74,name:'CZE-14 Capitán',flag:'🇨🇿',country:'Rep. Checa',group:'Grupo A'},
+  {num:75,name:'CZE-15 Figura',flag:'🇨🇿',country:'Rep. Checa',group:'Grupo A'},
+  {num:76,name:'CZE-16 Promesa',flag:'🇨🇿',country:'Rep. Checa',group:'Grupo A'},
+  {num:77,name:'CZE-17 Técnico',flag:'🇨🇿',country:'Rep. Checa',group:'Grupo A'},
+  {num:78,name:'CZE-18 Escudo',flag:'🇨🇿',country:'Rep. Checa',group:'Grupo A'},
+  {num:79,name:'CZE-19 Estadio',flag:'🇨🇿',country:'Rep. Checa',group:'Grupo A'},
+  {num:80,name:'CZE-20 Logo Grupo',flag:'🇨🇿',country:'Rep. Checa',group:'Grupo A'},
+  {num:81,name:'CAN-01 Portero 1',flag:'🇨🇦',country:'Canadá',group:'Grupo B'},
+  {num:82,name:'CAN-02 Portero 2',flag:'🇨🇦',country:'Canadá',group:'Grupo B'},
+  {num:83,name:'CAN-03 Defensa 1',flag:'🇨🇦',country:'Canadá',group:'Grupo B'},
+  {num:84,name:'CAN-04 Defensa 2',flag:'🇨🇦',country:'Canadá',group:'Grupo B'},
+  {num:85,name:'CAN-05 Defensa 3',flag:'🇨🇦',country:'Canadá',group:'Grupo B'},
+  {num:86,name:'CAN-06 Defensa 4',flag:'🇨🇦',country:'Canadá',group:'Grupo B'},
+  {num:87,name:'CAN-07 Mediocampista 1',flag:'🇨🇦',country:'Canadá',group:'Grupo B'},
+  {num:88,name:'CAN-08 Mediocampista 2',flag:'🇨🇦',country:'Canadá',group:'Grupo B'},
+  {num:89,name:'CAN-09 Mediocampista 3',flag:'🇨🇦',country:'Canadá',group:'Grupo B'},
+  {num:90,name:'CAN-10 Mediocampista 4',flag:'🇨🇦',country:'Canadá',group:'Grupo B'},
+  {num:91,name:'CAN-11 Delantero 1',flag:'🇨🇦',country:'Canadá',group:'Grupo B'},
+  {num:92,name:'CAN-12 Delantero 2',flag:'🇨🇦',country:'Canadá',group:'Grupo B'},
+  {num:93,name:'CAN-13 Delantero 3',flag:'🇨🇦',country:'Canadá',group:'Grupo B'},
+  {num:94,name:'CAN-14 Capitán',flag:'🇨🇦',country:'Canadá',group:'Grupo B'},
+  {num:95,name:'CAN-15 Figura',flag:'🇨🇦',country:'Canadá',group:'Grupo B'},
+  {num:96,name:'CAN-16 Promesa',flag:'🇨🇦',country:'Canadá',group:'Grupo B'},
+  {num:97,name:'CAN-17 Técnico',flag:'🇨🇦',country:'Canadá',group:'Grupo B'},
+  {num:98,name:'CAN-18 Escudo',flag:'🇨🇦',country:'Canadá',group:'Grupo B'},
+  {num:99,name:'CAN-19 Estadio',flag:'🇨🇦',country:'Canadá',group:'Grupo B'},
+  {num:100,name:'CAN-20 Logo Grupo',flag:'🇨🇦',country:'Canadá',group:'Grupo B'},
+  {num:101,name:'BIH-01 Portero 1',flag:'🇧🇦',country:'Bosnia',group:'Grupo B'},
+  {num:102,name:'BIH-02 Portero 2',flag:'🇧🇦',country:'Bosnia',group:'Grupo B'},
+  {num:103,name:'BIH-03 Defensa 1',flag:'🇧🇦',country:'Bosnia',group:'Grupo B'},
+  {num:104,name:'BIH-04 Defensa 2',flag:'🇧🇦',country:'Bosnia',group:'Grupo B'},
+  {num:105,name:'BIH-05 Defensa 3',flag:'🇧🇦',country:'Bosnia',group:'Grupo B'},
+  {num:106,name:'BIH-06 Defensa 4',flag:'🇧🇦',country:'Bosnia',group:'Grupo B'},
+  {num:107,name:'BIH-07 Mediocampista 1',flag:'🇧🇦',country:'Bosnia',group:'Grupo B'},
+  {num:108,name:'BIH-08 Mediocampista 2',flag:'🇧🇦',country:'Bosnia',group:'Grupo B'},
+  {num:109,name:'BIH-09 Mediocampista 3',flag:'🇧🇦',country:'Bosnia',group:'Grupo B'},
+  {num:110,name:'BIH-10 Mediocampista 4',flag:'🇧🇦',country:'Bosnia',group:'Grupo B'},
+  {num:111,name:'BIH-11 Delantero 1',flag:'🇧🇦',country:'Bosnia',group:'Grupo B'},
+  {num:112,name:'BIH-12 Delantero 2',flag:'🇧🇦',country:'Bosnia',group:'Grupo B'},
+  {num:113,name:'BIH-13 Delantero 3',flag:'🇧🇦',country:'Bosnia',group:'Grupo B'},
+  {num:114,name:'BIH-14 Capitán',flag:'🇧🇦',country:'Bosnia',group:'Grupo B'},
+  {num:115,name:'BIH-15 Figura',flag:'🇧🇦',country:'Bosnia',group:'Grupo B'},
+  {num:116,name:'BIH-16 Promesa',flag:'🇧🇦',country:'Bosnia',group:'Grupo B'},
+  {num:117,name:'BIH-17 Técnico',flag:'🇧🇦',country:'Bosnia',group:'Grupo B'},
+  {num:118,name:'BIH-18 Escudo',flag:'🇧🇦',country:'Bosnia',group:'Grupo B'},
+  {num:119,name:'BIH-19 Estadio',flag:'🇧🇦',country:'Bosnia',group:'Grupo B'},
+  {num:120,name:'BIH-20 Logo Grupo',flag:'🇧🇦',country:'Bosnia',group:'Grupo B'},
+  {num:121,name:'QAT-01 Portero 1',flag:'🇶🇦',country:'Qatar',group:'Grupo B'},
+  {num:122,name:'QAT-02 Portero 2',flag:'🇶🇦',country:'Qatar',group:'Grupo B'},
+  {num:123,name:'QAT-03 Defensa 1',flag:'🇶🇦',country:'Qatar',group:'Grupo B'},
+  {num:124,name:'QAT-04 Defensa 2',flag:'🇶🇦',country:'Qatar',group:'Grupo B'},
+  {num:125,name:'QAT-05 Defensa 3',flag:'🇶🇦',country:'Qatar',group:'Grupo B'},
+  {num:126,name:'QAT-06 Defensa 4',flag:'🇶🇦',country:'Qatar',group:'Grupo B'},
+  {num:127,name:'QAT-07 Mediocampista 1',flag:'🇶🇦',country:'Qatar',group:'Grupo B'},
+  {num:128,name:'QAT-08 Mediocampista 2',flag:'🇶🇦',country:'Qatar',group:'Grupo B'},
+  {num:129,name:'QAT-09 Mediocampista 3',flag:'🇶🇦',country:'Qatar',group:'Grupo B'},
+  {num:130,name:'QAT-10 Mediocampista 4',flag:'🇶🇦',country:'Qatar',group:'Grupo B'},
+  {num:131,name:'QAT-11 Delantero 1',flag:'🇶🇦',country:'Qatar',group:'Grupo B'},
+  {num:132,name:'QAT-12 Delantero 2',flag:'🇶🇦',country:'Qatar',group:'Grupo B'},
+  {num:133,name:'QAT-13 Delantero 3',flag:'🇶🇦',country:'Qatar',group:'Grupo B'},
+  {num:134,name:'QAT-14 Capitán',flag:'🇶🇦',country:'Qatar',group:'Grupo B'},
+  {num:135,name:'QAT-15 Figura',flag:'🇶🇦',country:'Qatar',group:'Grupo B'},
+  {num:136,name:'QAT-16 Promesa',flag:'🇶🇦',country:'Qatar',group:'Grupo B'},
+  {num:137,name:'QAT-17 Técnico',flag:'🇶🇦',country:'Qatar',group:'Grupo B'},
+  {num:138,name:'QAT-18 Escudo',flag:'🇶🇦',country:'Qatar',group:'Grupo B'},
+  {num:139,name:'QAT-19 Estadio',flag:'🇶🇦',country:'Qatar',group:'Grupo B'},
+  {num:140,name:'QAT-20 Logo Grupo',flag:'🇶🇦',country:'Qatar',group:'Grupo B'},
+  {num:141,name:'SUI-01 Portero 1',flag:'🇨🇭',country:'Suiza',group:'Grupo B'},
+  {num:142,name:'SUI-02 Portero 2',flag:'🇨🇭',country:'Suiza',group:'Grupo B'},
+  {num:143,name:'SUI-03 Defensa 1',flag:'🇨🇭',country:'Suiza',group:'Grupo B'},
+  {num:144,name:'SUI-04 Defensa 2',flag:'🇨🇭',country:'Suiza',group:'Grupo B'},
+  {num:145,name:'SUI-05 Defensa 3',flag:'🇨🇭',country:'Suiza',group:'Grupo B'},
+  {num:146,name:'SUI-06 Defensa 4',flag:'🇨🇭',country:'Suiza',group:'Grupo B'},
+  {num:147,name:'SUI-07 Mediocampista 1',flag:'🇨🇭',country:'Suiza',group:'Grupo B'},
+  {num:148,name:'SUI-08 Mediocampista 2',flag:'🇨🇭',country:'Suiza',group:'Grupo B'},
+  {num:149,name:'SUI-09 Mediocampista 3',flag:'🇨🇭',country:'Suiza',group:'Grupo B'},
+  {num:150,name:'SUI-10 Mediocampista 4',flag:'🇨🇭',country:'Suiza',group:'Grupo B'},
+  {num:151,name:'SUI-11 Delantero 1',flag:'🇨🇭',country:'Suiza',group:'Grupo B'},
+  {num:152,name:'SUI-12 Delantero 2',flag:'🇨🇭',country:'Suiza',group:'Grupo B'},
+  {num:153,name:'SUI-13 Delantero 3',flag:'🇨🇭',country:'Suiza',group:'Grupo B'},
+  {num:154,name:'SUI-14 Capitán',flag:'🇨🇭',country:'Suiza',group:'Grupo B'},
+  {num:155,name:'SUI-15 Figura',flag:'🇨🇭',country:'Suiza',group:'Grupo B'},
+  {num:156,name:'SUI-16 Promesa',flag:'🇨🇭',country:'Suiza',group:'Grupo B'},
+  {num:157,name:'SUI-17 Técnico',flag:'🇨🇭',country:'Suiza',group:'Grupo B'},
+  {num:158,name:'SUI-18 Escudo',flag:'🇨🇭',country:'Suiza',group:'Grupo B'},
+  {num:159,name:'SUI-19 Estadio',flag:'🇨🇭',country:'Suiza',group:'Grupo B'},
+  {num:160,name:'SUI-20 Logo Grupo',flag:'🇨🇭',country:'Suiza',group:'Grupo B'},
+  {num:161,name:'BRA-01 Portero 1',flag:'🇧🇷',country:'Brasil',group:'Grupo C'},
+  {num:162,name:'BRA-02 Portero 2',flag:'🇧🇷',country:'Brasil',group:'Grupo C'},
+  {num:163,name:'BRA-03 Defensa 1',flag:'🇧🇷',country:'Brasil',group:'Grupo C'},
+  {num:164,name:'BRA-04 Defensa 2',flag:'🇧🇷',country:'Brasil',group:'Grupo C'},
+  {num:165,name:'BRA-05 Defensa 3',flag:'🇧🇷',country:'Brasil',group:'Grupo C'},
+  {num:166,name:'BRA-06 Defensa 4',flag:'🇧🇷',country:'Brasil',group:'Grupo C'},
+  {num:167,name:'BRA-07 Mediocampista 1',flag:'🇧🇷',country:'Brasil',group:'Grupo C'},
+  {num:168,name:'BRA-08 Mediocampista 2',flag:'🇧🇷',country:'Brasil',group:'Grupo C'},
+  {num:169,name:'BRA-09 Mediocampista 3',flag:'🇧🇷',country:'Brasil',group:'Grupo C'},
+  {num:170,name:'BRA-10 Mediocampista 4',flag:'🇧🇷',country:'Brasil',group:'Grupo C'},
+  {num:171,name:'BRA-11 Delantero 1',flag:'🇧🇷',country:'Brasil',group:'Grupo C'},
+  {num:172,name:'BRA-12 Delantero 2',flag:'🇧🇷',country:'Brasil',group:'Grupo C'},
+  {num:173,name:'BRA-13 Delantero 3',flag:'🇧🇷',country:'Brasil',group:'Grupo C'},
+  {num:174,name:'BRA-14 Capitán',flag:'🇧🇷',country:'Brasil',group:'Grupo C'},
+  {num:175,name:'BRA-15 Figura',flag:'🇧🇷',country:'Brasil',group:'Grupo C'},
+  {num:176,name:'BRA-16 Promesa',flag:'🇧🇷',country:'Brasil',group:'Grupo C'},
+  {num:177,name:'BRA-17 Técnico',flag:'🇧🇷',country:'Brasil',group:'Grupo C'},
+  {num:178,name:'BRA-18 Escudo',flag:'🇧🇷',country:'Brasil',group:'Grupo C'},
+  {num:179,name:'BRA-19 Estadio',flag:'🇧🇷',country:'Brasil',group:'Grupo C'},
+  {num:180,name:'BRA-20 Logo Grupo',flag:'🇧🇷',country:'Brasil',group:'Grupo C'},
+  {num:181,name:'MAR-01 Portero 1',flag:'🇲🇦',country:'Marruecos',group:'Grupo C'},
+  {num:182,name:'MAR-02 Portero 2',flag:'🇲🇦',country:'Marruecos',group:'Grupo C'},
+  {num:183,name:'MAR-03 Defensa 1',flag:'🇲🇦',country:'Marruecos',group:'Grupo C'},
+  {num:184,name:'MAR-04 Defensa 2',flag:'🇲🇦',country:'Marruecos',group:'Grupo C'},
+  {num:185,name:'MAR-05 Defensa 3',flag:'🇲🇦',country:'Marruecos',group:'Grupo C'},
+  {num:186,name:'MAR-06 Defensa 4',flag:'🇲🇦',country:'Marruecos',group:'Grupo C'},
+  {num:187,name:'MAR-07 Mediocampista 1',flag:'🇲🇦',country:'Marruecos',group:'Grupo C'},
+  {num:188,name:'MAR-08 Mediocampista 2',flag:'🇲🇦',country:'Marruecos',group:'Grupo C'},
+  {num:189,name:'MAR-09 Mediocampista 3',flag:'🇲🇦',country:'Marruecos',group:'Grupo C'},
+  {num:190,name:'MAR-10 Mediocampista 4',flag:'🇲🇦',country:'Marruecos',group:'Grupo C'},
+  {num:191,name:'MAR-11 Delantero 1',flag:'🇲🇦',country:'Marruecos',group:'Grupo C'},
+  {num:192,name:'MAR-12 Delantero 2',flag:'🇲🇦',country:'Marruecos',group:'Grupo C'},
+  {num:193,name:'MAR-13 Delantero 3',flag:'🇲🇦',country:'Marruecos',group:'Grupo C'},
+  {num:194,name:'MAR-14 Capitán',flag:'🇲🇦',country:'Marruecos',group:'Grupo C'},
+  {num:195,name:'MAR-15 Figura',flag:'🇲🇦',country:'Marruecos',group:'Grupo C'},
+  {num:196,name:'MAR-16 Promesa',flag:'🇲🇦',country:'Marruecos',group:'Grupo C'},
+  {num:197,name:'MAR-17 Técnico',flag:'🇲🇦',country:'Marruecos',group:'Grupo C'},
+  {num:198,name:'MAR-18 Escudo',flag:'🇲🇦',country:'Marruecos',group:'Grupo C'},
+  {num:199,name:'MAR-19 Estadio',flag:'🇲🇦',country:'Marruecos',group:'Grupo C'},
+  {num:200,name:'MAR-20 Logo Grupo',flag:'🇲🇦',country:'Marruecos',group:'Grupo C'},
+  {num:201,name:'HAI-01 Portero 1',flag:'🇭🇹',country:'Haití',group:'Grupo C'},
+  {num:202,name:'HAI-02 Portero 2',flag:'🇭🇹',country:'Haití',group:'Grupo C'},
+  {num:203,name:'HAI-03 Defensa 1',flag:'🇭🇹',country:'Haití',group:'Grupo C'},
+  {num:204,name:'HAI-04 Defensa 2',flag:'🇭🇹',country:'Haití',group:'Grupo C'},
+  {num:205,name:'HAI-05 Defensa 3',flag:'🇭🇹',country:'Haití',group:'Grupo C'},
+  {num:206,name:'HAI-06 Defensa 4',flag:'🇭🇹',country:'Haití',group:'Grupo C'},
+  {num:207,name:'HAI-07 Mediocampista 1',flag:'🇭🇹',country:'Haití',group:'Grupo C'},
+  {num:208,name:'HAI-08 Mediocampista 2',flag:'🇭🇹',country:'Haití',group:'Grupo C'},
+  {num:209,name:'HAI-09 Mediocampista 3',flag:'🇭🇹',country:'Haití',group:'Grupo C'},
+  {num:210,name:'HAI-10 Mediocampista 4',flag:'🇭🇹',country:'Haití',group:'Grupo C'},
+  {num:211,name:'HAI-11 Delantero 1',flag:'🇭🇹',country:'Haití',group:'Grupo C'},
+  {num:212,name:'HAI-12 Delantero 2',flag:'🇭🇹',country:'Haití',group:'Grupo C'},
+  {num:213,name:'HAI-13 Delantero 3',flag:'🇭🇹',country:'Haití',group:'Grupo C'},
+  {num:214,name:'HAI-14 Capitán',flag:'🇭🇹',country:'Haití',group:'Grupo C'},
+  {num:215,name:'HAI-15 Figura',flag:'🇭🇹',country:'Haití',group:'Grupo C'},
+  {num:216,name:'HAI-16 Promesa',flag:'🇭🇹',country:'Haití',group:'Grupo C'},
+  {num:217,name:'HAI-17 Técnico',flag:'🇭🇹',country:'Haití',group:'Grupo C'},
+  {num:218,name:'HAI-18 Escudo',flag:'🇭🇹',country:'Haití',group:'Grupo C'},
+  {num:219,name:'HAI-19 Estadio',flag:'🇭🇹',country:'Haití',group:'Grupo C'},
+  {num:220,name:'HAI-20 Logo Grupo',flag:'🇭🇹',country:'Haití',group:'Grupo C'},
+  {num:221,name:'SCO-01 Portero 1',flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',country:'Escocia',group:'Grupo C'},
+  {num:222,name:'SCO-02 Portero 2',flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',country:'Escocia',group:'Grupo C'},
+  {num:223,name:'SCO-03 Defensa 1',flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',country:'Escocia',group:'Grupo C'},
+  {num:224,name:'SCO-04 Defensa 2',flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',country:'Escocia',group:'Grupo C'},
+  {num:225,name:'SCO-05 Defensa 3',flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',country:'Escocia',group:'Grupo C'},
+  {num:226,name:'SCO-06 Defensa 4',flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',country:'Escocia',group:'Grupo C'},
+  {num:227,name:'SCO-07 Mediocampista 1',flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',country:'Escocia',group:'Grupo C'},
+  {num:228,name:'SCO-08 Mediocampista 2',flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',country:'Escocia',group:'Grupo C'},
+  {num:229,name:'SCO-09 Mediocampista 3',flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',country:'Escocia',group:'Grupo C'},
+  {num:230,name:'SCO-10 Mediocampista 4',flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',country:'Escocia',group:'Grupo C'},
+  {num:231,name:'SCO-11 Delantero 1',flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',country:'Escocia',group:'Grupo C'},
+  {num:232,name:'SCO-12 Delantero 2',flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',country:'Escocia',group:'Grupo C'},
+  {num:233,name:'SCO-13 Delantero 3',flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',country:'Escocia',group:'Grupo C'},
+  {num:234,name:'SCO-14 Capitán',flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',country:'Escocia',group:'Grupo C'},
+  {num:235,name:'SCO-15 Figura',flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',country:'Escocia',group:'Grupo C'},
+  {num:236,name:'SCO-16 Promesa',flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',country:'Escocia',group:'Grupo C'},
+  {num:237,name:'SCO-17 Técnico',flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',country:'Escocia',group:'Grupo C'},
+  {num:238,name:'SCO-18 Escudo',flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',country:'Escocia',group:'Grupo C'},
+  {num:239,name:'SCO-19 Estadio',flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',country:'Escocia',group:'Grupo C'},
+  {num:240,name:'SCO-20 Logo Grupo',flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',country:'Escocia',group:'Grupo C'},
+  {num:241,name:'USA-01 Portero 1',flag:'🇺🇸',country:'EE.UU.',group:'Grupo D'},
+  {num:242,name:'USA-02 Portero 2',flag:'🇺🇸',country:'EE.UU.',group:'Grupo D'},
+  {num:243,name:'USA-03 Defensa 1',flag:'🇺🇸',country:'EE.UU.',group:'Grupo D'},
+  {num:244,name:'USA-04 Defensa 2',flag:'🇺🇸',country:'EE.UU.',group:'Grupo D'},
+  {num:245,name:'USA-05 Defensa 3',flag:'🇺🇸',country:'EE.UU.',group:'Grupo D'},
+  {num:246,name:'USA-06 Defensa 4',flag:'🇺🇸',country:'EE.UU.',group:'Grupo D'},
+  {num:247,name:'USA-07 Mediocampista 1',flag:'🇺🇸',country:'EE.UU.',group:'Grupo D'},
+  {num:248,name:'USA-08 Mediocampista 2',flag:'🇺🇸',country:'EE.UU.',group:'Grupo D'},
+  {num:249,name:'USA-09 Mediocampista 3',flag:'🇺🇸',country:'EE.UU.',group:'Grupo D'},
+  {num:250,name:'USA-10 Mediocampista 4',flag:'🇺🇸',country:'EE.UU.',group:'Grupo D'},
+  {num:251,name:'USA-11 Delantero 1',flag:'🇺🇸',country:'EE.UU.',group:'Grupo D'},
+  {num:252,name:'USA-12 Delantero 2',flag:'🇺🇸',country:'EE.UU.',group:'Grupo D'},
+  {num:253,name:'USA-13 Delantero 3',flag:'🇺🇸',country:'EE.UU.',group:'Grupo D'},
+  {num:254,name:'USA-14 Capitán',flag:'🇺🇸',country:'EE.UU.',group:'Grupo D'},
+  {num:255,name:'USA-15 Figura',flag:'🇺🇸',country:'EE.UU.',group:'Grupo D'},
+  {num:256,name:'USA-16 Promesa',flag:'🇺🇸',country:'EE.UU.',group:'Grupo D'},
+  {num:257,name:'USA-17 Técnico',flag:'🇺🇸',country:'EE.UU.',group:'Grupo D'},
+  {num:258,name:'USA-18 Escudo',flag:'🇺🇸',country:'EE.UU.',group:'Grupo D'},
+  {num:259,name:'USA-19 Estadio',flag:'🇺🇸',country:'EE.UU.',group:'Grupo D'},
+  {num:260,name:'USA-20 Logo Grupo',flag:'🇺🇸',country:'EE.UU.',group:'Grupo D'},
+  {num:261,name:'PAR-01 Portero 1',flag:'🇵🇾',country:'Paraguay',group:'Grupo D'},
+  {num:262,name:'PAR-02 Portero 2',flag:'🇵🇾',country:'Paraguay',group:'Grupo D'},
+  {num:263,name:'PAR-03 Defensa 1',flag:'🇵🇾',country:'Paraguay',group:'Grupo D'},
+  {num:264,name:'PAR-04 Defensa 2',flag:'🇵🇾',country:'Paraguay',group:'Grupo D'},
+  {num:265,name:'PAR-05 Defensa 3',flag:'🇵🇾',country:'Paraguay',group:'Grupo D'},
+  {num:266,name:'PAR-06 Defensa 4',flag:'🇵🇾',country:'Paraguay',group:'Grupo D'},
+  {num:267,name:'PAR-07 Mediocampista 1',flag:'🇵🇾',country:'Paraguay',group:'Grupo D'},
+  {num:268,name:'PAR-08 Mediocampista 2',flag:'🇵🇾',country:'Paraguay',group:'Grupo D'},
+  {num:269,name:'PAR-09 Mediocampista 3',flag:'🇵🇾',country:'Paraguay',group:'Grupo D'},
+  {num:270,name:'PAR-10 Mediocampista 4',flag:'🇵🇾',country:'Paraguay',group:'Grupo D'},
+  {num:271,name:'PAR-11 Delantero 1',flag:'🇵🇾',country:'Paraguay',group:'Grupo D'},
+  {num:272,name:'PAR-12 Delantero 2',flag:'🇵🇾',country:'Paraguay',group:'Grupo D'},
+  {num:273,name:'PAR-13 Delantero 3',flag:'🇵🇾',country:'Paraguay',group:'Grupo D'},
+  {num:274,name:'PAR-14 Capitán',flag:'🇵🇾',country:'Paraguay',group:'Grupo D'},
+  {num:275,name:'PAR-15 Figura',flag:'🇵🇾',country:'Paraguay',group:'Grupo D'},
+  {num:276,name:'PAR-16 Promesa',flag:'🇵🇾',country:'Paraguay',group:'Grupo D'},
+  {num:277,name:'PAR-17 Técnico',flag:'🇵🇾',country:'Paraguay',group:'Grupo D'},
+  {num:278,name:'PAR-18 Escudo',flag:'🇵🇾',country:'Paraguay',group:'Grupo D'},
+  {num:279,name:'PAR-19 Estadio',flag:'🇵🇾',country:'Paraguay',group:'Grupo D'},
+  {num:280,name:'PAR-20 Logo Grupo',flag:'🇵🇾',country:'Paraguay',group:'Grupo D'},
+  {num:281,name:'AUS-01 Portero 1',flag:'🇦🇺',country:'Australia',group:'Grupo D'},
+  {num:282,name:'AUS-02 Portero 2',flag:'🇦🇺',country:'Australia',group:'Grupo D'},
+  {num:283,name:'AUS-03 Defensa 1',flag:'🇦🇺',country:'Australia',group:'Grupo D'},
+  {num:284,name:'AUS-04 Defensa 2',flag:'🇦🇺',country:'Australia',group:'Grupo D'},
+  {num:285,name:'AUS-05 Defensa 3',flag:'🇦🇺',country:'Australia',group:'Grupo D'},
+  {num:286,name:'AUS-06 Defensa 4',flag:'🇦🇺',country:'Australia',group:'Grupo D'},
+  {num:287,name:'AUS-07 Mediocampista 1',flag:'🇦🇺',country:'Australia',group:'Grupo D'},
+  {num:288,name:'AUS-08 Mediocampista 2',flag:'🇦🇺',country:'Australia',group:'Grupo D'},
+  {num:289,name:'AUS-09 Mediocampista 3',flag:'🇦🇺',country:'Australia',group:'Grupo D'},
+  {num:290,name:'AUS-10 Mediocampista 4',flag:'🇦🇺',country:'Australia',group:'Grupo D'},
+  {num:291,name:'AUS-11 Delantero 1',flag:'🇦🇺',country:'Australia',group:'Grupo D'},
+  {num:292,name:'AUS-12 Delantero 2',flag:'🇦🇺',country:'Australia',group:'Grupo D'},
+  {num:293,name:'AUS-13 Delantero 3',flag:'🇦🇺',country:'Australia',group:'Grupo D'},
+  {num:294,name:'AUS-14 Capitán',flag:'🇦🇺',country:'Australia',group:'Grupo D'},
+  {num:295,name:'AUS-15 Figura',flag:'🇦🇺',country:'Australia',group:'Grupo D'},
+  {num:296,name:'AUS-16 Promesa',flag:'🇦🇺',country:'Australia',group:'Grupo D'},
+  {num:297,name:'AUS-17 Técnico',flag:'🇦🇺',country:'Australia',group:'Grupo D'},
+  {num:298,name:'AUS-18 Escudo',flag:'🇦🇺',country:'Australia',group:'Grupo D'},
+  {num:299,name:'AUS-19 Estadio',flag:'🇦🇺',country:'Australia',group:'Grupo D'},
+  {num:300,name:'AUS-20 Logo Grupo',flag:'🇦🇺',country:'Australia',group:'Grupo D'},
+  {num:301,name:'TUR-01 Portero 1',flag:'🇹🇷',country:'Turquía',group:'Grupo D'},
+  {num:302,name:'TUR-02 Portero 2',flag:'🇹🇷',country:'Turquía',group:'Grupo D'},
+  {num:303,name:'TUR-03 Defensa 1',flag:'🇹🇷',country:'Turquía',group:'Grupo D'},
+  {num:304,name:'TUR-04 Defensa 2',flag:'🇹🇷',country:'Turquía',group:'Grupo D'},
+  {num:305,name:'TUR-05 Defensa 3',flag:'🇹🇷',country:'Turquía',group:'Grupo D'},
+  {num:306,name:'TUR-06 Defensa 4',flag:'🇹🇷',country:'Turquía',group:'Grupo D'},
+  {num:307,name:'TUR-07 Mediocampista 1',flag:'🇹🇷',country:'Turquía',group:'Grupo D'},
+  {num:308,name:'TUR-08 Mediocampista 2',flag:'🇹🇷',country:'Turquía',group:'Grupo D'},
+  {num:309,name:'TUR-09 Mediocampista 3',flag:'🇹🇷',country:'Turquía',group:'Grupo D'},
+  {num:310,name:'TUR-10 Mediocampista 4',flag:'🇹🇷',country:'Turquía',group:'Grupo D'},
+  {num:311,name:'TUR-11 Delantero 1',flag:'🇹🇷',country:'Turquía',group:'Grupo D'},
+  {num:312,name:'TUR-12 Delantero 2',flag:'🇹🇷',country:'Turquía',group:'Grupo D'},
+  {num:313,name:'TUR-13 Delantero 3',flag:'🇹🇷',country:'Turquía',group:'Grupo D'},
+  {num:314,name:'TUR-14 Capitán',flag:'🇹🇷',country:'Turquía',group:'Grupo D'},
+  {num:315,name:'TUR-15 Figura',flag:'🇹🇷',country:'Turquía',group:'Grupo D'},
+  {num:316,name:'TUR-16 Promesa',flag:'🇹🇷',country:'Turquía',group:'Grupo D'},
+  {num:317,name:'TUR-17 Técnico',flag:'🇹🇷',country:'Turquía',group:'Grupo D'},
+  {num:318,name:'TUR-18 Escudo',flag:'🇹🇷',country:'Turquía',group:'Grupo D'},
+  {num:319,name:'TUR-19 Estadio',flag:'🇹🇷',country:'Turquía',group:'Grupo D'},
+  {num:320,name:'TUR-20 Logo Grupo',flag:'🇹🇷',country:'Turquía',group:'Grupo D'},
+  {num:321,name:'GER-01 Portero 1',flag:'🇩🇪',country:'Alemania',group:'Grupo E'},
+  {num:322,name:'GER-02 Portero 2',flag:'🇩🇪',country:'Alemania',group:'Grupo E'},
+  {num:323,name:'GER-03 Defensa 1',flag:'🇩🇪',country:'Alemania',group:'Grupo E'},
+  {num:324,name:'GER-04 Defensa 2',flag:'🇩🇪',country:'Alemania',group:'Grupo E'},
+  {num:325,name:'GER-05 Defensa 3',flag:'🇩🇪',country:'Alemania',group:'Grupo E'},
+  {num:326,name:'GER-06 Defensa 4',flag:'🇩🇪',country:'Alemania',group:'Grupo E'},
+  {num:327,name:'GER-07 Mediocampista 1',flag:'🇩🇪',country:'Alemania',group:'Grupo E'},
+  {num:328,name:'GER-08 Mediocampista 2',flag:'🇩🇪',country:'Alemania',group:'Grupo E'},
+  {num:329,name:'GER-09 Mediocampista 3',flag:'🇩🇪',country:'Alemania',group:'Grupo E'},
+  {num:330,name:'GER-10 Mediocampista 4',flag:'🇩🇪',country:'Alemania',group:'Grupo E'},
+  {num:331,name:'GER-11 Delantero 1',flag:'🇩🇪',country:'Alemania',group:'Grupo E'},
+  {num:332,name:'GER-12 Delantero 2',flag:'🇩🇪',country:'Alemania',group:'Grupo E'},
+  {num:333,name:'GER-13 Delantero 3',flag:'🇩🇪',country:'Alemania',group:'Grupo E'},
+  {num:334,name:'GER-14 Capitán',flag:'🇩🇪',country:'Alemania',group:'Grupo E'},
+  {num:335,name:'GER-15 Figura',flag:'🇩🇪',country:'Alemania',group:'Grupo E'},
+  {num:336,name:'GER-16 Promesa',flag:'🇩🇪',country:'Alemania',group:'Grupo E'},
+  {num:337,name:'GER-17 Técnico',flag:'🇩🇪',country:'Alemania',group:'Grupo E'},
+  {num:338,name:'GER-18 Escudo',flag:'🇩🇪',country:'Alemania',group:'Grupo E'},
+  {num:339,name:'GER-19 Estadio',flag:'🇩🇪',country:'Alemania',group:'Grupo E'},
+  {num:340,name:'GER-20 Logo Grupo',flag:'🇩🇪',country:'Alemania',group:'Grupo E'},
+  {num:341,name:'CUW-01 Portero 1',flag:'🇨🇼',country:'Curazao',group:'Grupo E'},
+  {num:342,name:'CUW-02 Portero 2',flag:'🇨🇼',country:'Curazao',group:'Grupo E'},
+  {num:343,name:'CUW-03 Defensa 1',flag:'🇨🇼',country:'Curazao',group:'Grupo E'},
+  {num:344,name:'CUW-04 Defensa 2',flag:'🇨🇼',country:'Curazao',group:'Grupo E'},
+  {num:345,name:'CUW-05 Defensa 3',flag:'🇨🇼',country:'Curazao',group:'Grupo E'},
+  {num:346,name:'CUW-06 Defensa 4',flag:'🇨🇼',country:'Curazao',group:'Grupo E'},
+  {num:347,name:'CUW-07 Mediocampista 1',flag:'🇨🇼',country:'Curazao',group:'Grupo E'},
+  {num:348,name:'CUW-08 Mediocampista 2',flag:'🇨🇼',country:'Curazao',group:'Grupo E'},
+  {num:349,name:'CUW-09 Mediocampista 3',flag:'🇨🇼',country:'Curazao',group:'Grupo E'},
+  {num:350,name:'CUW-10 Mediocampista 4',flag:'🇨🇼',country:'Curazao',group:'Grupo E'},
+  {num:351,name:'CUW-11 Delantero 1',flag:'🇨🇼',country:'Curazao',group:'Grupo E'},
+  {num:352,name:'CUW-12 Delantero 2',flag:'🇨🇼',country:'Curazao',group:'Grupo E'},
+  {num:353,name:'CUW-13 Delantero 3',flag:'🇨🇼',country:'Curazao',group:'Grupo E'},
+  {num:354,name:'CUW-14 Capitán',flag:'🇨🇼',country:'Curazao',group:'Grupo E'},
+  {num:355,name:'CUW-15 Figura',flag:'🇨🇼',country:'Curazao',group:'Grupo E'},
+  {num:356,name:'CUW-16 Promesa',flag:'🇨🇼',country:'Curazao',group:'Grupo E'},
+  {num:357,name:'CUW-17 Técnico',flag:'🇨🇼',country:'Curazao',group:'Grupo E'},
+  {num:358,name:'CUW-18 Escudo',flag:'🇨🇼',country:'Curazao',group:'Grupo E'},
+  {num:359,name:'CUW-19 Estadio',flag:'🇨🇼',country:'Curazao',group:'Grupo E'},
+  {num:360,name:'CUW-20 Logo Grupo',flag:'🇨🇼',country:'Curazao',group:'Grupo E'},
+  {num:361,name:'CIV-01 Portero 1',flag:'🇨🇮',country:'Costa de Marfil',group:'Grupo E'},
+  {num:362,name:'CIV-02 Portero 2',flag:'🇨🇮',country:'Costa de Marfil',group:'Grupo E'},
+  {num:363,name:'CIV-03 Defensa 1',flag:'🇨🇮',country:'Costa de Marfil',group:'Grupo E'},
+  {num:364,name:'CIV-04 Defensa 2',flag:'🇨🇮',country:'Costa de Marfil',group:'Grupo E'},
+  {num:365,name:'CIV-05 Defensa 3',flag:'🇨🇮',country:'Costa de Marfil',group:'Grupo E'},
+  {num:366,name:'CIV-06 Defensa 4',flag:'🇨🇮',country:'Costa de Marfil',group:'Grupo E'},
+  {num:367,name:'CIV-07 Mediocampista 1',flag:'🇨🇮',country:'Costa de Marfil',group:'Grupo E'},
+  {num:368,name:'CIV-08 Mediocampista 2',flag:'🇨🇮',country:'Costa de Marfil',group:'Grupo E'},
+  {num:369,name:'CIV-09 Mediocampista 3',flag:'🇨🇮',country:'Costa de Marfil',group:'Grupo E'},
+  {num:370,name:'CIV-10 Mediocampista 4',flag:'🇨🇮',country:'Costa de Marfil',group:'Grupo E'},
+  {num:371,name:'CIV-11 Delantero 1',flag:'🇨🇮',country:'Costa de Marfil',group:'Grupo E'},
+  {num:372,name:'CIV-12 Delantero 2',flag:'🇨🇮',country:'Costa de Marfil',group:'Grupo E'},
+  {num:373,name:'CIV-13 Delantero 3',flag:'🇨🇮',country:'Costa de Marfil',group:'Grupo E'},
+  {num:374,name:'CIV-14 Capitán',flag:'🇨🇮',country:'Costa de Marfil',group:'Grupo E'},
+  {num:375,name:'CIV-15 Figura',flag:'🇨🇮',country:'Costa de Marfil',group:'Grupo E'},
+  {num:376,name:'CIV-16 Promesa',flag:'🇨🇮',country:'Costa de Marfil',group:'Grupo E'},
+  {num:377,name:'CIV-17 Técnico',flag:'🇨🇮',country:'Costa de Marfil',group:'Grupo E'},
+  {num:378,name:'CIV-18 Escudo',flag:'🇨🇮',country:'Costa de Marfil',group:'Grupo E'},
+  {num:379,name:'CIV-19 Estadio',flag:'🇨🇮',country:'Costa de Marfil',group:'Grupo E'},
+  {num:380,name:'CIV-20 Logo Grupo',flag:'🇨🇮',country:'Costa de Marfil',group:'Grupo E'},
+  {num:381,name:'ECU-01 Portero 1',flag:'🇪🇨',country:'Ecuador',group:'Grupo E'},
+  {num:382,name:'ECU-02 Portero 2',flag:'🇪🇨',country:'Ecuador',group:'Grupo E'},
+  {num:383,name:'ECU-03 Defensa 1',flag:'🇪🇨',country:'Ecuador',group:'Grupo E'},
+  {num:384,name:'ECU-04 Defensa 2',flag:'🇪🇨',country:'Ecuador',group:'Grupo E'},
+  {num:385,name:'ECU-05 Defensa 3',flag:'🇪🇨',country:'Ecuador',group:'Grupo E'},
+  {num:386,name:'ECU-06 Defensa 4',flag:'🇪🇨',country:'Ecuador',group:'Grupo E'},
+  {num:387,name:'ECU-07 Mediocampista 1',flag:'🇪🇨',country:'Ecuador',group:'Grupo E'},
+  {num:388,name:'ECU-08 Mediocampista 2',flag:'🇪🇨',country:'Ecuador',group:'Grupo E'},
+  {num:389,name:'ECU-09 Mediocampista 3',flag:'🇪🇨',country:'Ecuador',group:'Grupo E'},
+  {num:390,name:'ECU-10 Mediocampista 4',flag:'🇪🇨',country:'Ecuador',group:'Grupo E'},
+  {num:391,name:'ECU-11 Delantero 1',flag:'🇪🇨',country:'Ecuador',group:'Grupo E'},
+  {num:392,name:'ECU-12 Delantero 2',flag:'🇪🇨',country:'Ecuador',group:'Grupo E'},
+  {num:393,name:'ECU-13 Delantero 3',flag:'🇪🇨',country:'Ecuador',group:'Grupo E'},
+  {num:394,name:'ECU-14 Capitán',flag:'🇪🇨',country:'Ecuador',group:'Grupo E'},
+  {num:395,name:'ECU-15 Figura',flag:'🇪🇨',country:'Ecuador',group:'Grupo E'},
+  {num:396,name:'ECU-16 Promesa',flag:'🇪🇨',country:'Ecuador',group:'Grupo E'},
+  {num:397,name:'ECU-17 Técnico',flag:'🇪🇨',country:'Ecuador',group:'Grupo E'},
+  {num:398,name:'ECU-18 Escudo',flag:'🇪🇨',country:'Ecuador',group:'Grupo E'},
+  {num:399,name:'ECU-19 Estadio',flag:'🇪🇨',country:'Ecuador',group:'Grupo E'},
+  {num:400,name:'ECU-20 Logo Grupo',flag:'🇪🇨',country:'Ecuador',group:'Grupo E'},
+  {num:401,name:'NED-01 Portero 1',flag:'🇳🇱',country:'Países Bajos',group:'Grupo F'},
+  {num:402,name:'NED-02 Portero 2',flag:'🇳🇱',country:'Países Bajos',group:'Grupo F'},
+  {num:403,name:'NED-03 Defensa 1',flag:'🇳🇱',country:'Países Bajos',group:'Grupo F'},
+  {num:404,name:'NED-04 Defensa 2',flag:'🇳🇱',country:'Países Bajos',group:'Grupo F'},
+  {num:405,name:'NED-05 Defensa 3',flag:'🇳🇱',country:'Países Bajos',group:'Grupo F'},
+  {num:406,name:'NED-06 Defensa 4',flag:'🇳🇱',country:'Países Bajos',group:'Grupo F'},
+  {num:407,name:'NED-07 Mediocampista 1',flag:'🇳🇱',country:'Países Bajos',group:'Grupo F'},
+  {num:408,name:'NED-08 Mediocampista 2',flag:'🇳🇱',country:'Países Bajos',group:'Grupo F'},
+  {num:409,name:'NED-09 Mediocampista 3',flag:'🇳🇱',country:'Países Bajos',group:'Grupo F'},
+  {num:410,name:'NED-10 Mediocampista 4',flag:'🇳🇱',country:'Países Bajos',group:'Grupo F'},
+  {num:411,name:'NED-11 Delantero 1',flag:'🇳🇱',country:'Países Bajos',group:'Grupo F'},
+  {num:412,name:'NED-12 Delantero 2',flag:'🇳🇱',country:'Países Bajos',group:'Grupo F'},
+  {num:413,name:'NED-13 Delantero 3',flag:'🇳🇱',country:'Países Bajos',group:'Grupo F'},
+  {num:414,name:'NED-14 Capitán',flag:'🇳🇱',country:'Países Bajos',group:'Grupo F'},
+  {num:415,name:'NED-15 Figura',flag:'🇳🇱',country:'Países Bajos',group:'Grupo F'},
+  {num:416,name:'NED-16 Promesa',flag:'🇳🇱',country:'Países Bajos',group:'Grupo F'},
+  {num:417,name:'NED-17 Técnico',flag:'🇳🇱',country:'Países Bajos',group:'Grupo F'},
+  {num:418,name:'NED-18 Escudo',flag:'🇳🇱',country:'Países Bajos',group:'Grupo F'},
+  {num:419,name:'NED-19 Estadio',flag:'🇳🇱',country:'Países Bajos',group:'Grupo F'},
+  {num:420,name:'NED-20 Logo Grupo',flag:'🇳🇱',country:'Países Bajos',group:'Grupo F'},
+  {num:421,name:'JPN-01 Portero 1',flag:'🇯🇵',country:'Japón',group:'Grupo F'},
+  {num:422,name:'JPN-02 Portero 2',flag:'🇯🇵',country:'Japón',group:'Grupo F'},
+  {num:423,name:'JPN-03 Defensa 1',flag:'🇯🇵',country:'Japón',group:'Grupo F'},
+  {num:424,name:'JPN-04 Defensa 2',flag:'🇯🇵',country:'Japón',group:'Grupo F'},
+  {num:425,name:'JPN-05 Defensa 3',flag:'🇯🇵',country:'Japón',group:'Grupo F'},
+  {num:426,name:'JPN-06 Defensa 4',flag:'🇯🇵',country:'Japón',group:'Grupo F'},
+  {num:427,name:'JPN-07 Mediocampista 1',flag:'🇯🇵',country:'Japón',group:'Grupo F'},
+  {num:428,name:'JPN-08 Mediocampista 2',flag:'🇯🇵',country:'Japón',group:'Grupo F'},
+  {num:429,name:'JPN-09 Mediocampista 3',flag:'🇯🇵',country:'Japón',group:'Grupo F'},
+  {num:430,name:'JPN-10 Mediocampista 4',flag:'🇯🇵',country:'Japón',group:'Grupo F'},
+  {num:431,name:'JPN-11 Delantero 1',flag:'🇯🇵',country:'Japón',group:'Grupo F'},
+  {num:432,name:'JPN-12 Delantero 2',flag:'🇯🇵',country:'Japón',group:'Grupo F'},
+  {num:433,name:'JPN-13 Delantero 3',flag:'🇯🇵',country:'Japón',group:'Grupo F'},
+  {num:434,name:'JPN-14 Capitán',flag:'🇯🇵',country:'Japón',group:'Grupo F'},
+  {num:435,name:'JPN-15 Figura',flag:'🇯🇵',country:'Japón',group:'Grupo F'},
+  {num:436,name:'JPN-16 Promesa',flag:'🇯🇵',country:'Japón',group:'Grupo F'},
+  {num:437,name:'JPN-17 Técnico',flag:'🇯🇵',country:'Japón',group:'Grupo F'},
+  {num:438,name:'JPN-18 Escudo',flag:'🇯🇵',country:'Japón',group:'Grupo F'},
+  {num:439,name:'JPN-19 Estadio',flag:'🇯🇵',country:'Japón',group:'Grupo F'},
+  {num:440,name:'JPN-20 Logo Grupo',flag:'🇯🇵',country:'Japón',group:'Grupo F'},
+  {num:441,name:'SWE-01 Portero 1',flag:'🇸🇪',country:'Suecia',group:'Grupo F'},
+  {num:442,name:'SWE-02 Portero 2',flag:'🇸🇪',country:'Suecia',group:'Grupo F'},
+  {num:443,name:'SWE-03 Defensa 1',flag:'🇸🇪',country:'Suecia',group:'Grupo F'},
+  {num:444,name:'SWE-04 Defensa 2',flag:'🇸🇪',country:'Suecia',group:'Grupo F'},
+  {num:445,name:'SWE-05 Defensa 3',flag:'🇸🇪',country:'Suecia',group:'Grupo F'},
+  {num:446,name:'SWE-06 Defensa 4',flag:'🇸🇪',country:'Suecia',group:'Grupo F'},
+  {num:447,name:'SWE-07 Mediocampista 1',flag:'🇸🇪',country:'Suecia',group:'Grupo F'},
+  {num:448,name:'SWE-08 Mediocampista 2',flag:'🇸🇪',country:'Suecia',group:'Grupo F'},
+  {num:449,name:'SWE-09 Mediocampista 3',flag:'🇸🇪',country:'Suecia',group:'Grupo F'},
+  {num:450,name:'SWE-10 Mediocampista 4',flag:'🇸🇪',country:'Suecia',group:'Grupo F'},
+  {num:451,name:'SWE-11 Delantero 1',flag:'🇸🇪',country:'Suecia',group:'Grupo F'},
+  {num:452,name:'SWE-12 Delantero 2',flag:'🇸🇪',country:'Suecia',group:'Grupo F'},
+  {num:453,name:'SWE-13 Delantero 3',flag:'🇸🇪',country:'Suecia',group:'Grupo F'},
+  {num:454,name:'SWE-14 Capitán',flag:'🇸🇪',country:'Suecia',group:'Grupo F'},
+  {num:455,name:'SWE-15 Figura',flag:'🇸🇪',country:'Suecia',group:'Grupo F'},
+  {num:456,name:'SWE-16 Promesa',flag:'🇸🇪',country:'Suecia',group:'Grupo F'},
+  {num:457,name:'SWE-17 Técnico',flag:'🇸🇪',country:'Suecia',group:'Grupo F'},
+  {num:458,name:'SWE-18 Escudo',flag:'🇸🇪',country:'Suecia',group:'Grupo F'},
+  {num:459,name:'SWE-19 Estadio',flag:'🇸🇪',country:'Suecia',group:'Grupo F'},
+  {num:460,name:'SWE-20 Logo Grupo',flag:'🇸🇪',country:'Suecia',group:'Grupo F'},
+  {num:461,name:'TUN-01 Portero 1',flag:'🇹🇳',country:'Túnez',group:'Grupo F'},
+  {num:462,name:'TUN-02 Portero 2',flag:'🇹🇳',country:'Túnez',group:'Grupo F'},
+  {num:463,name:'TUN-03 Defensa 1',flag:'🇹🇳',country:'Túnez',group:'Grupo F'},
+  {num:464,name:'TUN-04 Defensa 2',flag:'🇹🇳',country:'Túnez',group:'Grupo F'},
+  {num:465,name:'TUN-05 Defensa 3',flag:'🇹🇳',country:'Túnez',group:'Grupo F'},
+  {num:466,name:'TUN-06 Defensa 4',flag:'🇹🇳',country:'Túnez',group:'Grupo F'},
+  {num:467,name:'TUN-07 Mediocampista 1',flag:'🇹🇳',country:'Túnez',group:'Grupo F'},
+  {num:468,name:'TUN-08 Mediocampista 2',flag:'🇹🇳',country:'Túnez',group:'Grupo F'},
+  {num:469,name:'TUN-09 Mediocampista 3',flag:'🇹🇳',country:'Túnez',group:'Grupo F'},
+  {num:470,name:'TUN-10 Mediocampista 4',flag:'🇹🇳',country:'Túnez',group:'Grupo F'},
+  {num:471,name:'TUN-11 Delantero 1',flag:'🇹🇳',country:'Túnez',group:'Grupo F'},
+  {num:472,name:'TUN-12 Delantero 2',flag:'🇹🇳',country:'Túnez',group:'Grupo F'},
+  {num:473,name:'TUN-13 Delantero 3',flag:'🇹🇳',country:'Túnez',group:'Grupo F'},
+  {num:474,name:'TUN-14 Capitán',flag:'🇹🇳',country:'Túnez',group:'Grupo F'},
+  {num:475,name:'TUN-15 Figura',flag:'🇹🇳',country:'Túnez',group:'Grupo F'},
+  {num:476,name:'TUN-16 Promesa',flag:'🇹🇳',country:'Túnez',group:'Grupo F'},
+  {num:477,name:'TUN-17 Técnico',flag:'🇹🇳',country:'Túnez',group:'Grupo F'},
+  {num:478,name:'TUN-18 Escudo',flag:'🇹🇳',country:'Túnez',group:'Grupo F'},
+  {num:479,name:'TUN-19 Estadio',flag:'🇹🇳',country:'Túnez',group:'Grupo F'},
+  {num:480,name:'TUN-20 Logo Grupo',flag:'🇹🇳',country:'Túnez',group:'Grupo F'},
+  {num:481,name:'BEL-01 Portero 1',flag:'🇧🇪',country:'Bélgica',group:'Grupo G'},
+  {num:482,name:'BEL-02 Portero 2',flag:'🇧🇪',country:'Bélgica',group:'Grupo G'},
+  {num:483,name:'BEL-03 Defensa 1',flag:'🇧🇪',country:'Bélgica',group:'Grupo G'},
+  {num:484,name:'BEL-04 Defensa 2',flag:'🇧🇪',country:'Bélgica',group:'Grupo G'},
+  {num:485,name:'BEL-05 Defensa 3',flag:'🇧🇪',country:'Bélgica',group:'Grupo G'},
+  {num:486,name:'BEL-06 Defensa 4',flag:'🇧🇪',country:'Bélgica',group:'Grupo G'},
+  {num:487,name:'BEL-07 Mediocampista 1',flag:'🇧🇪',country:'Bélgica',group:'Grupo G'},
+  {num:488,name:'BEL-08 Mediocampista 2',flag:'🇧🇪',country:'Bélgica',group:'Grupo G'},
+  {num:489,name:'BEL-09 Mediocampista 3',flag:'🇧🇪',country:'Bélgica',group:'Grupo G'},
+  {num:490,name:'BEL-10 Mediocampista 4',flag:'🇧🇪',country:'Bélgica',group:'Grupo G'},
+  {num:491,name:'BEL-11 Delantero 1',flag:'🇧🇪',country:'Bélgica',group:'Grupo G'},
+  {num:492,name:'BEL-12 Delantero 2',flag:'🇧🇪',country:'Bélgica',group:'Grupo G'},
+  {num:493,name:'BEL-13 Delantero 3',flag:'🇧🇪',country:'Bélgica',group:'Grupo G'},
+  {num:494,name:'BEL-14 Capitán',flag:'🇧🇪',country:'Bélgica',group:'Grupo G'},
+  {num:495,name:'BEL-15 Figura',flag:'🇧🇪',country:'Bélgica',group:'Grupo G'},
+  {num:496,name:'BEL-16 Promesa',flag:'🇧🇪',country:'Bélgica',group:'Grupo G'},
+  {num:497,name:'BEL-17 Técnico',flag:'🇧🇪',country:'Bélgica',group:'Grupo G'},
+  {num:498,name:'BEL-18 Escudo',flag:'🇧🇪',country:'Bélgica',group:'Grupo G'},
+  {num:499,name:'BEL-19 Estadio',flag:'🇧🇪',country:'Bélgica',group:'Grupo G'},
+  {num:500,name:'BEL-20 Logo Grupo',flag:'🇧🇪',country:'Bélgica',group:'Grupo G'},
+  {num:501,name:'EGY-01 Portero 1',flag:'🇪🇬',country:'Egipto',group:'Grupo G'},
+  {num:502,name:'EGY-02 Portero 2',flag:'🇪🇬',country:'Egipto',group:'Grupo G'},
+  {num:503,name:'EGY-03 Defensa 1',flag:'🇪🇬',country:'Egipto',group:'Grupo G'},
+  {num:504,name:'EGY-04 Defensa 2',flag:'🇪🇬',country:'Egipto',group:'Grupo G'},
+  {num:505,name:'EGY-05 Defensa 3',flag:'🇪🇬',country:'Egipto',group:'Grupo G'},
+  {num:506,name:'EGY-06 Defensa 4',flag:'🇪🇬',country:'Egipto',group:'Grupo G'},
+  {num:507,name:'EGY-07 Mediocampista 1',flag:'🇪🇬',country:'Egipto',group:'Grupo G'},
+  {num:508,name:'EGY-08 Mediocampista 2',flag:'🇪🇬',country:'Egipto',group:'Grupo G'},
+  {num:509,name:'EGY-09 Mediocampista 3',flag:'🇪🇬',country:'Egipto',group:'Grupo G'},
+  {num:510,name:'EGY-10 Mediocampista 4',flag:'🇪🇬',country:'Egipto',group:'Grupo G'},
+  {num:511,name:'EGY-11 Delantero 1',flag:'🇪🇬',country:'Egipto',group:'Grupo G'},
+  {num:512,name:'EGY-12 Delantero 2',flag:'🇪🇬',country:'Egipto',group:'Grupo G'},
+  {num:513,name:'EGY-13 Delantero 3',flag:'🇪🇬',country:'Egipto',group:'Grupo G'},
+  {num:514,name:'EGY-14 Capitán',flag:'🇪🇬',country:'Egipto',group:'Grupo G'},
+  {num:515,name:'EGY-15 Figura',flag:'🇪🇬',country:'Egipto',group:'Grupo G'},
+  {num:516,name:'EGY-16 Promesa',flag:'🇪🇬',country:'Egipto',group:'Grupo G'},
+  {num:517,name:'EGY-17 Técnico',flag:'🇪🇬',country:'Egipto',group:'Grupo G'},
+  {num:518,name:'EGY-18 Escudo',flag:'🇪🇬',country:'Egipto',group:'Grupo G'},
+  {num:519,name:'EGY-19 Estadio',flag:'🇪🇬',country:'Egipto',group:'Grupo G'},
+  {num:520,name:'EGY-20 Logo Grupo',flag:'🇪🇬',country:'Egipto',group:'Grupo G'},
+  {num:521,name:'IRN-01 Portero 1',flag:'🇮🇷',country:'Irán',group:'Grupo G'},
+  {num:522,name:'IRN-02 Portero 2',flag:'🇮🇷',country:'Irán',group:'Grupo G'},
+  {num:523,name:'IRN-03 Defensa 1',flag:'🇮🇷',country:'Irán',group:'Grupo G'},
+  {num:524,name:'IRN-04 Defensa 2',flag:'🇮🇷',country:'Irán',group:'Grupo G'},
+  {num:525,name:'IRN-05 Defensa 3',flag:'🇮🇷',country:'Irán',group:'Grupo G'},
+  {num:526,name:'IRN-06 Defensa 4',flag:'🇮🇷',country:'Irán',group:'Grupo G'},
+  {num:527,name:'IRN-07 Mediocampista 1',flag:'🇮🇷',country:'Irán',group:'Grupo G'},
+  {num:528,name:'IRN-08 Mediocampista 2',flag:'🇮🇷',country:'Irán',group:'Grupo G'},
+  {num:529,name:'IRN-09 Mediocampista 3',flag:'🇮🇷',country:'Irán',group:'Grupo G'},
+  {num:530,name:'IRN-10 Mediocampista 4',flag:'🇮🇷',country:'Irán',group:'Grupo G'},
+  {num:531,name:'IRN-11 Delantero 1',flag:'🇮🇷',country:'Irán',group:'Grupo G'},
+  {num:532,name:'IRN-12 Delantero 2',flag:'🇮🇷',country:'Irán',group:'Grupo G'},
+  {num:533,name:'IRN-13 Delantero 3',flag:'🇮🇷',country:'Irán',group:'Grupo G'},
+  {num:534,name:'IRN-14 Capitán',flag:'🇮🇷',country:'Irán',group:'Grupo G'},
+  {num:535,name:'IRN-15 Figura',flag:'🇮🇷',country:'Irán',group:'Grupo G'},
+  {num:536,name:'IRN-16 Promesa',flag:'🇮🇷',country:'Irán',group:'Grupo G'},
+  {num:537,name:'IRN-17 Técnico',flag:'🇮🇷',country:'Irán',group:'Grupo G'},
+  {num:538,name:'IRN-18 Escudo',flag:'🇮🇷',country:'Irán',group:'Grupo G'},
+  {num:539,name:'IRN-19 Estadio',flag:'🇮🇷',country:'Irán',group:'Grupo G'},
+  {num:540,name:'IRN-20 Logo Grupo',flag:'🇮🇷',country:'Irán',group:'Grupo G'},
+  {num:541,name:'NZL-01 Portero 1',flag:'🇳🇿',country:'Nueva Zelanda',group:'Grupo G'},
+  {num:542,name:'NZL-02 Portero 2',flag:'🇳🇿',country:'Nueva Zelanda',group:'Grupo G'},
+  {num:543,name:'NZL-03 Defensa 1',flag:'🇳🇿',country:'Nueva Zelanda',group:'Grupo G'},
+  {num:544,name:'NZL-04 Defensa 2',flag:'🇳🇿',country:'Nueva Zelanda',group:'Grupo G'},
+  {num:545,name:'NZL-05 Defensa 3',flag:'🇳🇿',country:'Nueva Zelanda',group:'Grupo G'},
+  {num:546,name:'NZL-06 Defensa 4',flag:'🇳🇿',country:'Nueva Zelanda',group:'Grupo G'},
+  {num:547,name:'NZL-07 Mediocampista 1',flag:'🇳🇿',country:'Nueva Zelanda',group:'Grupo G'},
+  {num:548,name:'NZL-08 Mediocampista 2',flag:'🇳🇿',country:'Nueva Zelanda',group:'Grupo G'},
+  {num:549,name:'NZL-09 Mediocampista 3',flag:'🇳🇿',country:'Nueva Zelanda',group:'Grupo G'},
+  {num:550,name:'NZL-10 Mediocampista 4',flag:'🇳🇿',country:'Nueva Zelanda',group:'Grupo G'},
+  {num:551,name:'NZL-11 Delantero 1',flag:'🇳🇿',country:'Nueva Zelanda',group:'Grupo G'},
+  {num:552,name:'NZL-12 Delantero 2',flag:'🇳🇿',country:'Nueva Zelanda',group:'Grupo G'},
+  {num:553,name:'NZL-13 Delantero 3',flag:'🇳🇿',country:'Nueva Zelanda',group:'Grupo G'},
+  {num:554,name:'NZL-14 Capitán',flag:'🇳🇿',country:'Nueva Zelanda',group:'Grupo G'},
+  {num:555,name:'NZL-15 Figura',flag:'🇳🇿',country:'Nueva Zelanda',group:'Grupo G'},
+  {num:556,name:'NZL-16 Promesa',flag:'🇳🇿',country:'Nueva Zelanda',group:'Grupo G'},
+  {num:557,name:'NZL-17 Técnico',flag:'🇳🇿',country:'Nueva Zelanda',group:'Grupo G'},
+  {num:558,name:'NZL-18 Escudo',flag:'🇳🇿',country:'Nueva Zelanda',group:'Grupo G'},
+  {num:559,name:'NZL-19 Estadio',flag:'🇳🇿',country:'Nueva Zelanda',group:'Grupo G'},
+  {num:560,name:'NZL-20 Logo Grupo',flag:'🇳🇿',country:'Nueva Zelanda',group:'Grupo G'},
+  {num:561,name:'ESP-01 Portero 1',flag:'🇪🇸',country:'España',group:'Grupo H'},
+  {num:562,name:'ESP-02 Portero 2',flag:'🇪🇸',country:'España',group:'Grupo H'},
+  {num:563,name:'ESP-03 Defensa 1',flag:'🇪🇸',country:'España',group:'Grupo H'},
+  {num:564,name:'ESP-04 Defensa 2',flag:'🇪🇸',country:'España',group:'Grupo H'},
+  {num:565,name:'ESP-05 Defensa 3',flag:'🇪🇸',country:'España',group:'Grupo H'},
+  {num:566,name:'ESP-06 Defensa 4',flag:'🇪🇸',country:'España',group:'Grupo H'},
+  {num:567,name:'ESP-07 Mediocampista 1',flag:'🇪🇸',country:'España',group:'Grupo H'},
+  {num:568,name:'ESP-08 Mediocampista 2',flag:'🇪🇸',country:'España',group:'Grupo H'},
+  {num:569,name:'ESP-09 Mediocampista 3',flag:'🇪🇸',country:'España',group:'Grupo H'},
+  {num:570,name:'ESP-10 Mediocampista 4',flag:'🇪🇸',country:'España',group:'Grupo H'},
+  {num:571,name:'ESP-11 Delantero 1',flag:'🇪🇸',country:'España',group:'Grupo H'},
+  {num:572,name:'ESP-12 Delantero 2',flag:'🇪🇸',country:'España',group:'Grupo H'},
+  {num:573,name:'ESP-13 Delantero 3',flag:'🇪🇸',country:'España',group:'Grupo H'},
+  {num:574,name:'ESP-14 Capitán',flag:'🇪🇸',country:'España',group:'Grupo H'},
+  {num:575,name:'ESP-15 Figura',flag:'🇪🇸',country:'España',group:'Grupo H'},
+  {num:576,name:'ESP-16 Promesa',flag:'🇪🇸',country:'España',group:'Grupo H'},
+  {num:577,name:'ESP-17 Técnico',flag:'🇪🇸',country:'España',group:'Grupo H'},
+  {num:578,name:'ESP-18 Escudo',flag:'🇪🇸',country:'España',group:'Grupo H'},
+  {num:579,name:'ESP-19 Estadio',flag:'🇪🇸',country:'España',group:'Grupo H'},
+  {num:580,name:'ESP-20 Logo Grupo',flag:'🇪🇸',country:'España',group:'Grupo H'},
+  {num:581,name:'CPV-01 Portero 1',flag:'🇨🇻',country:'Cabo Verde',group:'Grupo H'},
+  {num:582,name:'CPV-02 Portero 2',flag:'🇨🇻',country:'Cabo Verde',group:'Grupo H'},
+  {num:583,name:'CPV-03 Defensa 1',flag:'🇨🇻',country:'Cabo Verde',group:'Grupo H'},
+  {num:584,name:'CPV-04 Defensa 2',flag:'🇨🇻',country:'Cabo Verde',group:'Grupo H'},
+  {num:585,name:'CPV-05 Defensa 3',flag:'🇨🇻',country:'Cabo Verde',group:'Grupo H'},
+  {num:586,name:'CPV-06 Defensa 4',flag:'🇨🇻',country:'Cabo Verde',group:'Grupo H'},
+  {num:587,name:'CPV-07 Mediocampista 1',flag:'🇨🇻',country:'Cabo Verde',group:'Grupo H'},
+  {num:588,name:'CPV-08 Mediocampista 2',flag:'🇨🇻',country:'Cabo Verde',group:'Grupo H'},
+  {num:589,name:'CPV-09 Mediocampista 3',flag:'🇨🇻',country:'Cabo Verde',group:'Grupo H'},
+  {num:590,name:'CPV-10 Mediocampista 4',flag:'🇨🇻',country:'Cabo Verde',group:'Grupo H'},
+  {num:591,name:'CPV-11 Delantero 1',flag:'🇨🇻',country:'Cabo Verde',group:'Grupo H'},
+  {num:592,name:'CPV-12 Delantero 2',flag:'🇨🇻',country:'Cabo Verde',group:'Grupo H'},
+  {num:593,name:'CPV-13 Delantero 3',flag:'🇨🇻',country:'Cabo Verde',group:'Grupo H'},
+  {num:594,name:'CPV-14 Capitán',flag:'🇨🇻',country:'Cabo Verde',group:'Grupo H'},
+  {num:595,name:'CPV-15 Figura',flag:'🇨🇻',country:'Cabo Verde',group:'Grupo H'},
+  {num:596,name:'CPV-16 Promesa',flag:'🇨🇻',country:'Cabo Verde',group:'Grupo H'},
+  {num:597,name:'CPV-17 Técnico',flag:'🇨🇻',country:'Cabo Verde',group:'Grupo H'},
+  {num:598,name:'CPV-18 Escudo',flag:'🇨🇻',country:'Cabo Verde',group:'Grupo H'},
+  {num:599,name:'CPV-19 Estadio',flag:'🇨🇻',country:'Cabo Verde',group:'Grupo H'},
+  {num:600,name:'CPV-20 Logo Grupo',flag:'🇨🇻',country:'Cabo Verde',group:'Grupo H'},
+  {num:601,name:'KSA-01 Portero 1',flag:'🇸🇦',country:'Arabia Saudita',group:'Grupo H'},
+  {num:602,name:'KSA-02 Portero 2',flag:'🇸🇦',country:'Arabia Saudita',group:'Grupo H'},
+  {num:603,name:'KSA-03 Defensa 1',flag:'🇸🇦',country:'Arabia Saudita',group:'Grupo H'},
+  {num:604,name:'KSA-04 Defensa 2',flag:'🇸🇦',country:'Arabia Saudita',group:'Grupo H'},
+  {num:605,name:'KSA-05 Defensa 3',flag:'🇸🇦',country:'Arabia Saudita',group:'Grupo H'},
+  {num:606,name:'KSA-06 Defensa 4',flag:'🇸🇦',country:'Arabia Saudita',group:'Grupo H'},
+  {num:607,name:'KSA-07 Mediocampista 1',flag:'🇸🇦',country:'Arabia Saudita',group:'Grupo H'},
+  {num:608,name:'KSA-08 Mediocampista 2',flag:'🇸🇦',country:'Arabia Saudita',group:'Grupo H'},
+  {num:609,name:'KSA-09 Mediocampista 3',flag:'🇸🇦',country:'Arabia Saudita',group:'Grupo H'},
+  {num:610,name:'KSA-10 Mediocampista 4',flag:'🇸🇦',country:'Arabia Saudita',group:'Grupo H'},
+  {num:611,name:'KSA-11 Delantero 1',flag:'🇸🇦',country:'Arabia Saudita',group:'Grupo H'},
+  {num:612,name:'KSA-12 Delantero 2',flag:'🇸🇦',country:'Arabia Saudita',group:'Grupo H'},
+  {num:613,name:'KSA-13 Delantero 3',flag:'🇸🇦',country:'Arabia Saudita',group:'Grupo H'},
+  {num:614,name:'KSA-14 Capitán',flag:'🇸🇦',country:'Arabia Saudita',group:'Grupo H'},
+  {num:615,name:'KSA-15 Figura',flag:'🇸🇦',country:'Arabia Saudita',group:'Grupo H'},
+  {num:616,name:'KSA-16 Promesa',flag:'🇸🇦',country:'Arabia Saudita',group:'Grupo H'},
+  {num:617,name:'KSA-17 Técnico',flag:'🇸🇦',country:'Arabia Saudita',group:'Grupo H'},
+  {num:618,name:'KSA-18 Escudo',flag:'🇸🇦',country:'Arabia Saudita',group:'Grupo H'},
+  {num:619,name:'KSA-19 Estadio',flag:'🇸🇦',country:'Arabia Saudita',group:'Grupo H'},
+  {num:620,name:'KSA-20 Logo Grupo',flag:'🇸🇦',country:'Arabia Saudita',group:'Grupo H'},
+  {num:621,name:'URU-01 Portero 1',flag:'🇺🇾',country:'Uruguay',group:'Grupo H'},
+  {num:622,name:'URU-02 Portero 2',flag:'🇺🇾',country:'Uruguay',group:'Grupo H'},
+  {num:623,name:'URU-03 Defensa 1',flag:'🇺🇾',country:'Uruguay',group:'Grupo H'},
+  {num:624,name:'URU-04 Defensa 2',flag:'🇺🇾',country:'Uruguay',group:'Grupo H'},
+  {num:625,name:'URU-05 Defensa 3',flag:'🇺🇾',country:'Uruguay',group:'Grupo H'},
+  {num:626,name:'URU-06 Defensa 4',flag:'🇺🇾',country:'Uruguay',group:'Grupo H'},
+  {num:627,name:'URU-07 Mediocampista 1',flag:'🇺🇾',country:'Uruguay',group:'Grupo H'},
+  {num:628,name:'URU-08 Mediocampista 2',flag:'🇺🇾',country:'Uruguay',group:'Grupo H'},
+  {num:629,name:'URU-09 Mediocampista 3',flag:'🇺🇾',country:'Uruguay',group:'Grupo H'},
+  {num:630,name:'URU-10 Mediocampista 4',flag:'🇺🇾',country:'Uruguay',group:'Grupo H'},
+  {num:631,name:'URU-11 Delantero 1',flag:'🇺🇾',country:'Uruguay',group:'Grupo H'},
+  {num:632,name:'URU-12 Delantero 2',flag:'🇺🇾',country:'Uruguay',group:'Grupo H'},
+  {num:633,name:'URU-13 Delantero 3',flag:'🇺🇾',country:'Uruguay',group:'Grupo H'},
+  {num:634,name:'URU-14 Capitán',flag:'🇺🇾',country:'Uruguay',group:'Grupo H'},
+  {num:635,name:'URU-15 Figura',flag:'🇺🇾',country:'Uruguay',group:'Grupo H'},
+  {num:636,name:'URU-16 Promesa',flag:'🇺🇾',country:'Uruguay',group:'Grupo H'},
+  {num:637,name:'URU-17 Técnico',flag:'🇺🇾',country:'Uruguay',group:'Grupo H'},
+  {num:638,name:'URU-18 Escudo',flag:'🇺🇾',country:'Uruguay',group:'Grupo H'},
+  {num:639,name:'URU-19 Estadio',flag:'🇺🇾',country:'Uruguay',group:'Grupo H'},
+  {num:640,name:'URU-20 Logo Grupo',flag:'🇺🇾',country:'Uruguay',group:'Grupo H'},
+  {num:641,name:'FRA-01 Portero 1',flag:'🇫🇷',country:'Francia',group:'Grupo I'},
+  {num:642,name:'FRA-02 Portero 2',flag:'🇫🇷',country:'Francia',group:'Grupo I'},
+  {num:643,name:'FRA-03 Defensa 1',flag:'🇫🇷',country:'Francia',group:'Grupo I'},
+  {num:644,name:'FRA-04 Defensa 2',flag:'🇫🇷',country:'Francia',group:'Grupo I'},
+  {num:645,name:'FRA-05 Defensa 3',flag:'🇫🇷',country:'Francia',group:'Grupo I'},
+  {num:646,name:'FRA-06 Defensa 4',flag:'🇫🇷',country:'Francia',group:'Grupo I'},
+  {num:647,name:'FRA-07 Mediocampista 1',flag:'🇫🇷',country:'Francia',group:'Grupo I'},
+  {num:648,name:'FRA-08 Mediocampista 2',flag:'🇫🇷',country:'Francia',group:'Grupo I'},
+  {num:649,name:'FRA-09 Mediocampista 3',flag:'🇫🇷',country:'Francia',group:'Grupo I'},
+  {num:650,name:'FRA-10 Mediocampista 4',flag:'🇫🇷',country:'Francia',group:'Grupo I'},
+  {num:651,name:'FRA-11 Delantero 1',flag:'🇫🇷',country:'Francia',group:'Grupo I'},
+  {num:652,name:'FRA-12 Delantero 2',flag:'🇫🇷',country:'Francia',group:'Grupo I'},
+  {num:653,name:'FRA-13 Delantero 3',flag:'🇫🇷',country:'Francia',group:'Grupo I'},
+  {num:654,name:'FRA-14 Capitán',flag:'🇫🇷',country:'Francia',group:'Grupo I'},
+  {num:655,name:'FRA-15 Figura',flag:'🇫🇷',country:'Francia',group:'Grupo I'},
+  {num:656,name:'FRA-16 Promesa',flag:'🇫🇷',country:'Francia',group:'Grupo I'},
+  {num:657,name:'FRA-17 Técnico',flag:'🇫🇷',country:'Francia',group:'Grupo I'},
+  {num:658,name:'FRA-18 Escudo',flag:'🇫🇷',country:'Francia',group:'Grupo I'},
+  {num:659,name:'FRA-19 Estadio',flag:'🇫🇷',country:'Francia',group:'Grupo I'},
+  {num:660,name:'FRA-20 Logo Grupo',flag:'🇫🇷',country:'Francia',group:'Grupo I'},
+  {num:661,name:'SEN-01 Portero 1',flag:'🇸🇳',country:'Senegal',group:'Grupo I'},
+  {num:662,name:'SEN-02 Portero 2',flag:'🇸🇳',country:'Senegal',group:'Grupo I'},
+  {num:663,name:'SEN-03 Defensa 1',flag:'🇸🇳',country:'Senegal',group:'Grupo I'},
+  {num:664,name:'SEN-04 Defensa 2',flag:'🇸🇳',country:'Senegal',group:'Grupo I'},
+  {num:665,name:'SEN-05 Defensa 3',flag:'🇸🇳',country:'Senegal',group:'Grupo I'},
+  {num:666,name:'SEN-06 Defensa 4',flag:'🇸🇳',country:'Senegal',group:'Grupo I'},
+  {num:667,name:'SEN-07 Mediocampista 1',flag:'🇸🇳',country:'Senegal',group:'Grupo I'},
+  {num:668,name:'SEN-08 Mediocampista 2',flag:'🇸🇳',country:'Senegal',group:'Grupo I'},
+  {num:669,name:'SEN-09 Mediocampista 3',flag:'🇸🇳',country:'Senegal',group:'Grupo I'},
+  {num:670,name:'SEN-10 Mediocampista 4',flag:'🇸🇳',country:'Senegal',group:'Grupo I'},
+  {num:671,name:'SEN-11 Delantero 1',flag:'🇸🇳',country:'Senegal',group:'Grupo I'},
+  {num:672,name:'SEN-12 Delantero 2',flag:'🇸🇳',country:'Senegal',group:'Grupo I'},
+  {num:673,name:'SEN-13 Delantero 3',flag:'🇸🇳',country:'Senegal',group:'Grupo I'},
+  {num:674,name:'SEN-14 Capitán',flag:'🇸🇳',country:'Senegal',group:'Grupo I'},
+  {num:675,name:'SEN-15 Figura',flag:'🇸🇳',country:'Senegal',group:'Grupo I'},
+  {num:676,name:'SEN-16 Promesa',flag:'🇸🇳',country:'Senegal',group:'Grupo I'},
+  {num:677,name:'SEN-17 Técnico',flag:'🇸🇳',country:'Senegal',group:'Grupo I'},
+  {num:678,name:'SEN-18 Escudo',flag:'🇸🇳',country:'Senegal',group:'Grupo I'},
+  {num:679,name:'SEN-19 Estadio',flag:'🇸🇳',country:'Senegal',group:'Grupo I'},
+  {num:680,name:'SEN-20 Logo Grupo',flag:'🇸🇳',country:'Senegal',group:'Grupo I'},
+  {num:681,name:'IRQ-01 Portero 1',flag:'🇮🇶',country:'Irak',group:'Grupo I'},
+  {num:682,name:'IRQ-02 Portero 2',flag:'🇮🇶',country:'Irak',group:'Grupo I'},
+  {num:683,name:'IRQ-03 Defensa 1',flag:'🇮🇶',country:'Irak',group:'Grupo I'},
+  {num:684,name:'IRQ-04 Defensa 2',flag:'🇮🇶',country:'Irak',group:'Grupo I'},
+  {num:685,name:'IRQ-05 Defensa 3',flag:'🇮🇶',country:'Irak',group:'Grupo I'},
+  {num:686,name:'IRQ-06 Defensa 4',flag:'🇮🇶',country:'Irak',group:'Grupo I'},
+  {num:687,name:'IRQ-07 Mediocampista 1',flag:'🇮🇶',country:'Irak',group:'Grupo I'},
+  {num:688,name:'IRQ-08 Mediocampista 2',flag:'🇮🇶',country:'Irak',group:'Grupo I'},
+  {num:689,name:'IRQ-09 Mediocampista 3',flag:'🇮🇶',country:'Irak',group:'Grupo I'},
+  {num:690,name:'IRQ-10 Mediocampista 4',flag:'🇮🇶',country:'Irak',group:'Grupo I'},
+  {num:691,name:'IRQ-11 Delantero 1',flag:'🇮🇶',country:'Irak',group:'Grupo I'},
+  {num:692,name:'IRQ-12 Delantero 2',flag:'🇮🇶',country:'Irak',group:'Grupo I'},
+  {num:693,name:'IRQ-13 Delantero 3',flag:'🇮🇶',country:'Irak',group:'Grupo I'},
+  {num:694,name:'IRQ-14 Capitán',flag:'🇮🇶',country:'Irak',group:'Grupo I'},
+  {num:695,name:'IRQ-15 Figura',flag:'🇮🇶',country:'Irak',group:'Grupo I'},
+  {num:696,name:'IRQ-16 Promesa',flag:'🇮🇶',country:'Irak',group:'Grupo I'},
+  {num:697,name:'IRQ-17 Técnico',flag:'🇮🇶',country:'Irak',group:'Grupo I'},
+  {num:698,name:'IRQ-18 Escudo',flag:'🇮🇶',country:'Irak',group:'Grupo I'},
+  {num:699,name:'IRQ-19 Estadio',flag:'🇮🇶',country:'Irak',group:'Grupo I'},
+  {num:700,name:'IRQ-20 Logo Grupo',flag:'🇮🇶',country:'Irak',group:'Grupo I'},
+  {num:701,name:'NOR-01 Portero 1',flag:'🇳🇴',country:'Noruega',group:'Grupo I'},
+  {num:702,name:'NOR-02 Portero 2',flag:'🇳🇴',country:'Noruega',group:'Grupo I'},
+  {num:703,name:'NOR-03 Defensa 1',flag:'🇳🇴',country:'Noruega',group:'Grupo I'},
+  {num:704,name:'NOR-04 Defensa 2',flag:'🇳🇴',country:'Noruega',group:'Grupo I'},
+  {num:705,name:'NOR-05 Defensa 3',flag:'🇳🇴',country:'Noruega',group:'Grupo I'},
+  {num:706,name:'NOR-06 Defensa 4',flag:'🇳🇴',country:'Noruega',group:'Grupo I'},
+  {num:707,name:'NOR-07 Mediocampista 1',flag:'🇳🇴',country:'Noruega',group:'Grupo I'},
+  {num:708,name:'NOR-08 Mediocampista 2',flag:'🇳🇴',country:'Noruega',group:'Grupo I'},
+  {num:709,name:'NOR-09 Mediocampista 3',flag:'🇳🇴',country:'Noruega',group:'Grupo I'},
+  {num:710,name:'NOR-10 Mediocampista 4',flag:'🇳🇴',country:'Noruega',group:'Grupo I'},
+  {num:711,name:'NOR-11 Delantero 1',flag:'🇳🇴',country:'Noruega',group:'Grupo I'},
+  {num:712,name:'NOR-12 Delantero 2',flag:'🇳🇴',country:'Noruega',group:'Grupo I'},
+  {num:713,name:'NOR-13 Delantero 3',flag:'🇳🇴',country:'Noruega',group:'Grupo I'},
+  {num:714,name:'NOR-14 Capitán',flag:'🇳🇴',country:'Noruega',group:'Grupo I'},
+  {num:715,name:'NOR-15 Figura',flag:'🇳🇴',country:'Noruega',group:'Grupo I'},
+  {num:716,name:'NOR-16 Promesa',flag:'🇳🇴',country:'Noruega',group:'Grupo I'},
+  {num:717,name:'NOR-17 Técnico',flag:'🇳🇴',country:'Noruega',group:'Grupo I'},
+  {num:718,name:'NOR-18 Escudo',flag:'🇳🇴',country:'Noruega',group:'Grupo I'},
+  {num:719,name:'NOR-19 Estadio',flag:'🇳🇴',country:'Noruega',group:'Grupo I'},
+  {num:720,name:'NOR-20 Logo Grupo',flag:'🇳🇴',country:'Noruega',group:'Grupo I'},
+  {num:721,name:'ARG-01 Portero 1',flag:'🇦🇷',country:'Argentina',group:'Grupo J'},
+  {num:722,name:'ARG-02 Portero 2',flag:'🇦🇷',country:'Argentina',group:'Grupo J'},
+  {num:723,name:'ARG-03 Defensa 1',flag:'🇦🇷',country:'Argentina',group:'Grupo J'},
+  {num:724,name:'ARG-04 Defensa 2',flag:'🇦🇷',country:'Argentina',group:'Grupo J'},
+  {num:725,name:'ARG-05 Defensa 3',flag:'🇦🇷',country:'Argentina',group:'Grupo J'},
+  {num:726,name:'ARG-06 Defensa 4',flag:'🇦🇷',country:'Argentina',group:'Grupo J'},
+  {num:727,name:'ARG-07 Mediocampista 1',flag:'🇦🇷',country:'Argentina',group:'Grupo J'},
+  {num:728,name:'ARG-08 Mediocampista 2',flag:'🇦🇷',country:'Argentina',group:'Grupo J'},
+  {num:729,name:'ARG-09 Mediocampista 3',flag:'🇦🇷',country:'Argentina',group:'Grupo J'},
+  {num:730,name:'ARG-10 Mediocampista 4',flag:'🇦🇷',country:'Argentina',group:'Grupo J'},
+  {num:731,name:'ARG-11 Delantero 1',flag:'🇦🇷',country:'Argentina',group:'Grupo J'},
+  {num:732,name:'ARG-12 Delantero 2',flag:'🇦🇷',country:'Argentina',group:'Grupo J'},
+  {num:733,name:'ARG-13 Delantero 3',flag:'🇦🇷',country:'Argentina',group:'Grupo J'},
+  {num:734,name:'ARG-14 Capitán',flag:'🇦🇷',country:'Argentina',group:'Grupo J'},
+  {num:735,name:'ARG-15 Figura',flag:'🇦🇷',country:'Argentina',group:'Grupo J'},
+  {num:736,name:'ARG-16 Promesa',flag:'🇦🇷',country:'Argentina',group:'Grupo J'},
+  {num:737,name:'ARG-17 Técnico',flag:'🇦🇷',country:'Argentina',group:'Grupo J'},
+  {num:738,name:'ARG-18 Escudo',flag:'🇦🇷',country:'Argentina',group:'Grupo J'},
+  {num:739,name:'ARG-19 Estadio',flag:'🇦🇷',country:'Argentina',group:'Grupo J'},
+  {num:740,name:'ARG-20 Logo Grupo',flag:'🇦🇷',country:'Argentina',group:'Grupo J'},
+  {num:741,name:'ALG-01 Portero 1',flag:'🇩🇿',country:'Argelia',group:'Grupo J'},
+  {num:742,name:'ALG-02 Portero 2',flag:'🇩🇿',country:'Argelia',group:'Grupo J'},
+  {num:743,name:'ALG-03 Defensa 1',flag:'🇩🇿',country:'Argelia',group:'Grupo J'},
+  {num:744,name:'ALG-04 Defensa 2',flag:'🇩🇿',country:'Argelia',group:'Grupo J'},
+  {num:745,name:'ALG-05 Defensa 3',flag:'🇩🇿',country:'Argelia',group:'Grupo J'},
+  {num:746,name:'ALG-06 Defensa 4',flag:'🇩🇿',country:'Argelia',group:'Grupo J'},
+  {num:747,name:'ALG-07 Mediocampista 1',flag:'🇩🇿',country:'Argelia',group:'Grupo J'},
+  {num:748,name:'ALG-08 Mediocampista 2',flag:'🇩🇿',country:'Argelia',group:'Grupo J'},
+  {num:749,name:'ALG-09 Mediocampista 3',flag:'🇩🇿',country:'Argelia',group:'Grupo J'},
+  {num:750,name:'ALG-10 Mediocampista 4',flag:'🇩🇿',country:'Argelia',group:'Grupo J'},
+  {num:751,name:'ALG-11 Delantero 1',flag:'🇩🇿',country:'Argelia',group:'Grupo J'},
+  {num:752,name:'ALG-12 Delantero 2',flag:'🇩🇿',country:'Argelia',group:'Grupo J'},
+  {num:753,name:'ALG-13 Delantero 3',flag:'🇩🇿',country:'Argelia',group:'Grupo J'},
+  {num:754,name:'ALG-14 Capitán',flag:'🇩🇿',country:'Argelia',group:'Grupo J'},
+  {num:755,name:'ALG-15 Figura',flag:'🇩🇿',country:'Argelia',group:'Grupo J'},
+  {num:756,name:'ALG-16 Promesa',flag:'🇩🇿',country:'Argelia',group:'Grupo J'},
+  {num:757,name:'ALG-17 Técnico',flag:'🇩🇿',country:'Argelia',group:'Grupo J'},
+  {num:758,name:'ALG-18 Escudo',flag:'🇩🇿',country:'Argelia',group:'Grupo J'},
+  {num:759,name:'ALG-19 Estadio',flag:'🇩🇿',country:'Argelia',group:'Grupo J'},
+  {num:760,name:'ALG-20 Logo Grupo',flag:'🇩🇿',country:'Argelia',group:'Grupo J'},
+  {num:761,name:'AUT-01 Portero 1',flag:'🇦🇹',country:'Austria',group:'Grupo J'},
+  {num:762,name:'AUT-02 Portero 2',flag:'🇦🇹',country:'Austria',group:'Grupo J'},
+  {num:763,name:'AUT-03 Defensa 1',flag:'🇦🇹',country:'Austria',group:'Grupo J'},
+  {num:764,name:'AUT-04 Defensa 2',flag:'🇦🇹',country:'Austria',group:'Grupo J'},
+  {num:765,name:'AUT-05 Defensa 3',flag:'🇦🇹',country:'Austria',group:'Grupo J'},
+  {num:766,name:'AUT-06 Defensa 4',flag:'🇦🇹',country:'Austria',group:'Grupo J'},
+  {num:767,name:'AUT-07 Mediocampista 1',flag:'🇦🇹',country:'Austria',group:'Grupo J'},
+  {num:768,name:'AUT-08 Mediocampista 2',flag:'🇦🇹',country:'Austria',group:'Grupo J'},
+  {num:769,name:'AUT-09 Mediocampista 3',flag:'🇦🇹',country:'Austria',group:'Grupo J'},
+  {num:770,name:'AUT-10 Mediocampista 4',flag:'🇦🇹',country:'Austria',group:'Grupo J'},
+  {num:771,name:'AUT-11 Delantero 1',flag:'🇦🇹',country:'Austria',group:'Grupo J'},
+  {num:772,name:'AUT-12 Delantero 2',flag:'🇦🇹',country:'Austria',group:'Grupo J'},
+  {num:773,name:'AUT-13 Delantero 3',flag:'🇦🇹',country:'Austria',group:'Grupo J'},
+  {num:774,name:'AUT-14 Capitán',flag:'🇦🇹',country:'Austria',group:'Grupo J'},
+  {num:775,name:'AUT-15 Figura',flag:'🇦🇹',country:'Austria',group:'Grupo J'},
+  {num:776,name:'AUT-16 Promesa',flag:'🇦🇹',country:'Austria',group:'Grupo J'},
+  {num:777,name:'AUT-17 Técnico',flag:'🇦🇹',country:'Austria',group:'Grupo J'},
+  {num:778,name:'AUT-18 Escudo',flag:'🇦🇹',country:'Austria',group:'Grupo J'},
+  {num:779,name:'AUT-19 Estadio',flag:'🇦🇹',country:'Austria',group:'Grupo J'},
+  {num:780,name:'AUT-20 Logo Grupo',flag:'🇦🇹',country:'Austria',group:'Grupo J'},
+  {num:781,name:'JOR-01 Portero 1',flag:'🇯🇴',country:'Jordania',group:'Grupo J'},
+  {num:782,name:'JOR-02 Portero 2',flag:'🇯🇴',country:'Jordania',group:'Grupo J'},
+  {num:783,name:'JOR-03 Defensa 1',flag:'🇯🇴',country:'Jordania',group:'Grupo J'},
+  {num:784,name:'JOR-04 Defensa 2',flag:'🇯🇴',country:'Jordania',group:'Grupo J'},
+  {num:785,name:'JOR-05 Defensa 3',flag:'🇯🇴',country:'Jordania',group:'Grupo J'},
+  {num:786,name:'JOR-06 Defensa 4',flag:'🇯🇴',country:'Jordania',group:'Grupo J'},
+  {num:787,name:'JOR-07 Mediocampista 1',flag:'🇯🇴',country:'Jordania',group:'Grupo J'},
+  {num:788,name:'JOR-08 Mediocampista 2',flag:'🇯🇴',country:'Jordania',group:'Grupo J'},
+  {num:789,name:'JOR-09 Mediocampista 3',flag:'🇯🇴',country:'Jordania',group:'Grupo J'},
+  {num:790,name:'JOR-10 Mediocampista 4',flag:'🇯🇴',country:'Jordania',group:'Grupo J'},
+  {num:791,name:'JOR-11 Delantero 1',flag:'🇯🇴',country:'Jordania',group:'Grupo J'},
+  {num:792,name:'JOR-12 Delantero 2',flag:'🇯🇴',country:'Jordania',group:'Grupo J'},
+  {num:793,name:'JOR-13 Delantero 3',flag:'🇯🇴',country:'Jordania',group:'Grupo J'},
+  {num:794,name:'JOR-14 Capitán',flag:'🇯🇴',country:'Jordania',group:'Grupo J'},
+  {num:795,name:'JOR-15 Figura',flag:'🇯🇴',country:'Jordania',group:'Grupo J'},
+  {num:796,name:'JOR-16 Promesa',flag:'🇯🇴',country:'Jordania',group:'Grupo J'},
+  {num:797,name:'JOR-17 Técnico',flag:'🇯🇴',country:'Jordania',group:'Grupo J'},
+  {num:798,name:'JOR-18 Escudo',flag:'🇯🇴',country:'Jordania',group:'Grupo J'},
+  {num:799,name:'JOR-19 Estadio',flag:'🇯🇴',country:'Jordania',group:'Grupo J'},
+  {num:800,name:'JOR-20 Logo Grupo',flag:'🇯🇴',country:'Jordania',group:'Grupo J'},
+  {num:801,name:'POR-01 Portero 1',flag:'🇵🇹',country:'Portugal',group:'Grupo K'},
+  {num:802,name:'POR-02 Portero 2',flag:'🇵🇹',country:'Portugal',group:'Grupo K'},
+  {num:803,name:'POR-03 Defensa 1',flag:'🇵🇹',country:'Portugal',group:'Grupo K'},
+  {num:804,name:'POR-04 Defensa 2',flag:'🇵🇹',country:'Portugal',group:'Grupo K'},
+  {num:805,name:'POR-05 Defensa 3',flag:'🇵🇹',country:'Portugal',group:'Grupo K'},
+  {num:806,name:'POR-06 Defensa 4',flag:'🇵🇹',country:'Portugal',group:'Grupo K'},
+  {num:807,name:'POR-07 Mediocampista 1',flag:'🇵🇹',country:'Portugal',group:'Grupo K'},
+  {num:808,name:'POR-08 Mediocampista 2',flag:'🇵🇹',country:'Portugal',group:'Grupo K'},
+  {num:809,name:'POR-09 Mediocampista 3',flag:'🇵🇹',country:'Portugal',group:'Grupo K'},
+  {num:810,name:'POR-10 Mediocampista 4',flag:'🇵🇹',country:'Portugal',group:'Grupo K'},
+  {num:811,name:'POR-11 Delantero 1',flag:'🇵🇹',country:'Portugal',group:'Grupo K'},
+  {num:812,name:'POR-12 Delantero 2',flag:'🇵🇹',country:'Portugal',group:'Grupo K'},
+  {num:813,name:'POR-13 Delantero 3',flag:'🇵🇹',country:'Portugal',group:'Grupo K'},
+  {num:814,name:'POR-14 Capitán',flag:'🇵🇹',country:'Portugal',group:'Grupo K'},
+  {num:815,name:'POR-15 Figura',flag:'🇵🇹',country:'Portugal',group:'Grupo K'},
+  {num:816,name:'POR-16 Promesa',flag:'🇵🇹',country:'Portugal',group:'Grupo K'},
+  {num:817,name:'POR-17 Técnico',flag:'🇵🇹',country:'Portugal',group:'Grupo K'},
+  {num:818,name:'POR-18 Escudo',flag:'🇵🇹',country:'Portugal',group:'Grupo K'},
+  {num:819,name:'POR-19 Estadio',flag:'🇵🇹',country:'Portugal',group:'Grupo K'},
+  {num:820,name:'POR-20 Logo Grupo',flag:'🇵🇹',country:'Portugal',group:'Grupo K'},
+  {num:821,name:'COD-01 Portero 1',flag:'🇨🇩',country:'Congo',group:'Grupo K'},
+  {num:822,name:'COD-02 Portero 2',flag:'🇨🇩',country:'Congo',group:'Grupo K'},
+  {num:823,name:'COD-03 Defensa 1',flag:'🇨🇩',country:'Congo',group:'Grupo K'},
+  {num:824,name:'COD-04 Defensa 2',flag:'🇨🇩',country:'Congo',group:'Grupo K'},
+  {num:825,name:'COD-05 Defensa 3',flag:'🇨🇩',country:'Congo',group:'Grupo K'},
+  {num:826,name:'COD-06 Defensa 4',flag:'🇨🇩',country:'Congo',group:'Grupo K'},
+  {num:827,name:'COD-07 Mediocampista 1',flag:'🇨🇩',country:'Congo',group:'Grupo K'},
+  {num:828,name:'COD-08 Mediocampista 2',flag:'🇨🇩',country:'Congo',group:'Grupo K'},
+  {num:829,name:'COD-09 Mediocampista 3',flag:'🇨🇩',country:'Congo',group:'Grupo K'},
+  {num:830,name:'COD-10 Mediocampista 4',flag:'🇨🇩',country:'Congo',group:'Grupo K'},
+  {num:831,name:'COD-11 Delantero 1',flag:'🇨🇩',country:'Congo',group:'Grupo K'},
+  {num:832,name:'COD-12 Delantero 2',flag:'🇨🇩',country:'Congo',group:'Grupo K'},
+  {num:833,name:'COD-13 Delantero 3',flag:'🇨🇩',country:'Congo',group:'Grupo K'},
+  {num:834,name:'COD-14 Capitán',flag:'🇨🇩',country:'Congo',group:'Grupo K'},
+  {num:835,name:'COD-15 Figura',flag:'🇨🇩',country:'Congo',group:'Grupo K'},
+  {num:836,name:'COD-16 Promesa',flag:'🇨🇩',country:'Congo',group:'Grupo K'},
+  {num:837,name:'COD-17 Técnico',flag:'🇨🇩',country:'Congo',group:'Grupo K'},
+  {num:838,name:'COD-18 Escudo',flag:'🇨🇩',country:'Congo',group:'Grupo K'},
+  {num:839,name:'COD-19 Estadio',flag:'🇨🇩',country:'Congo',group:'Grupo K'},
+  {num:840,name:'COD-20 Logo Grupo',flag:'🇨🇩',country:'Congo',group:'Grupo K'},
+  {num:841,name:'UZB-01 Portero 1',flag:'🇺🇿',country:'Uzbekistán',group:'Grupo K'},
+  {num:842,name:'UZB-02 Portero 2',flag:'🇺🇿',country:'Uzbekistán',group:'Grupo K'},
+  {num:843,name:'UZB-03 Defensa 1',flag:'🇺🇿',country:'Uzbekistán',group:'Grupo K'},
+  {num:844,name:'UZB-04 Defensa 2',flag:'🇺🇿',country:'Uzbekistán',group:'Grupo K'},
+  {num:845,name:'UZB-05 Defensa 3',flag:'🇺🇿',country:'Uzbekistán',group:'Grupo K'},
+  {num:846,name:'UZB-06 Defensa 4',flag:'🇺🇿',country:'Uzbekistán',group:'Grupo K'},
+  {num:847,name:'UZB-07 Mediocampista 1',flag:'🇺🇿',country:'Uzbekistán',group:'Grupo K'},
+  {num:848,name:'UZB-08 Mediocampista 2',flag:'🇺🇿',country:'Uzbekistán',group:'Grupo K'},
+  {num:849,name:'UZB-09 Mediocampista 3',flag:'🇺🇿',country:'Uzbekistán',group:'Grupo K'},
+  {num:850,name:'UZB-10 Mediocampista 4',flag:'🇺🇿',country:'Uzbekistán',group:'Grupo K'},
+  {num:851,name:'UZB-11 Delantero 1',flag:'🇺🇿',country:'Uzbekistán',group:'Grupo K'},
+  {num:852,name:'UZB-12 Delantero 2',flag:'🇺🇿',country:'Uzbekistán',group:'Grupo K'},
+  {num:853,name:'UZB-13 Delantero 3',flag:'🇺🇿',country:'Uzbekistán',group:'Grupo K'},
+  {num:854,name:'UZB-14 Capitán',flag:'🇺🇿',country:'Uzbekistán',group:'Grupo K'},
+  {num:855,name:'UZB-15 Figura',flag:'🇺🇿',country:'Uzbekistán',group:'Grupo K'},
+  {num:856,name:'UZB-16 Promesa',flag:'🇺🇿',country:'Uzbekistán',group:'Grupo K'},
+  {num:857,name:'UZB-17 Técnico',flag:'🇺🇿',country:'Uzbekistán',group:'Grupo K'},
+  {num:858,name:'UZB-18 Escudo',flag:'🇺🇿',country:'Uzbekistán',group:'Grupo K'},
+  {num:859,name:'UZB-19 Estadio',flag:'🇺🇿',country:'Uzbekistán',group:'Grupo K'},
+  {num:860,name:'UZB-20 Logo Grupo',flag:'🇺🇿',country:'Uzbekistán',group:'Grupo K'},
+  {num:861,name:'COL-01 Portero 1',flag:'🇨🇴',country:'Colombia',group:'Grupo K'},
+  {num:862,name:'COL-02 Portero 2',flag:'🇨🇴',country:'Colombia',group:'Grupo K'},
+  {num:863,name:'COL-03 Defensa 1',flag:'🇨🇴',country:'Colombia',group:'Grupo K'},
+  {num:864,name:'COL-04 Defensa 2',flag:'🇨🇴',country:'Colombia',group:'Grupo K'},
+  {num:865,name:'COL-05 Defensa 3',flag:'🇨🇴',country:'Colombia',group:'Grupo K'},
+  {num:866,name:'COL-06 Defensa 4',flag:'🇨🇴',country:'Colombia',group:'Grupo K'},
+  {num:867,name:'COL-07 Mediocampista 1',flag:'🇨🇴',country:'Colombia',group:'Grupo K'},
+  {num:868,name:'COL-08 Mediocampista 2',flag:'🇨🇴',country:'Colombia',group:'Grupo K'},
+  {num:869,name:'COL-09 Mediocampista 3',flag:'🇨🇴',country:'Colombia',group:'Grupo K'},
+  {num:870,name:'COL-10 Mediocampista 4',flag:'🇨🇴',country:'Colombia',group:'Grupo K'},
+  {num:871,name:'COL-11 Delantero 1',flag:'🇨🇴',country:'Colombia',group:'Grupo K'},
+  {num:872,name:'COL-12 Delantero 2',flag:'🇨🇴',country:'Colombia',group:'Grupo K'},
+  {num:873,name:'COL-13 Delantero 3',flag:'🇨🇴',country:'Colombia',group:'Grupo K'},
+  {num:874,name:'COL-14 Capitán',flag:'🇨🇴',country:'Colombia',group:'Grupo K'},
+  {num:875,name:'COL-15 Figura',flag:'🇨🇴',country:'Colombia',group:'Grupo K'},
+  {num:876,name:'COL-16 Promesa',flag:'🇨🇴',country:'Colombia',group:'Grupo K'},
+  {num:877,name:'COL-17 Técnico',flag:'🇨🇴',country:'Colombia',group:'Grupo K'},
+  {num:878,name:'COL-18 Escudo',flag:'🇨🇴',country:'Colombia',group:'Grupo K'},
+  {num:879,name:'COL-19 Estadio',flag:'🇨🇴',country:'Colombia',group:'Grupo K'},
+  {num:880,name:'COL-20 Logo Grupo',flag:'🇨🇴',country:'Colombia',group:'Grupo K'},
+  {num:881,name:'ENG-01 Portero 1',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra',group:'Grupo L'},
+  {num:882,name:'ENG-02 Portero 2',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra',group:'Grupo L'},
+  {num:883,name:'ENG-03 Defensa 1',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra',group:'Grupo L'},
+  {num:884,name:'ENG-04 Defensa 2',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra',group:'Grupo L'},
+  {num:885,name:'ENG-05 Defensa 3',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra',group:'Grupo L'},
+  {num:886,name:'ENG-06 Defensa 4',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra',group:'Grupo L'},
+  {num:887,name:'ENG-07 Mediocampista 1',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra',group:'Grupo L'},
+  {num:888,name:'ENG-08 Mediocampista 2',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra',group:'Grupo L'},
+  {num:889,name:'ENG-09 Mediocampista 3',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra',group:'Grupo L'},
+  {num:890,name:'ENG-10 Mediocampista 4',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra',group:'Grupo L'},
+  {num:891,name:'ENG-11 Delantero 1',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra',group:'Grupo L'},
+  {num:892,name:'ENG-12 Delantero 2',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra',group:'Grupo L'},
+  {num:893,name:'ENG-13 Delantero 3',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra',group:'Grupo L'},
+  {num:894,name:'ENG-14 Capitán',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra',group:'Grupo L'},
+  {num:895,name:'ENG-15 Figura',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra',group:'Grupo L'},
+  {num:896,name:'ENG-16 Promesa',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra',group:'Grupo L'},
+  {num:897,name:'ENG-17 Técnico',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra',group:'Grupo L'},
+  {num:898,name:'ENG-18 Escudo',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra',group:'Grupo L'},
+  {num:899,name:'ENG-19 Estadio',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra',group:'Grupo L'},
+  {num:900,name:'ENG-20 Logo Grupo',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',country:'Inglaterra',group:'Grupo L'},
+  {num:901,name:'CRO-01 Portero 1',flag:'🇭🇷',country:'Croacia',group:'Grupo L'},
+  {num:902,name:'CRO-02 Portero 2',flag:'🇭🇷',country:'Croacia',group:'Grupo L'},
+  {num:903,name:'CRO-03 Defensa 1',flag:'🇭🇷',country:'Croacia',group:'Grupo L'},
+  {num:904,name:'CRO-04 Defensa 2',flag:'🇭🇷',country:'Croacia',group:'Grupo L'},
+  {num:905,name:'CRO-05 Defensa 3',flag:'🇭🇷',country:'Croacia',group:'Grupo L'},
+  {num:906,name:'CRO-06 Defensa 4',flag:'🇭🇷',country:'Croacia',group:'Grupo L'},
+  {num:907,name:'CRO-07 Mediocampista 1',flag:'🇭🇷',country:'Croacia',group:'Grupo L'},
+  {num:908,name:'CRO-08 Mediocampista 2',flag:'🇭🇷',country:'Croacia',group:'Grupo L'},
+  {num:909,name:'CRO-09 Mediocampista 3',flag:'🇭🇷',country:'Croacia',group:'Grupo L'},
+  {num:910,name:'CRO-10 Mediocampista 4',flag:'🇭🇷',country:'Croacia',group:'Grupo L'},
+  {num:911,name:'CRO-11 Delantero 1',flag:'🇭🇷',country:'Croacia',group:'Grupo L'},
+  {num:912,name:'CRO-12 Delantero 2',flag:'🇭🇷',country:'Croacia',group:'Grupo L'},
+  {num:913,name:'CRO-13 Delantero 3',flag:'🇭🇷',country:'Croacia',group:'Grupo L'},
+  {num:914,name:'CRO-14 Capitán',flag:'🇭🇷',country:'Croacia',group:'Grupo L'},
+  {num:915,name:'CRO-15 Figura',flag:'🇭🇷',country:'Croacia',group:'Grupo L'},
+  {num:916,name:'CRO-16 Promesa',flag:'🇭🇷',country:'Croacia',group:'Grupo L'},
+  {num:917,name:'CRO-17 Técnico',flag:'🇭🇷',country:'Croacia',group:'Grupo L'},
+  {num:918,name:'CRO-18 Escudo',flag:'🇭🇷',country:'Croacia',group:'Grupo L'},
+  {num:919,name:'CRO-19 Estadio',flag:'🇭🇷',country:'Croacia',group:'Grupo L'},
+  {num:920,name:'CRO-20 Logo Grupo',flag:'🇭🇷',country:'Croacia',group:'Grupo L'},
+  {num:921,name:'GHA-01 Portero 1',flag:'🇬🇭',country:'Ghana',group:'Grupo L'},
+  {num:922,name:'GHA-02 Portero 2',flag:'🇬🇭',country:'Ghana',group:'Grupo L'},
+  {num:923,name:'GHA-03 Defensa 1',flag:'🇬🇭',country:'Ghana',group:'Grupo L'},
+  {num:924,name:'GHA-04 Defensa 2',flag:'🇬🇭',country:'Ghana',group:'Grupo L'},
+  {num:925,name:'GHA-05 Defensa 3',flag:'🇬🇭',country:'Ghana',group:'Grupo L'},
+  {num:926,name:'GHA-06 Defensa 4',flag:'🇬🇭',country:'Ghana',group:'Grupo L'},
+  {num:927,name:'GHA-07 Mediocampista 1',flag:'🇬🇭',country:'Ghana',group:'Grupo L'},
+  {num:928,name:'GHA-08 Mediocampista 2',flag:'🇬🇭',country:'Ghana',group:'Grupo L'},
+  {num:929,name:'GHA-09 Mediocampista 3',flag:'🇬🇭',country:'Ghana',group:'Grupo L'},
+  {num:930,name:'GHA-10 Mediocampista 4',flag:'🇬🇭',country:'Ghana',group:'Grupo L'},
+  {num:931,name:'GHA-11 Delantero 1',flag:'🇬🇭',country:'Ghana',group:'Grupo L'},
+  {num:932,name:'GHA-12 Delantero 2',flag:'🇬🇭',country:'Ghana',group:'Grupo L'},
+  {num:933,name:'GHA-13 Delantero 3',flag:'🇬🇭',country:'Ghana',group:'Grupo L'},
+  {num:934,name:'GHA-14 Capitán',flag:'🇬🇭',country:'Ghana',group:'Grupo L'},
+  {num:935,name:'GHA-15 Figura',flag:'🇬🇭',country:'Ghana',group:'Grupo L'},
+  {num:936,name:'GHA-16 Promesa',flag:'🇬🇭',country:'Ghana',group:'Grupo L'},
+  {num:937,name:'GHA-17 Técnico',flag:'🇬🇭',country:'Ghana',group:'Grupo L'},
+  {num:938,name:'GHA-18 Escudo',flag:'🇬🇭',country:'Ghana',group:'Grupo L'},
+  {num:939,name:'GHA-19 Estadio',flag:'🇬🇭',country:'Ghana',group:'Grupo L'},
+  {num:940,name:'GHA-20 Logo Grupo',flag:'🇬🇭',country:'Ghana',group:'Grupo L'},
+  {num:941,name:'PAN-01 Portero 1',flag:'🇵🇦',country:'Panamá',group:'Grupo L'},
+  {num:942,name:'PAN-02 Portero 2',flag:'🇵🇦',country:'Panamá',group:'Grupo L'},
+  {num:943,name:'PAN-03 Defensa 1',flag:'🇵🇦',country:'Panamá',group:'Grupo L'},
+  {num:944,name:'PAN-04 Defensa 2',flag:'🇵🇦',country:'Panamá',group:'Grupo L'},
+  {num:945,name:'PAN-05 Defensa 3',flag:'🇵🇦',country:'Panamá',group:'Grupo L'},
+  {num:946,name:'PAN-06 Defensa 4',flag:'🇵🇦',country:'Panamá',group:'Grupo L'},
+  {num:947,name:'PAN-07 Mediocampista 1',flag:'🇵🇦',country:'Panamá',group:'Grupo L'},
+  {num:948,name:'PAN-08 Mediocampista 2',flag:'🇵🇦',country:'Panamá',group:'Grupo L'},
+  {num:949,name:'PAN-09 Mediocampista 3',flag:'🇵🇦',country:'Panamá',group:'Grupo L'},
+  {num:950,name:'PAN-10 Mediocampista 4',flag:'🇵🇦',country:'Panamá',group:'Grupo L'},
+  {num:951,name:'PAN-11 Delantero 1',flag:'🇵🇦',country:'Panamá',group:'Grupo L'},
+  {num:952,name:'PAN-12 Delantero 2',flag:'🇵🇦',country:'Panamá',group:'Grupo L'},
+  {num:953,name:'PAN-13 Delantero 3',flag:'🇵🇦',country:'Panamá',group:'Grupo L'},
+  {num:954,name:'PAN-14 Capitán',flag:'🇵🇦',country:'Panamá',group:'Grupo L'},
+  {num:955,name:'PAN-15 Figura',flag:'🇵🇦',country:'Panamá',group:'Grupo L'},
+  {num:956,name:'PAN-16 Promesa',flag:'🇵🇦',country:'Panamá',group:'Grupo L'},
+  {num:957,name:'PAN-17 Técnico',flag:'🇵🇦',country:'Panamá',group:'Grupo L'},
+  {num:958,name:'PAN-18 Escudo',flag:'🇵🇦',country:'Panamá',group:'Grupo L'},
+  {num:959,name:'PAN-19 Estadio',flag:'🇵🇦',country:'Panamá',group:'Grupo L'},
+  {num:960,name:'PAN-20 Logo Grupo',flag:'🇵🇦',country:'Panamá',group:'Grupo L'},
 ];
 
 const TRADERS = []; // Solo usuarios reales de Supabase
@@ -789,6 +1700,17 @@ const MEETINGS_SAMPLE = [
 let cardStates = {}; // num -> 'have'|'want'|''
 let currentFilter = 'none';
 let currentCountry = 'Todos';
+let currentGroup = 'Todos';
+
+function filterByGroup(group, btn) {
+  currentGroup = group;
+  currentCountry = 'Todos';
+  document.querySelectorAll('#group-filter-bar .filter-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  // Reset country filter
+  buildCountryFilter();
+  renderCollection();
+}
 let meetings = [...MEETINGS_SAMPLE];
 
 // ── RENDER COLLECTION ──
@@ -864,7 +1786,8 @@ function makeCountryBtn(c, isActive, onclickStr) {
 function buildCountryFilter() {
   const bar = document.getElementById('country-filter-bar');
   if (!bar) return;
-  const countries = ['Todos', ...new Set(STICKERS.map(s => s.country))];
+  const filteredByGroup = currentGroup === 'Todos' ? STICKERS : STICKERS.filter(s => s.group === currentGroup);
+  const countries = ['Todos', ...new Set(filteredByGroup.map(s => s.country))];
   bar.innerHTML = '';
   countries.forEach(c => {
     const isActive = c === currentCountry;
@@ -894,7 +1817,8 @@ function renderCollection() {
       currentFilter === 'none' ? !cardStates[s.num] :
       cardStates[s.num] === currentFilter;
     const matchCountry = currentCountry === 'Todos' || s.country === currentCountry;
-    return matchStatus && matchCountry;
+    const matchGroup = currentGroup === 'Todos' || s.group === currentGroup;
+    return matchStatus && matchCountry && matchGroup;
   });
   if (countEl) countEl.textContent = 'Mostrando ' + filtered.length + ' cromo' + (filtered.length!==1?'s':'') + (currentCountry!=='Todos'?' de '+currentCountry:'');
   grid.innerHTML = filtered.map(s => {
@@ -938,6 +1862,30 @@ async function toggleCard(num) {
     } catch(e) { console.log('Error en toggleCard:', e); }
   }
   renderCollection();
+}
+
+function switchCromosTab(tab, btn) {
+  // Hide all panels
+  document.getElementById('panel-todos').style.display = 'none';
+  document.getElementById('panel-repetidos').style.display = 'none';
+  document.getElementById('panel-faltantes').style.display = 'none';
+  // Reset tab styles
+  ['tab-todos','tab-repetidos','tab-faltantes'].forEach(id => {
+    const b = document.getElementById(id);
+    if (b) { b.style.background = 'none'; b.style.color = 'var(--gray)'; }
+  });
+  // Activate selected
+  if (btn) { btn.style.background = 'var(--gold)'; btn.style.color = 'var(--pitch)'; }
+  if (tab === 'todos') {
+    document.getElementById('panel-todos').style.display = 'block';
+    renderCollection();
+  } else if (tab === 'repetidos') {
+    document.getElementById('panel-repetidos').style.display = 'block';
+    renderSubCollection('rep', 'have');
+  } else if (tab === 'faltantes') {
+    document.getElementById('panel-faltantes').style.display = 'block';
+    renderSubCollection('fal', 'want');
+  }
 }
 
 function filterCards(f, btn) {
@@ -1014,26 +1962,49 @@ function clearCitySearch() {
 
 // ── RENDER TRADERS ──
 function getMatchData(t) {
-  // What I have that trader wants
   const myHave = Object.keys(cardStates).filter(n => cardStates[n] === 'have').map(Number);
   const myWant = Object.keys(cardStates).filter(n => cardStates[n] === 'want').map(Number);
   const theirHaveNums = (t.haveNums || []);
   const theirWantNums = (t.wantNums || []);
+  // Cromos que yo tengo y el otro necesita
   const iCanGive = myHave.filter(n => theirWantNums.includes(n));
-  const iCanGet  = myWant.filter(n => theirHaveNums.includes(n));
-  return { iCanGive, iCanGet };
+  // Cromos que el otro tiene y yo necesito
+  const iCanGet = myWant.filter(n => theirHaveNums.includes(n));
+  // Match real = pares posibles (doy 1, recibo 1)
+  const matchPairs = Math.min(iCanGive.length, iCanGet.length);
+  return { iCanGive, iCanGet, matchPairs };
+}
+
+function getMatchScore(t) {
+  const m = getMatchData(t);
+  return m.matchPairs;
 }
 
 function traderCard(t, showMatch) {
   const match = showMatch ? getMatchData(t) : null;
   const username = t.username ? '@' + t.username : '';
   const profileUrl = window.location.origin + window.location.pathname + '?user=' + (t.username || t.name);
-  const matchHTML = match ? `
-    <div style="margin:10px 0;padding:10px;background:rgba(82,224,156,.06);border:1px solid rgba(82,224,156,.2);border-radius:8px;">
-      <div style="font-size:11px;color:var(--gray);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;">🤝 Match de intercambio</div>
-      ${match.iCanGive.length ? `<div style="font-size:12px;margin-bottom:4px;">Yo le doy: ${match.iCanGive.map(n=>{const s=STICKERS.find(x=>x.num===n);return s?'<span class="tag have" style="font-size:10px;">'+s.flag+' #'+n+' '+s.name+'</span>':''}).join(' ')}</div>` : '<div style="font-size:12px;color:var(--gray);">No tengo lo que necesita</div>'}
-      ${match.iCanGet.length ? `<div style="font-size:12px;margin-top:4px;">Yo recibo: ${match.iCanGet.map(n=>{const s=STICKERS.find(x=>x.num===n);return s?'<span class="tag want" style="font-size:10px;">'+s.flag+' #'+n+' '+s.name+'</span>':''}).join(' ')}</div>` : '<div style="font-size:12px;color:var(--gray);">No tiene lo que me falta</div>'}
-    </div>` : '';
+  const matchHTML = match ? (function() {
+    if (match.matchPairs === 0) {
+      return '<div style="margin:10px 0;padding:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;font-size:12px;color:var(--gray);">Sin match directo de intercambio</div>';
+    }
+    const pairs = Math.min(match.iCanGive.length, match.iCanGet.length);
+    let html = '<div style="margin:10px 0;padding:10px;background:rgba(82,224,156,.06);border:1px solid rgba(82,224,156,.3);border-radius:8px;">';
+    html += '<div style="font-size:11px;color:var(--success);font-weight:700;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;">🤝 ' + pairs + ' intercambio' + (pairs>1?'s':'') + ' posible' + (pairs>1?'s':'') + '</div>';
+    for (let i = 0; i < pairs; i++) {
+      const give = STICKERS.find(x => x.num === match.iCanGive[i]);
+      const get = STICKERS.find(x => x.num === match.iCanGet[i]);
+      if (give && get) {
+        html += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:12px;">';
+        html += '<span class="tag have" style="font-size:10px;">' + give.flag + ' ' + give.name + '</span>';
+        html += '<span style="color:var(--gray);">⇄</span>';
+        html += '<span class="tag want" style="font-size:10px;">' + get.flag + ' ' + get.name + '</span>';
+        html += '</div>';
+      }
+    }
+    html += '</div>';
+    return html;
+  })() : '';
   const haveLabel = t.have.slice(0,4).map(h=>`<span class="tag have">✓ ${h}</span>`).join('') + (t.have.length>4?`<span style="font-size:10px;color:var(--gray);"> +${t.have.length-4} más</span>`:'');
   const wantLabel = t.want.slice(0,3).map(w=>`<span class="tag want">★ ${w}</span>`).join('') + (t.want.length>3?`<span style="font-size:10px;color:var(--gray);"> +${t.want.length-3} más</span>`:'');
   return `<div class="trader-card" id="user-${t.username||t.name}">
@@ -1055,7 +2026,7 @@ function traderCard(t, showMatch) {
     <div class="trader-tags" style="margin-bottom:6px;">${wantLabel}</div>
     ${matchHTML}
     <div class="trader-actions" style="margin-top:8px;">
-      <button class="btn-sm btn-propose" onclick="proposeTrader('${t.name}')">📤 Proponer Intercambio</button>
+      <button class="btn-sm btn-propose" onclick="proposeTrader('${t.name}','${t.supaId||''}')">📤 Proponer Intercambio</button>
       <button class="btn-sm btn-msg" onclick="showToast('Mensaje enviado a ${t.name}!')">💬 Mensaje</button>
     </div>
   </div>`;
@@ -1104,42 +2075,67 @@ async function renderTraders() {
     }
   }
 
-  // Combine real users with test users (avoid duplicates)
-  const realUsernames = realUsers.map(u => u.username);
-  const filteredTest = TRADERS.filter(t => !realUsernames.includes(t.username));
-  let list = [...realUsers, ...filteredTest];
+  // Only real users - no test data
+  let list = [...realUsers];
 
   if (activeCity) {
     const q = activeCity.toLowerCase();
     list = list.filter(t => (t.city||'').toLowerCase().includes(q) || (t.cities||[]).some(c => c.toLowerCase().includes(q)));
   }
 
+  // Sort by match score (most matches first)
+  list.sort((a, b) => getMatchScore(b) - getMatchScore(a));
+
+  // Update real trader count in stats
+  const statTraders = document.getElementById('stat-traders');
+  if (statTraders) statTraders.textContent = list.length;
+
   if (status) status.textContent = activeCity
     ? list.length + ' coleccionista' + (list.length>1?'s':'') + ' cerca de "' + activeCity + '"'
-    : 'Mostrando ' + list.length + ' coleccionistas';
+    : list.length + ' coleccionista' + (list.length>1?'s':'')+' registrado'+(list.length>1?'s':'');
 
   if (!list.length) {
     grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🌍</div><div>No hay coleccionistas en <strong>' + activeCity + '</strong>.</div></div>';
     return;
   }
+  window._lastTraderList = list;
   grid.innerHTML = list.map(t => traderCard(t, true)).join('');
 }
 
-function proposeTrader(name) {
-  document.getElementById('m-partner').value = name;
+function proposeTrader(name, traderId) {
+  // Find trader in cached list
+  const trader = (window._lastTraderList || []).find(t => t.name === name || t.username === name) || null;
   openModal();
+  // Auto-fill partner
+  if (traderId) {
+    selectedPartnerId = traderId;
+    document.getElementById('m-partner-id').value = traderId;
+    document.getElementById('m-partner').value = name;
+    document.getElementById('m-partner-search').value = name + (trader && trader.username ? ' @' + trader.username : '');
+  }
+  // Auto-fill match cromos
+  if (trader) {
+    const match = getMatchData(trader);
+    if (match.iCanGive.length > 0) {
+      const giveLabels = match.iCanGive.slice(0, match.matchPairs).map(n => {
+        const s = STICKERS.find(x => x.num === n);
+        return s ? '#' + n + ' ' + s.name : '#' + n;
+      });
+      document.getElementById('m-give').value = giveLabels.join(', ');
+    }
+    if (match.iCanGet.length > 0) {
+      const getLabels = match.iCanGet.slice(0, match.matchPairs).map(n => {
+        const s = STICKERS.find(x => x.num === n);
+        return s ? '#' + n + ' ' + s.name : '#' + n;
+      });
+      document.getElementById('m-recv').value = getLabels.join(', ');
+    }
+  }
 }
 
 // ── RENDER MEETINGS ──
 let currentMeetTab = 'pendientes';
 let cachedUsers = [];
-
-function switchMeetTab(tab, btn) {
-  currentMeetTab = tab;
-  document.querySelectorAll('#tab-pendientes,#tab-confirmados,#tab-recibidos').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  renderMeetings();
-}
 
 async function renderMeetings() {
   const list = document.getElementById('meetings-list');
@@ -1155,7 +2151,6 @@ async function renderMeetings() {
     const { data: { session } } = await sb.auth.getSession();
     const uid = session?.user?.id || currentUserId;
 
-    // Load all users for name lookup
     if (!cachedUsers.length) {
       const u = await supaFetch('perfiles', { method: 'SELECT' });
       if (u) cachedUsers = u;
@@ -1166,73 +2161,37 @@ async function renderMeetings() {
       return u ? (u.nombre || u.username) : 'Usuario';
     };
 
-    let encuentros = [];
-    if (currentMeetTab === 'pendientes') {
-      // Propuestas que YO envié y están pendientes
-      const { data } = await sb.from('encuentros').select('*').eq('de_user_id', uid).eq('estado', 'pendiente').order('created_at', { ascending: false });
-      encuentros = data || [];
-      if (!encuentros.length) {
-        list.innerHTML = '<div class="empty"><div class="empty-icon">📤</div><div>No tienes propuestas pendientes.<br><span style="font-size:12px;color:var(--gray)">¡Propón un intercambio!</span></div></div>';
-        return;
-      }
-      list.innerHTML = encuentros.map(e => `
-        <div class="meeting-card" style="border-color:rgba(245,197,24,.3);">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-            <div style="font-size:13px;font-weight:700;">Para: ${getName(e.para_user_id)}</div>
-            <div style="font-size:11px;background:rgba(245,197,24,.15);color:var(--gold);padding:3px 8px;border-radius:999px;">⏳ Pendiente</div>
-          </div>
-          <div style="font-size:12px;color:var(--gray);margin-bottom:6px;">📍 ${e.lugar} · 📅 ${e.fecha} · 🕐 ${e.hora === '15:00' ? '3:00 PM' : '5:00 PM'}</div>
-          <div class="meeting-exchange">
-            <span class="exchange-chip">Dar: ${e.cromos_dar || '-'}</span>
-            <span class="arrow">⇄</span>
-            <span class="exchange-chip want">Recibir: ${e.cromos_recibir || '-'}</span>
-          </div>
-        </div>`).join('');
+    const horaLabel = (h) => h === '15:00' ? '3:00 PM' : '5:00 PM';
 
-    } else if (currentMeetTab === 'confirmados') {
-      const { data } = await sb.from('encuentros').select('*')
-        .or('de_user_id.eq.' + uid + ',para_user_id.eq.' + uid)
-        .eq('estado', 'confirmado').order('created_at', { ascending: false });
-      encuentros = data || [];
-      if (!encuentros.length) {
-        list.innerHTML = '<div class="empty"><div class="empty-icon">✅</div><div>No tienes intercambios confirmados aún.</div></div>';
-        return;
-      }
-      list.innerHTML = encuentros.map(e => {
-        const esMio = e.de_user_id === uid;
-        const otro = esMio ? getName(e.para_user_id) : getName(e.de_user_id);
-        return `<div class="meeting-card" style="border-color:rgba(82,224,156,.4);">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-            <div style="font-size:13px;font-weight:700;">Con: ${otro}</div>
-            <div style="font-size:11px;background:rgba(82,224,156,.15);color:var(--success);padding:3px 8px;border-radius:999px;">✅ Confirmado</div>
-          </div>
-          <div style="font-size:12px;color:var(--gray);margin-bottom:6px;">📍 ${e.lugar} · 📅 ${e.fecha} · 🕐 ${e.hora === '15:00' ? '3:00 PM' : '5:00 PM'}</div>
-          <div class="meeting-exchange">
-            <span class="exchange-chip">Dar: ${e.cromos_dar || '-'}</span>
-            <span class="arrow">⇄</span>
-            <span class="exchange-chip want">Recibir: ${e.cromos_recibir || '-'}</span>
-          </div>
-        </div>`;
-      }).join('');
+    // Load ALL encounters involving this user
+    const { data: enviados } = await sb.from('encuentros').select('*').eq('de_user_id', uid).order('created_at', { ascending: false });
+    const { data: recibidos } = await sb.from('encuentros').select('*').eq('para_user_id', uid).order('created_at', { ascending: false });
 
-    } else if (currentMeetTab === 'recibidos') {
-      const { data } = await sb.from('encuentros').select('*').eq('para_user_id', uid).eq('estado', 'pendiente').order('created_at', { ascending: false });
-      encuentros = data || [];
-      if (!encuentros.length) {
-        list.innerHTML = '<div class="empty"><div class="empty-icon">📬</div><div>No tienes propuestas recibidas.</div></div>';
-        return;
-      }
-      list.innerHTML = encuentros.map(e => `
-        <div class="meeting-card" style="border-color:rgba(82,224,156,.3);">
+    const todosEnviados = enviados || [];
+    const todosRecibidos = recibidos || [];
+
+    if (!todosEnviados.length && !todosRecibidos.length) {
+      list.innerHTML = '<div class="empty"><div class="empty-icon">🤝</div><div>No tienes intercambios aún.<br><span style="font-size:12px;color:var(--gray)">¡Propón uno desde Coleccionistas!</span></div></div>';
+      return;
+    }
+
+    let html = '';
+
+    // ── RECIBIDOS PENDIENTES (acción requerida) ──
+    const pendientesRecibidos = todosRecibidos.filter(e => e.estado === 'pendiente');
+    if (pendientesRecibidos.length) {
+      html += '<div style="font-family:Bebas Neue,sans-serif;font-size:18px;color:var(--success);margin-bottom:10px;">📬 Propuestas recibidas (' + pendientesRecibidos.length + ')</div>';
+      html += pendientesRecibidos.map(e => `
+        <div class="meeting-card" style="border-color:rgba(82,224,156,.4);margin-bottom:12px;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-            <div style="font-size:13px;font-weight:700;">De: ${getName(e.de_user_id)}</div>
-            <div style="font-size:11px;background:rgba(82,224,156,.15);color:var(--success);padding:3px 8px;border-radius:999px;">📬 Nueva propuesta</div>
+            <div style="font-size:14px;font-weight:700;">De: ${getName(e.de_user_id)}</div>
+            <div style="font-size:11px;background:rgba(82,224,156,.15);color:var(--success);padding:3px 8px;border-radius:999px;">📬 Nueva</div>
           </div>
-          <div style="font-size:12px;color:var(--gray);margin-bottom:6px;">📍 ${e.lugar} · 📅 ${e.fecha} · 🕐 ${e.hora === '15:00' ? '3:00 PM' : '5:00 PM'}</div>
+          <div style="font-size:12px;color:var(--gray);margin-bottom:8px;">📍 ${e.lugar} · 📅 ${e.fecha} · 🕐 ${horaLabel(e.hora)}</div>
           <div class="meeting-exchange" style="margin-bottom:12px;">
-            <span class="exchange-chip">Dar: ${e.cromos_dar || '-'}</span>
+            <span class="exchange-chip">Dar: ${e.cromos_dar||'-'}</span>
             <span class="arrow">⇄</span>
-            <span class="exchange-chip want">Recibir: ${e.cromos_recibir || '-'}</span>
+            <span class="exchange-chip want">Recibir: ${e.cromos_recibir||'-'}</span>
           </div>
           <div style="display:flex;gap:8px;">
             <button class="btn-sm btn-propose" onclick="responderEncuentro(${e.id},'confirmado')">✅ Confirmar</button>
@@ -1240,6 +2199,66 @@ async function renderMeetings() {
           </div>
         </div>`).join('');
     }
+
+    // ── CONFIRMADOS ──
+    const confirmados = [...todosEnviados, ...todosRecibidos].filter(e => e.estado === 'confirmado');
+    // Deduplicate
+    const confUniq = confirmados.filter((e,i,a) => a.findIndex(x=>x.id===e.id)===i);
+    if (confUniq.length) {
+      html += '<div style="font-family:Bebas Neue,sans-serif;font-size:18px;color:var(--gold);margin:16px 0 10px;">✅ Confirmados (' + confUniq.length + ')</div>';
+      html += confUniq.map(e => {
+        const esMio = e.de_user_id === uid;
+        const otro = esMio ? getName(e.para_user_id) : getName(e.de_user_id);
+        return `<div class="meeting-card" style="border-color:rgba(245,197,24,.4);margin-bottom:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <div style="font-size:14px;font-weight:700;">Con: ${otro}</div>
+            <div style="font-size:11px;background:rgba(245,197,24,.15);color:var(--gold);padding:3px 8px;border-radius:999px;">✅ Confirmado</div>
+          </div>
+          <div style="font-size:12px;color:var(--gray);margin-bottom:6px;">📍 ${e.lugar} · 📅 ${e.fecha} · 🕐 ${horaLabel(e.hora)}</div>
+          <div class="meeting-exchange">
+            <span class="exchange-chip">Dar: ${e.cromos_dar||'-'}</span>
+            <span class="arrow">⇄</span>
+            <span class="exchange-chip want">Recibir: ${e.cromos_recibir||'-'}</span>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    // ── ENVIADOS PENDIENTES ──
+    const pendientesEnviados = todosEnviados.filter(e => e.estado === 'pendiente');
+    if (pendientesEnviados.length) {
+      html += '<div style="font-family:Bebas Neue,sans-serif;font-size:18px;color:var(--gray);margin:16px 0 10px;">⏳ Enviados pendientes (' + pendientesEnviados.length + ')</div>';
+      html += pendientesEnviados.map(e => `
+        <div class="meeting-card" style="border-color:rgba(255,255,255,.1);margin-bottom:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <div style="font-size:14px;font-weight:700;">Para: ${getName(e.para_user_id)}</div>
+            <div style="font-size:11px;background:rgba(255,255,255,.08);color:var(--gray);padding:3px 8px;border-radius:999px;">⏳ Esperando</div>
+          </div>
+          <div style="font-size:12px;color:var(--gray);margin-bottom:6px;">📍 ${e.lugar} · 📅 ${e.fecha} · 🕐 ${horaLabel(e.hora)}</div>
+          <div class="meeting-exchange">
+            <span class="exchange-chip">Dar: ${e.cromos_dar||'-'}</span>
+            <span class="arrow">⇄</span>
+            <span class="exchange-chip want">Recibir: ${e.cromos_recibir||'-'}</span>
+          </div>
+        </div>`).join('');
+    }
+
+    // ── RECHAZADOS ──
+    const rechazados = [...todosEnviados, ...todosRecibidos].filter(e => e.estado === 'rechazado');
+    const rechUniq = rechazados.filter((e,i,a) => a.findIndex(x=>x.id===e.id)===i);
+    if (rechUniq.length) {
+      html += '<div style="font-family:Bebas Neue,sans-serif;font-size:16px;color:var(--danger);margin:16px 0 10px;opacity:.6;">❌ Rechazados (' + rechUniq.length + ')</div>';
+      html += rechUniq.map(e => {
+        const esMio = e.de_user_id === uid;
+        const otro = esMio ? getName(e.para_user_id) : getName(e.de_user_id);
+        return `<div class="meeting-card" style="border-color:rgba(224,82,82,.2);opacity:.6;margin-bottom:12px;">
+          <div style="font-size:13px;font-weight:700;margin-bottom:6px;">${esMio?'Para':'De'}: ${otro}</div>
+          <div style="font-size:12px;color:var(--gray);">📍 ${e.lugar} · 📅 ${e.fecha}</div>
+        </div>`;
+      }).join('');
+    }
+
+    list.innerHTML = html;
   } catch(err) {
     console.log('Error renderMeetings:', err);
     list.innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div>Error cargando intercambios.</div></div>';
@@ -1262,9 +2281,17 @@ function showSection(id, btn) {
   document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
   if (id === 'traders') renderTraders();
-  if (id === 'meetup') { currentMeetTab='pendientes'; renderMeetings(); }
-  if (id === 'repetidos') renderSubCollection('rep', 'have');
-  if (id === 'faltantes') renderSubCollection('fal', 'want');
+  if (id === 'meetup') { renderMeetings(); }
+  if (id === 'repetidos') {
+    showSection('collection', document.querySelectorAll('.nav-links button')[0]);
+    switchCromosTab('repetidos', document.getElementById('tab-repetidos'));
+    return;
+  }
+  if (id === 'faltantes') {
+    showSection('collection', document.querySelectorAll('.nav-links button')[0]);
+    switchCromosTab('faltantes', document.getElementById('tab-faltantes'));
+    return;
+  }
   if (id === 'buscador') runSearch();
 }
 
