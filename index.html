@@ -537,72 +537,85 @@
 
   <!-- ── SECTION: MEET UP ── -->
   <div class="section" id="section-meetup">
-    <div class="section-title" style="margin-bottom:8px;">Punto de Encuentro <span style="color:var(--gold)">📍</span></div>
-    <p style="color:var(--gray);font-size:13px;margin-bottom:24px;">Elige uno de los dos puntos oficiales de intercambio en Quito.</p>
+    <div class="section-title" style="margin-bottom:8px;">Intercambios <span style="color:var(--gold)">📍</span></div>
+    <p style="color:var(--gray);font-size:13px;margin-bottom:20px;">Propón un intercambio o responde a las propuestas que te llegaron.</p>
 
-    <!-- FIXED MEETING POINTS -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:28px;">
-      <div style="background:var(--card-bg);border:2px solid rgba(245,197,24,.3);border-radius:16px;padding:20px;">
-        <div style="font-size:32px;margin-bottom:10px;">🏬</div>
-        <div style="font-family:Bebas Neue,sans-serif;font-size:22px;color:var(--gold);margin-bottom:4px;">Quicentro Shopping</div>
-        <div style="font-size:13px;color:var(--gray);margin-bottom:12px;">📍 Av. Naciones Unidas y América, Quito</div>
-        <div style="font-size:12px;color:rgba(248,248,242,.7);line-height:1.5;margin-bottom:16px;">Punto de encuentro en la <strong style="color:var(--white)">entrada principal</strong>, frente al food court.</div>
-        <button class="btn-gold" style="width:100%;padding:10px;border-radius:8px;font-size:13px;" onclick="openModalWithPlace('Quicentro Shopping – Entrada Principal, Quito')">+ Agendar aquí</button>
-      </div>
-      <div style="background:var(--card-bg);border:2px solid rgba(82,224,156,.2);border-radius:16px;padding:20px;">
-        <div style="font-size:32px;margin-bottom:10px;">🏘️</div>
-        <div style="font-family:Bebas Neue,sans-serif;font-size:22px;color:var(--success);margin-bottom:4px;">Scala Shopping</div>
-        <div style="font-size:13px;color:var(--gray);margin-bottom:12px;">📍 Av. Interoceánica, Cumbayá</div>
-        <div style="font-size:12px;color:rgba(248,248,242,.7);line-height:1.5;margin-bottom:16px;">Punto de encuentro en la <strong style="color:var(--white)">plaza exterior</strong>, junto a la fuente.</div>
-        <button class="btn-gold" style="width:100%;padding:10px;border-radius:8px;font-size:13px;" onclick="openModalWithPlace('Scala Shopping – Plaza Exterior, Cumbayá')">+ Agendar aquí</button>
-      </div>
+    <button class="btn-gold" style="padding:12px 24px;margin-bottom:24px;" onclick="openModal()">+ Proponer Intercambio</button>
+
+    <!-- TABS -->
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
+      <button class="filter-btn active" id="tab-pendientes" onclick="switchMeetTab('pendientes',this)">⏳ Pendientes</button>
+      <button class="filter-btn" id="tab-confirmados" onclick="switchMeetTab('confirmados',this)">✅ Confirmados</button>
+      <button class="filter-btn" id="tab-recibidos" onclick="switchMeetTab('recibidos',this)">📬 Recibidos</button>
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-      <div>
-        <div class="section-title" style="font-size:20px;margin-bottom:16px;">Próximos <span style="color:var(--gold)">Encuentros</span></div>
-        <div class="meetings-list" id="meetings-list"></div>
-      </div>
-    </div>
+    <div id="meetings-list"></div>
   </div>
 
 </div><!-- /app -->
 
 <!-- PROPOSE MODAL -->
 <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
-  <div class="modal">
-    <h2>Agendar un <span>Encuentro</span></h2>
-    <p class="modal-sub">Elige un lugar público para intercambiar tus cromos.</p>
+  <div class="modal" style="max-width:440px;">
+    <h2>Proponer <span>Intercambio</span></h2>
+    <p class="modal-sub">Propón un encuentro a otro coleccionista.</p>
+
+    <div class="modal-row">
+      <label>Coleccionista</label>
+      <div style="position:relative;">
+        <input type="text" id="m-partner-search" placeholder="Busca por nombre o @usuario..." oninput="searchPartners()" autocomplete="off"
+          style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:10px 12px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;">
+        <div id="partner-suggestions" style="display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--pitch-mid);border:1px solid rgba(245,197,24,.25);border-radius:8px;z-index:50;overflow:hidden;max-height:180px;overflow-y:auto;"></div>
+      </div>
+      <input type="hidden" id="m-partner-id">
+      <input type="hidden" id="m-partner">
+    </div>
+
     <div class="modal-row">
       <label>Lugar del Encuentro</label>
       <select id="m-place" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:10px 12px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;">
-        <option value="Quicentro Shopping – Entrada Principal, Quito" style="background:var(--pitch-mid);">🏬 Quicentro Shopping – Quito</option>
-        <option value="Scala Shopping – Plaza Exterior, Cumbayá" style="background:var(--pitch-mid);">🏘️ Scala Shopping – Cumbayá</option>
+        <option value="Quicentro Shopping – Quito" style="background:var(--pitch-mid);">🏬 Quicentro Shopping – Quito</option>
+        <option value="Scala Shopping – Cumbayá" style="background:var(--pitch-mid);">🏘️ Scala Shopping – Cumbayá</option>
       </select>
     </div>
+
     <div class="modal-row">
-      <label>Fecha y Hora</label>
-      <input type="datetime-local" id="m-time">
+      <label>Fecha</label>
+      <input type="date" id="m-date" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:10px 12px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;">
     </div>
+
     <div class="modal-row">
-      <label>Coleccionista (nombre o usuario)</label>
-      <input type="text" id="m-partner" placeholder="ej. @carlos_futbol">
+      <label>Hora</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div id="hora-3pm" onclick="selectHora('15:00')"
+          style="border:2px solid var(--gold);background:rgba(245,197,24,.07);border-radius:10px;padding:12px;text-align:center;cursor:pointer;">
+          <div style="font-size:20px;">🕒</div>
+          <div style="font-size:14px;font-weight:700;margin-top:4px;">3:00 PM</div>
+        </div>
+        <div id="hora-5pm" onclick="selectHora('17:00')"
+          style="border:2px solid rgba(255,255,255,.1);border-radius:10px;padding:12px;text-align:center;cursor:pointer;">
+          <div style="font-size:20px;">🕔</div>
+          <div style="font-size:14px;font-weight:700;margin-top:4px;">5:00 PM</div>
+        </div>
+      </div>
+      <input type="hidden" id="m-hora" value="15:00">
     </div>
+
     <div class="modal-row">
       <label>Cromos que llevarás (para dar)</label>
-      <input type="text" id="m-give" placeholder="ej. #45 Messi, #112 Ronaldo">
+      <input type="text" id="m-give" placeholder="ej. #6 Caicedo, #22 Hincapié"
+        style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:10px 12px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;">
     </div>
     <div class="modal-row">
       <label>Cromos que recibirás</label>
-      <input type="text" id="m-recv" placeholder="ej. #23 Mbappé, #88 Vinicius">
+      <input type="text" id="m-recv" placeholder="ej. #85 Yamal, #55 Mbappé"
+        style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:10px 12px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;">
     </div>
-    <div class="modal-row">
-      <label>Notas</label>
-      <textarea id="m-notes" rows="2" placeholder="Algún detalle extra…"></textarea>
-    </div>
+
+    <div id="meeting-error" style="font-size:12px;color:var(--danger);min-height:16px;margin-bottom:8px;"></div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
-      <button class="btn-gold" onclick="confirmMeeting()">Confirmar Encuentro ✓</button>
+      <button class="btn-gold" onclick="confirmMeeting()">Enviar Propuesta 📤</button>
     </div>
   </div>
 </div>
@@ -1118,27 +1131,128 @@ function proposeTrader(name) {
 }
 
 // ── RENDER MEETINGS ──
-function renderMeetings() {
+let currentMeetTab = 'pendientes';
+let cachedUsers = [];
+
+function switchMeetTab(tab, btn) {
+  currentMeetTab = tab;
+  document.querySelectorAll('#tab-pendientes,#tab-confirmados,#tab-recibidos').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderMeetings();
+}
+
+async function renderMeetings() {
   const list = document.getElementById('meetings-list');
   if (!list) return;
-  if (!meetings.length) {
-    list.innerHTML = '<div class="empty"><div class="empty-icon">📅</div><div>Aún no tienes encuentros. ¡Agenda uno!</div></div>';
+  list.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div><div>Cargando...</div></div>';
+
+  if (!sb || !currentUserId) {
+    list.innerHTML = '<div class="empty"><div class="empty-icon">🔒</div><div>Inicia sesión para ver tus intercambios.</div></div>';
     return;
   }
-  list.innerHTML = meetings.map((m,i) => `
-    <div class="meeting-card">
-      <div class="meeting-top">
-        <div class="meeting-place">📍 ${m.place}</div>
-        <div class="meeting-time">🕐 ${m.time}</div>
-      </div>
-      <div class="meeting-people">Con: <strong>${m.people}</strong></div>
-      <div class="meeting-exchange">
-        ${m.give.map(g=>`<span class="exchange-chip">Dar: ${g}</span>`).join('')}
-        <span class="arrow">⇄</span>
-        ${m.recv.map(r=>`<span class="exchange-chip want">Recibir: ${r}</span>`).join('')}
-      </div>
-    </div>
-  `).join('');
+
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    const uid = session?.user?.id || currentUserId;
+
+    // Load all users for name lookup
+    if (!cachedUsers.length) {
+      const u = await supaFetch('perfiles', { method: 'SELECT' });
+      if (u) cachedUsers = u;
+    }
+
+    const getName = (id) => {
+      const u = cachedUsers.find(x => x.id === id);
+      return u ? (u.nombre || u.username) : 'Usuario';
+    };
+
+    let encuentros = [];
+    if (currentMeetTab === 'pendientes') {
+      // Propuestas que YO envié y están pendientes
+      const { data } = await sb.from('encuentros').select('*').eq('de_user_id', uid).eq('estado', 'pendiente').order('created_at', { ascending: false });
+      encuentros = data || [];
+      if (!encuentros.length) {
+        list.innerHTML = '<div class="empty"><div class="empty-icon">📤</div><div>No tienes propuestas pendientes.<br><span style="font-size:12px;color:var(--gray)">¡Propón un intercambio!</span></div></div>';
+        return;
+      }
+      list.innerHTML = encuentros.map(e => `
+        <div class="meeting-card" style="border-color:rgba(245,197,24,.3);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <div style="font-size:13px;font-weight:700;">Para: ${getName(e.para_user_id)}</div>
+            <div style="font-size:11px;background:rgba(245,197,24,.15);color:var(--gold);padding:3px 8px;border-radius:999px;">⏳ Pendiente</div>
+          </div>
+          <div style="font-size:12px;color:var(--gray);margin-bottom:6px;">📍 ${e.lugar} · 📅 ${e.fecha} · 🕐 ${e.hora === '15:00' ? '3:00 PM' : '5:00 PM'}</div>
+          <div class="meeting-exchange">
+            <span class="exchange-chip">Dar: ${e.cromos_dar || '-'}</span>
+            <span class="arrow">⇄</span>
+            <span class="exchange-chip want">Recibir: ${e.cromos_recibir || '-'}</span>
+          </div>
+        </div>`).join('');
+
+    } else if (currentMeetTab === 'confirmados') {
+      const { data } = await sb.from('encuentros').select('*')
+        .or('de_user_id.eq.' + uid + ',para_user_id.eq.' + uid)
+        .eq('estado', 'confirmado').order('created_at', { ascending: false });
+      encuentros = data || [];
+      if (!encuentros.length) {
+        list.innerHTML = '<div class="empty"><div class="empty-icon">✅</div><div>No tienes intercambios confirmados aún.</div></div>';
+        return;
+      }
+      list.innerHTML = encuentros.map(e => {
+        const esMio = e.de_user_id === uid;
+        const otro = esMio ? getName(e.para_user_id) : getName(e.de_user_id);
+        return `<div class="meeting-card" style="border-color:rgba(82,224,156,.4);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <div style="font-size:13px;font-weight:700;">Con: ${otro}</div>
+            <div style="font-size:11px;background:rgba(82,224,156,.15);color:var(--success);padding:3px 8px;border-radius:999px;">✅ Confirmado</div>
+          </div>
+          <div style="font-size:12px;color:var(--gray);margin-bottom:6px;">📍 ${e.lugar} · 📅 ${e.fecha} · 🕐 ${e.hora === '15:00' ? '3:00 PM' : '5:00 PM'}</div>
+          <div class="meeting-exchange">
+            <span class="exchange-chip">Dar: ${e.cromos_dar || '-'}</span>
+            <span class="arrow">⇄</span>
+            <span class="exchange-chip want">Recibir: ${e.cromos_recibir || '-'}</span>
+          </div>
+        </div>`;
+      }).join('');
+
+    } else if (currentMeetTab === 'recibidos') {
+      const { data } = await sb.from('encuentros').select('*').eq('para_user_id', uid).eq('estado', 'pendiente').order('created_at', { ascending: false });
+      encuentros = data || [];
+      if (!encuentros.length) {
+        list.innerHTML = '<div class="empty"><div class="empty-icon">📬</div><div>No tienes propuestas recibidas.</div></div>';
+        return;
+      }
+      list.innerHTML = encuentros.map(e => `
+        <div class="meeting-card" style="border-color:rgba(82,224,156,.3);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <div style="font-size:13px;font-weight:700;">De: ${getName(e.de_user_id)}</div>
+            <div style="font-size:11px;background:rgba(82,224,156,.15);color:var(--success);padding:3px 8px;border-radius:999px;">📬 Nueva propuesta</div>
+          </div>
+          <div style="font-size:12px;color:var(--gray);margin-bottom:6px;">📍 ${e.lugar} · 📅 ${e.fecha} · 🕐 ${e.hora === '15:00' ? '3:00 PM' : '5:00 PM'}</div>
+          <div class="meeting-exchange" style="margin-bottom:12px;">
+            <span class="exchange-chip">Dar: ${e.cromos_dar || '-'}</span>
+            <span class="arrow">⇄</span>
+            <span class="exchange-chip want">Recibir: ${e.cromos_recibir || '-'}</span>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn-sm btn-propose" onclick="responderEncuentro(${e.id},'confirmado')">✅ Confirmar</button>
+            <button class="btn-sm btn-msg" onclick="responderEncuentro(${e.id},'rechazado')">❌ Rechazar</button>
+          </div>
+        </div>`).join('');
+    }
+  } catch(err) {
+    console.log('Error renderMeetings:', err);
+    list.innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div>Error cargando intercambios.</div></div>';
+  }
+}
+
+async function responderEncuentro(id, estado) {
+  if (!sb) return;
+  const { error } = await sb.from('encuentros').update({ estado }).eq('id', id);
+  if (!error) {
+    showToast(estado === 'confirmado' ? '¡Intercambio confirmado! 🎉' : 'Propuesta rechazada.');
+    renderMeetings();
+  }
 }
 
 // ── NAV ──
@@ -1148,7 +1262,7 @@ function showSection(id, btn) {
   document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
   if (id === 'traders') renderTraders();
-  if (id === 'meetup') renderMeetings();
+  if (id === 'meetup') { currentMeetTab='pendientes'; renderMeetings(); }
   if (id === 'repetidos') renderSubCollection('rep', 'have');
   if (id === 'faltantes') renderSubCollection('fal', 'want');
   if (id === 'buscador') runSearch();
@@ -1218,36 +1332,126 @@ function runSearch() {
 }
 
 // ── MODAL ──
+let selectedHora = '15:00';
+let selectedPartnerId = null;
+
+function selectHora(hora) {
+  selectedHora = hora;
+  document.getElementById('m-hora').value = hora;
+  document.getElementById('hora-3pm').style.borderColor = hora === '15:00' ? 'var(--gold)' : 'rgba(255,255,255,.1)';
+  document.getElementById('hora-3pm').style.background = hora === '15:00' ? 'rgba(245,197,24,.07)' : 'transparent';
+  document.getElementById('hora-5pm').style.borderColor = hora === '17:00' ? 'var(--gold)' : 'rgba(255,255,255,.1)';
+  document.getElementById('hora-5pm').style.background = hora === '17:00' ? 'rgba(245,197,24,.07)' : 'transparent';
+}
+
+async function searchPartners() {
+  const q = document.getElementById('m-partner-search').value.trim().toLowerCase();
+  const box = document.getElementById('partner-suggestions');
+  selectedPartnerId = null;
+  document.getElementById('m-partner-id').value = '';
+  document.getElementById('m-partner').value = '';
+  if (!q || !sb) { box.style.display = 'none'; return; }
+
+  // Search from cached users
+  if (!cachedUsers.length) {
+    const u = await supaFetch('perfiles', { method: 'SELECT' });
+    if (u) cachedUsers = u;
+  }
+
+  const { data: { session } } = await sb.auth.getSession();
+  const myId = session?.user?.id || currentUserId;
+
+  const matches = cachedUsers.filter(u =>
+    u.id !== myId &&
+    ((u.nombre || '').toLowerCase().includes(q) || (u.username || '').toLowerCase().includes(q))
+  ).slice(0, 6);
+
+  if (!matches.length) { box.style.display = 'none'; return; }
+  box.style.display = 'block';
+  box.innerHTML = '';
+  matches.forEach(function(u) {
+    const div = document.createElement('div');
+    div.style.cssText = 'padding:10px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.05);';
+    div.onmouseover = function() { this.style.background = 'rgba(245,197,24,.1)'; };
+    div.onmouseout = function() { this.style.background = 'none'; };
+    div.innerHTML = '<span style="font-size:20px;">' + (u.emoji||'⚽') + '</span><div><div style="font-size:13px;font-weight:600;">' + (u.nombre||u.username) + '</div><div style="font-size:11px;color:var(--gold);">@' + (u.username||'') + '</div></div>';
+    (function(uid, uname, uuser) {
+      div.onclick = function() { selectPartner(uid, uname, '@' + uuser); };
+    })(u.id, u.nombre||u.username, u.username||'');
+    box.appendChild(div);
+  });
+}
+
+function selectPartner(id, name, username) {
+  selectedPartnerId = id;
+  document.getElementById('m-partner-id').value = id;
+  document.getElementById('m-partner').value = name;
+  document.getElementById('m-partner-search').value = name + ' ' + username;
+  document.getElementById('partner-suggestions').style.display = 'none';
+}
+
 function openModal() {
   document.getElementById('modal-overlay').classList.add('open');
-  const t = new Date(); t.setDate(t.getDate()+1); t.setHours(11,0);
-  document.getElementById('m-time').value = t.toISOString().slice(0,16);
+  // Set default date to tomorrow
+  const t = new Date(); t.setDate(t.getDate()+1);
+  document.getElementById('m-date').value = t.toISOString().split('T')[0];
+  // Reset
+  selectedPartnerId = null;
+  selectedHora = '15:00';
+  document.getElementById('m-partner-search').value = '';
+  document.getElementById('m-partner-id').value = '';
+  document.getElementById('m-give').value = '';
+  document.getElementById('m-recv').value = '';
+  if(document.getElementById('meeting-error')) document.getElementById('meeting-error').textContent = '';
+  selectHora('15:00');
 }
 
 function openModalWithPlace(place) {
   openModal();
   document.getElementById('m-place').value = place;
 }
+
 function closeModal() {
   document.getElementById('modal-overlay').classList.remove('open');
 }
-function confirmMeeting() {
-  const placeEl = document.getElementById('m-place'); const place = placeEl ? (placeEl.value || '').trim() : '';
-  const partner = document.getElementById('m-partner').value.trim();
+
+async function confirmMeeting() {
+  const place = document.getElementById('m-place').value;
+  const date = document.getElementById('m-date').value;
+  const hora = document.getElementById('m-hora').value || '15:00';
   const give = document.getElementById('m-give').value.trim();
   const recv = document.getElementById('m-recv').value.trim();
-  const time = document.getElementById('m-time').value;
-  if (!place || !partner) { alert('Please fill in place and partner.'); return; }
-  const dt = time ? new Date(time).toLocaleString('en-US',{weekday:'short',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : 'TBD';
-  meetings.unshift({
-    place, time: dt, people: partner,
-    give: give ? give.split(',').map(s=>s.trim()) : ['TBD'],
-    recv: recv ? recv.split(',').map(s=>s.trim()) : ['TBD'],
-  });
-  closeModal();
-  renderMeetings();
-  showToast('¡Encuentro agendado! 🎉');
-  showSection('meetup', document.querySelectorAll('.nav-links button')[2]);
+  const errEl = document.getElementById('meeting-error');
+
+  if (!selectedPartnerId) { errEl.textContent = '⚠️ Selecciona un coleccionista de la lista.'; return; }
+  if (!date) { errEl.textContent = '⚠️ Elige una fecha.'; return; }
+
+  if (!sb) { errEl.textContent = '⚠️ Error de conexión.'; return; }
+
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    const uid = session?.user?.id || currentUserId;
+    if (!uid) { errEl.textContent = '⚠️ Inicia sesión primero.'; return; }
+
+    const { error } = await sb.from('encuentros').insert({
+      de_user_id: uid,
+      para_user_id: selectedPartnerId,
+      lugar: place,
+      fecha: date,
+      hora: hora,
+      cromos_dar: give || '-',
+      cromos_recibir: recv || '-',
+      estado: 'pendiente'
+    });
+
+    if (error) { errEl.textContent = '⚠️ Error: ' + error.message; return; }
+
+    closeModal();
+    showToast('¡Propuesta enviada! 📤');
+    showSection('meetup', document.querySelectorAll('.nav-links button')[4]);
+  } catch(e) {
+    errEl.textContent = '⚠️ Error: ' + e.message;
+  }
 }
 
 // ── LOCATION ──
