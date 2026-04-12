@@ -525,12 +525,12 @@
 
     <!-- SEARCH BAR -->
     <div style="display:flex;gap:10px;margin-bottom:8px;flex-wrap:wrap;">
-      <input type="text" id="search-input" placeholder="ej. #22  ó  TomiTest"
+      <input type="text" id="search-input" placeholder="ej. #22  ó  @rafa"
         oninput="runSearch()"
         style="flex:1;min-width:200px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:12px 16px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;">
       <button class="btn-outline" onclick="document.getElementById('search-input').value='';runSearch()" style="padding:12px 16px;border-radius:10px;">✕</button>
     </div>
-    <div style="font-size:11px;color:var(--gray);margin-bottom:20px;">Escribe un número (#22), un nombre de cromo (Caicedo) o un usuario (@TomiTest)</div>
+    <div style="font-size:11px;color:var(--gray);margin-bottom:20px;">Escribe un número (#22), un nombre de cromo (Caicedo) o un usuario (@rafa)</div>
 
     <div id="search-results"></div>
   </div>
@@ -766,33 +766,7 @@ const STICKERS = [
   {num:436,name:'Logo Mundial 2026',flag:'🌍',country:'Especiales'},{num:437,name:'Estadio Azteca',flag:'🏟️',country:'Especiales'},{num:438,name:'SoFi Stadium',flag:'🏟️',country:'Especiales'},{num:439,name:'Arrowhead Stadium',flag:'🏟️',country:'Especiales'},{num:440,name:'MetLife Stadium',flag:'🏟️',country:'Especiales'},{num:441,name:'Estadio Akron',flag:'🏟️',country:'Especiales'},{num:442,name:'AT&T Stadium',flag:'🏟️',country:'Especiales'},{num:443,name:'NRG Stadium',flag:'🏟️',country:'Especiales'},{num:444,name:'Levis Stadium',flag:'🏟️',country:'Especiales'},{num:445,name:'Rose Bowl',flag:'🏟️',country:'Especiales'},{num:446,name:'Mercedes-Benz Stadium',flag:'🏟️',country:'Especiales'},{num:447,name:'Balón Oficial',flag:'⚽',country:'Especiales'},{num:448,name:'Trofeo FIFA',flag:'🏆',country:'Especiales'},
 ];
 
-const TRADERS = [
-  {name:'TomiTest', username:'tomitest', emoji:'⚽', city:'Quito', cities:['quito','ecuador'], punto:'Quicentro Shopping – Quito',
-    haveNums:[1,2,4,6,7,16,17,24,31,32,46,55,61,67,76,85,91,99,106,115],
-    wantNums:[3,5,22,33,56],
-    have:['#1 Escudo Ecu','#2 Domínguez','#4 Hincapié','#7 Gruezo','#16 Escudo Bra','#24 Vinicius Jr','#55 Mbappé','#67 Bellingham','#85 Yamal','#99 Musiala'],
-    want:['#3 Preciado','#5 Torres','#22 Caicedo','#33 Romero','#56 Griezmann'], match:4},
-  {name:'JuanMaTest', username:'juanmatest', emoji:'🏆', city:'Cumbayá', cities:['quito','cumbaya','ecuador'], punto:'Scala Shopping – Cumbayá',
-    haveNums:[3,5,8,9,22,33,34,56,57,62,68,83,100,107,114,121,127],
-    wantNums:[1,4,7,24,85],
-    have:['#3 Preciado','#5 Torres','#8 Cifuentes','#9 Ibarra','#22 Caicedo','#33 Romero','#56 Griezmann','#57 Dembélé','#83 Pedri','#100 Wirtz'],
-    want:['#1 Escudo Ecu','#4 Hincapié','#7 Gruezo','#24 Vinicius','#85 Yamal'], match:5},
-  {name:'IanTest', username:'iantest', emoji:'🔥', city:'Quito', cities:['quito','ecuador'], punto:'Quicentro Shopping – Quito',
-    haveNums:[15,16,19,21,25,36,47,63,78,82,93,101,108,116,122,128,151,166,196,211],
-    wantNums:[6,8,22,31,55],
-    have:['#15 Plaza','#16 Escudo Bra','#19 Marquinhos','#21 Renan Lodi','#25 Rodrygo','#36 Tagliafico','#47 Maignan','#63 Arnold','#78 Carvajal','#82 Rodri'],
-    want:['#6 Caicedo','#8 Cifuentes','#22 Caicedo','#31 Escudo Arg','#55 Mbappé'], match:3},
-  {name:'Sofía R.', username:'sofiar', emoji:'🌺', city:'La Floresta, Quito', cities:['quito','ecuador'], punto:'Quicentro Shopping – Quito',
-    haveNums:[10,11,62,68,77],
-    wantNums:[21,23,85],
-    have:['#10 Valencia','#11 Mena','#62 Pickford','#68 Rice','#77 Simón'],
-    want:['#21 Valencia','#23 Mena','#85 Yamal'], match:2},
-  {name:'Diego P.', username:'diegop', emoji:'🌟', city:'Guayaquil', cities:['guayaquil','ecuador'], punto:'Quicentro Shopping – Quito',
-    haveNums:[14,26,34,58],
-    wantNums:[1,9,55],
-    have:['#14 Estupiñán','#26 Raphinha','#34 Romero','#58 Giroud'],
-    want:['#1 Escudo Ecu','#9 Salah','#55 Mbappé'], match:2},
-];
+const TRADERS = []; // Solo usuarios reales de Supabase
 
 const MEETINGS_SAMPLE = [
   {place:'Parque La Carolina – Fuente Principal', time:'Sábado, Abr 5 · 11:00 AM', people:'@carlos_futbol', give:['#1 Yamal'], recv:['#22 Caicedo']},
@@ -1305,36 +1279,14 @@ async function supaFetch(table, options = {}) {
 // ── AUTH (localStorage) ──
 let accounts = {};
 try { accounts = JSON.parse(localStorage.getItem('ss_accounts') || '{}'); } catch(e) { accounts = {}; }
+// Clear old test accounts
+
+try { localStorage.setItem('ss_accounts', JSON.stringify(accounts)); } catch(err){}
 let currentUserId = null;
 let currentTab = 'signin';
 let showingPwd = false;
 
-// ── TEST USERS ──
-const TEST_USERS = {
-  'tomi@test.com': {
-    pwd: btoa('test1234'),
-    profile: { name:'Tomi', username:'TomiTest', punto:'Quicentro Shopping – Quito', city:'Quito', whatsapp:'', emoji:'⚽' },
-    cards: {1:'have',2:'have',4:'have',6:'have',7:'have',16:'have',17:'have',24:'have',31:'have',32:'have',46:'have',55:'have',61:'have',67:'have',76:'have',85:'have',91:'have',99:'have',106:'have',115:'have',3:'want',5:'want',22:'want',33:'want',56:'want'}
-  },
-  'juanma@test.com': {
-    pwd: btoa('test1234'),
-    profile: { name:'Juan Ma', username:'JuanMaTest', punto:'Scala Shopping – Cumbayá', city:'Cumbayá', whatsapp:'', emoji:'🏆' },
-    cards: {3:'have',5:'have',8:'have',9:'have',11:'have',22:'have',33:'have',34:'have',56:'have',57:'have',62:'have',68:'have',77:'have',83:'have',92:'have',100:'have',107:'have',114:'have',121:'have',127:'have',1:'want',4:'want',7:'want',24:'want',85:'want'}
-  },
-  'ian@test.com': {
-    pwd: btoa('test1234'),
-    profile: { name:'Ian', username:'IanTest', punto:'Quicentro Shopping – Quito', city:'Quito', whatsapp:'', emoji:'🔥' },
-    cards: {15:'have',16:'have',19:'have',21:'have',25:'have',36:'have',47:'have',63:'have',78:'have',82:'have',93:'have',101:'have',108:'have',116:'have',122:'have',128:'have',151:'have',166:'have',196:'have',211:'have',6:'want',8:'want',22:'want',31:'want',55:'want'}
-  }
-};
-
-// Seed test users
-Object.keys(TEST_USERS).forEach(email => {
-  if (!accounts[email]) {
-    accounts[email] = { pwd: TEST_USERS[email].pwd, profile: TEST_USERS[email].profile, cards: TEST_USERS[email].cards };
-    try { localStorage.setItem('ss_accounts', JSON.stringify(accounts)); } catch(e){}
-  }
-});
+// Sin usuarios de prueba — solo usuarios reales
 
 function closeLoginPopup() {
   document.getElementById('profile-overlay').style.display = 'none';
