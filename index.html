@@ -434,13 +434,21 @@
     <div class="nav-links">
       <button class="active" onclick="showSection('collection', this)">Mis Cromos</button>
       <button onclick="showSection('traders', this)">Coleccionistas</button>
-      <button onclick="showSection('buscador', this)">🔍 Buscador</button>
       <button onclick="showSection('meetup', this)">🤝 Intercambios</button>
+      <button onclick="showSection('buscador', this)">🔍 Buscador</button>
     </div>
-    <div id="nav-profile" onclick="document.getElementById('profile-overlay').style.display='flex';initProfileModal();"
-      style="cursor:pointer;font-size:13px;padding:7px 14px;border-radius:999px;border:1px solid rgba(245,197,24,.25);display:flex;align-items:center;gap:6px;transition:.2s;"
-      onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='rgba(245,197,24,.25)'">
-      ⚽ <strong>Mi Perfil</strong>
+    <div style="display:flex;gap:6px;align-items:center;">
+      <div id="nav-profile" onclick="document.getElementById('profile-overlay').style.display='flex';initProfileModal();"
+        style="cursor:pointer;font-size:13px;padding:7px 14px;border-radius:999px;border:1px solid rgba(245,197,24,.25);display:flex;align-items:center;gap:6px;transition:.2s;"
+        onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='rgba(245,197,24,.25)'">
+        ⚽ <strong>Mi Perfil</strong>
+      </div>
+      <button onclick="logOut()" title="Cerrar sesión"
+        style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--gray);padding:7px 12px;border-radius:999px;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;transition:.2s;"
+        onmouseover="this.style.borderColor='var(--danger)';this.style.color='var(--danger)'"
+        onmouseout="this.style.borderColor='rgba(255,255,255,.1)';this.style.color='var(--gray)'">
+        ↩ Salir
+      </button>
     </div>
   </div>
 
@@ -701,7 +709,19 @@
 
       <div id="auth-error" style="font-size:12px;color:var(--danger);margin-bottom:10px;min-height:16px;text-align:center;"></div>
       <button class="btn-gold" style="width:100%;padding:13px;font-size:15px;" id="auth-btn" onclick="handleAuth()">Iniciar Sesión →</button>
-      <p style="font-size:11px;color:var(--gray);text-align:center;margin-top:12px;">Tus datos se guardan en este navegador.</p>
+      <p id="forgot-link" style="font-size:12px;color:var(--gold);text-align:center;margin-top:12px;cursor:pointer;text-decoration:underline;" onclick="showForgotPassword()">¿Olvidaste tu contraseña?</p>
+
+      <!-- FORGOT PASSWORD PANEL -->
+      <div id="forgot-panel" style="display:none;margin-top:16px;padding:16px;background:rgba(255,255,255,.05);border-radius:10px;border:1px solid rgba(255,255,255,.1);">
+        <div style="font-size:14px;font-weight:600;margin-bottom:8px;">Restablecer contraseña</div>
+        <p style="font-size:12px;color:var(--gray);margin-bottom:12px;">Te enviaremos un correo para restablecer tu contraseña.</p>
+        <input type="email" id="forgot-email" placeholder="tú@correo.com" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:10px 12px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;margin-bottom:10px;">
+        <div id="forgot-msg" style="font-size:12px;min-height:16px;margin-bottom:8px;text-align:center;"></div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-cancel" onclick="hideForgotPassword()" style="flex:1;padding:10px;">Cancelar</button>
+          <button class="btn-gold" onclick="sendResetEmail()" style="flex:1;padding:10px;">Enviar correo 📧</button>
+        </div>
+      </div>
     </div>
 
     <!-- STEP 2: PROFILE -->
@@ -2445,6 +2465,25 @@ function selectPartner(id, name, username) {
   document.getElementById('m-partner').value = name;
   document.getElementById('m-partner-search').value = name + ' ' + username;
   document.getElementById('partner-suggestions').style.display = 'none';
+  // Auto-fill match cromos
+  const trader = (window._lastTraderList || []).find(t => t.supaId === id || t.username === username.replace('@',''));
+  if (trader) {
+    const match = getMatchData(trader);
+    if (match.iCanGive.length > 0) {
+      const giveLabels = match.iCanGive.slice(0, match.matchPairs || match.iCanGive.length).map(n => {
+        const s = STICKERS.find(x => x.num === n);
+        return s ? '#' + n + ' ' + s.name : '#' + n;
+      });
+      document.getElementById('m-give').value = giveLabels.join(', ');
+    }
+    if (match.iCanGet.length > 0) {
+      const getLabels = match.iCanGet.slice(0, match.matchPairs || match.iCanGet.length).map(n => {
+        const s = STICKERS.find(x => x.num === n);
+        return s ? '#' + n + ' ' + s.name : '#' + n;
+      });
+      document.getElementById('m-recv').value = getLabels.join(', ');
+    }
+  }
 }
 
 function openModal() {
@@ -2515,6 +2554,52 @@ async function confirmMeeting() {
 function setLocation() {
   const el = document.getElementById('location-input');
   if (el && el.value.trim()) showToast('Ubicación guardada: ' + el.value.trim() + ' ✓');
+}
+
+// ── LOGOUT ──
+async function logOut() {
+  if (!sb) return;
+  await sb.auth.signOut();
+  try { localStorage.removeItem('ss_uid'); localStorage.removeItem('ss_email'); localStorage.removeItem('ss_session'); } catch(e){}
+  currentUserId = null;
+  userProfile = { name:'', username:'', city:'', whatsapp:'', emoji:'⚽' };
+  cardStates = {};
+  const np = document.getElementById('nav-profile');
+  if (np) np.innerHTML = '⚽ <strong>Mi Perfil</strong>';
+  document.getElementById('welcome-screen').style.display = 'flex';
+  showToast('¡Hasta luego! 👋');
+}
+
+// ── FORGOT PASSWORD ──
+function showForgotPassword() {
+  document.getElementById('forgot-panel').style.display = 'block';
+  document.getElementById('forgot-link').style.display = 'none';
+  const email = document.getElementById('p-email').value;
+  if (email) document.getElementById('forgot-email').value = email;
+}
+
+function hideForgotPassword() {
+  document.getElementById('forgot-panel').style.display = 'none';
+  document.getElementById('forgot-link').style.display = 'block';
+  document.getElementById('forgot-msg').textContent = '';
+}
+
+async function sendResetEmail() {
+  const email = document.getElementById('forgot-email').value.trim();
+  const msgEl = document.getElementById('forgot-msg');
+  if (!email) { msgEl.style.color = 'var(--danger)'; msgEl.textContent = '⚠️ Ingresa tu correo.'; return; }
+  if (!sb) { msgEl.style.color = 'var(--danger)'; msgEl.textContent = '⚠️ Error de conexión.'; return; }
+  msgEl.style.color = 'var(--gray)'; msgEl.textContent = 'Enviando...';
+  const { error } = await sb.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + window.location.pathname
+  });
+  if (error) {
+    msgEl.style.color = 'var(--danger)';
+    msgEl.textContent = '⚠️ ' + error.message;
+  } else {
+    msgEl.style.color = 'var(--success)';
+    msgEl.textContent = '✅ ¡Correo enviado! Revisa tu bandeja.';
+  }
 }
 
 // ── TOAST ──
