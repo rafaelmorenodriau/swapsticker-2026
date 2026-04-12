@@ -1322,7 +1322,7 @@ function togglePwd() {
   document.getElementById('pwd-eye').textContent = showingPwd ? '🙈' : '👁';
 }
 
-function handleAuth() {
+async function handleAuth() {
   const email = document.getElementById('p-email').value.trim().toLowerCase();
   const pwd = document.getElementById('p-password').value;
   const errEl = document.getElementById('auth-error');
@@ -1333,33 +1333,54 @@ function handleAuth() {
   if (!email.includes('@') || !email.includes('.')) { errEl.textContent = '⚠️ Correo inválido.'; return; }
   if (pwd.length < 6) { errEl.textContent = '⚠️ Mínimo 6 caracteres.'; return; }
 
-  if (currentTab === 'register') {
-    const confirm = document.getElementById('p-confirm').value;
-    if (pwd !== confirm) { errEl.textContent = '⚠️ Las contraseñas no coinciden.'; return; }
-    if (accounts[email]) { errEl.textContent = '⚠️ Ya existe una cuenta con este correo.'; return; }
-    accounts[email] = { pwd: btoa(pwd), profile: null, cards: {} };
-    try { localStorage.setItem('ss_accounts', JSON.stringify(accounts)); } catch(e){}
-    try { localStorage.setItem('ss_current', email); } catch(e){}
-    currentUserId = email;
-    goToStep2();
-  } else {
-    if (!accounts[email]) { errEl.textContent = '⚠️ No encontramos esta cuenta.'; return; }
-    const stored = accounts[email].pwd;
-    if (stored !== btoa(pwd) && stored !== pwd) { errEl.textContent = '⚠️ Contraseña incorrecta.'; return; }
-    try { localStorage.setItem('ss_current', email); } catch(e){}
-    currentUserId = email;
-    if (accounts[email].profile) {
-      userProfile = accounts[email].profile;
-      selectedEmoji = userProfile.emoji;
-      cardStates = accounts[email].cards || {};
-      document.getElementById('profile-overlay').style.display = 'none';
-      updateNavProfile();
-      buildCountryFilter();
-      renderCollection();
-      showToast('¡Bienvenido de vuelta, ' + userProfile.name + '! 👋');
-    } else {
+  btn.textContent = '⏳ Cargando...'; btn.disabled = true;
+
+  try {
+    if (currentTab === 'register') {
+      const confirm = document.getElementById('p-confirm').value;
+      if (pwd !== confirm) { errEl.textContent = '⚠️ Las contraseñas no coinciden.'; btn.disabled=false; btn.textContent='Crear Cuenta →'; return; }
+
+      const { data, error } = await sb.auth.signUp({ email, password: pwd });
+      if (error) { errEl.textContent = '⚠️ ' + error.message; btn.disabled=false; btn.textContent='Crear Cuenta →'; return; }
+
+      const session = data.session?.access_token;
+      const uid = data.user?.id;
+
+      if (!uid) { errEl.textContent = '⚠️ Error al crear cuenta. Intenta de nuevo.'; btn.disabled=false; btn.textContent='Crear Cuenta →'; return; }
+
+      currentUserId = uid;
+      try { localStorage.setItem('ss_uid', uid); localStorage.setItem('ss_email', email); } catch(e){}
+      btn.disabled=false;
       goToStep2();
+
+    } else {
+      const { data, error } = await sb.auth.signInWithPassword({ email, password: pwd });
+      if (error) { errEl.textContent = '⚠️ Correo o contraseña incorrectos.'; btn.disabled=false; btn.textContent='Iniciar Sesión →'; return; }
+
+      currentUserId = data.user?.id;
+      try { localStorage.setItem('ss_uid', currentUserId); localStorage.setItem('ss_email', email); } catch(e){}
+
+      // Load profile from Supabase
+      const perfil = await supaFetch('perfiles', { method: 'SELECT', eq: { id: currentUserId } });
+      if (perfil && perfil.length > 0) {
+        const p = perfil[0];
+        userProfile = { name: p.nombre, username: p.username, emoji: p.emoji, punto: p.punto, city: p.punto };
+        selectedEmoji = userProfile.emoji;
+        // Load cromos
+        const crs = await supaFetch('cromos', { method: 'SELECT', eq: { user_id: currentUserId } });
+        if (crs) { cardStates = {}; crs.forEach(c => { cardStates[c.num] = c.estado; }); }
+        document.getElementById('profile-overlay').style.display = 'none';
+        updateNavProfile(); buildCountryFilter(); renderCollection();
+        showToast('¡Bienvenido de vuelta, ' + userProfile.name + '! 👋');
+      } else {
+        goToStep2();
+      }
+      btn.disabled=false;
     }
+  } catch(e) {
+    errEl.textContent = '⚠️ Error: ' + e.message;
+    btn.disabled=false;
+    btn.textContent = currentTab === 'register' ? 'Crear Cuenta →' : 'Iniciar Sesión →';
   }
 }
 
@@ -1441,18 +1462,29 @@ function updateNavProfile() {
 }
 
 // ── INIT ──
-(function() {
+(async function() {
   try {
-    const email = localStorage.getItem('ss_current');
-    if (email && accounts[email] && accounts[email].profile) {
-      userProfile = accounts[email].profile;
-      selectedEmoji = userProfile.emoji;
-      cardStates = accounts[email].cards || {};
-      currentUserId = email;
-      updateNavProfile();
-      document.getElementById('welcome-screen').style.display = 'none';
+    if (sb) {
+      const { data: { session } } = await sb.auth.getSession();
+      if (session && session.user) {
+        currentUserId = session.user.id;
+        const perfil = await supaFetch('perfiles', { method: 'SELECT', eq: { id: currentUserId } });
+        if (perfil && perfil.length > 0) {
+          const p = perfil[0];
+          userProfile = { name: p.nombre, username: p.username, emoji: p.emoji, punto: p.punto, city: p.punto };
+          selectedEmoji = userProfile.emoji;
+          const crs = await supaFetch('cromos', { method: 'SELECT', eq: { user_id: currentUserId } });
+          if (crs) { cardStates = {}; crs.forEach(c => { cardStates[c.num] = c.estado; }); }
+          updateNavProfile();
+          document.getElementById('welcome-screen').style.display = 'none';
+        } else {
+          document.getElementById('welcome-screen').style.display = 'none';
+          document.getElementById('profile-overlay').style.display = 'flex';
+          initProfileModal();
+        }
+      }
     }
-  } catch(e) {}
+  } catch(e) { console.log('Init error:', e); }
   initProfileModal();
   buildCountryFilter();
   renderCollection();
