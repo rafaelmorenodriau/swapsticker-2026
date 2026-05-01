@@ -474,15 +474,11 @@
       <div class="legend-item"><div class="legend-dot want"></div> Me falta</div>
       <div class="legend-item"><div class="legend-dot none"></div> Sin marcar</div>
     </div>
-    <!-- TABS UNIFICADAS: Todos / Sin marcar / Repetidos / Faltantes -->
+    <!-- TABS UNIFICADAS: Todos / Repetidos / Faltantes -->
     <div style="display:flex;background:rgba(255,255,255,.05);border-radius:10px;padding:3px;margin-bottom:18px;gap:3px;">
       <button id="tab-all" onclick="switchCromosTab('all',this)"
-        style="flex:1;padding:8px 4px;border:none;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:.2s;background:none;color:var(--white);">
-        📋 Todos
-      </button>
-      <button id="tab-todos" onclick="switchCromosTab('todos',this)"
         style="flex:1;padding:8px 4px;border:none;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:.2s;background:var(--gold);color:var(--pitch);">
-        ⚪ Sin marcar
+        📋 Todos
       </button>
       <button id="tab-repetidos" onclick="switchCromosTab('repetidos',this)"
         style="flex:1;padding:8px 4px;border:none;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:.2s;background:none;color:var(--white);">
@@ -544,19 +540,15 @@
     <div class="section-header">
       <div class="section-title">Buscar <span>Coleccionistas</span></div>
     </div>
-    <p style="color:var(--gray);font-size:13px;margin-bottom:16px;">Escribe tu ciudad para encontrar coleccionistas cerca de ti.</p>
+    <p style="color:var(--gray);font-size:13px;margin-bottom:16px;">Busca por nombre o usuario para encontrar coleccionistas con quienes intercambiar.</p>
 
-    <!-- City Search -->
+    <!-- Trader Search by name/username -->
     <div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;">
-      <div style="position:relative;flex:1;min-width:220px;">
-        <input type="text" id="city-input" placeholder="ej. Quito, Guayaquil, Madrid…"
-          oninput="onCityInput()"
-          autocomplete="off"
-          style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:11px 16px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;">
-        <div id="city-suggestions" style="display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--pitch-mid);border:1px solid rgba(245,197,24,.25);border-radius:10px;z-index:50;overflow:hidden;"></div>
-      </div>
-      <button class="btn-gold" onclick="searchByCity()" style="padding:11px 22px;border-radius:10px;font-size:14px;">🔍 Buscar</button>
-      <button class="btn-outline" onclick="clearCitySearch()" style="padding:11px 18px;border-radius:10px;font-size:14px;">✕ Limpiar</button>
+      <input type="text" id="trader-search-input" placeholder="ej. Daniela  ó  @rafa"
+        oninput="renderTraders()"
+        autocomplete="off"
+        style="flex:1;min-width:220px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:11px 16px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;">
+      <button class="btn-outline" onclick="document.getElementById('trader-search-input').value='';renderTraders()" style="padding:11px 18px;border-radius:10px;font-size:14px;">✕ Limpiar</button>
     </div>
     <div id="city-status" style="font-size:12px;color:var(--gray);margin-bottom:18px;min-height:16px;"></div>
 
@@ -1774,7 +1766,7 @@ const MEETINGS_SAMPLE = [
 ];
 
 let cardStates = {}; // num -> 'have'|'want'|''
-let currentFilter = 'none';
+let currentFilter = 'all';
 let currentCountry = 'Todos';
 let currentGroup = 'Todos';
 
@@ -1829,13 +1821,15 @@ function renderSubCollection(prefix, stateFilter) {
   }
 
   grid.innerHTML = filtered.map(s => {
-    const badge = stateFilter === 'have' ? '✓ REPETIDO' : '★ ME FALTA';
-    const num3 = String(s.num).padStart(3,'0');
+    const badge = stateFilter === 'have' ? '🔁 REPETIDO' : '★ ME FALTA';
+    const codeParts = s.name ? s.name.split(' ') : [];
+    const code = codeParts[0] || '';
+    const posName = codeParts.slice(1).join(' ');
     return '<div class="sticker-card ' + stateFilter + '" onclick="toggleCard(' + s.num + ');renderSubCollection(\'' + prefix + '\',\'' + stateFilter + '\')">' +
       '<div class="sticker-badge">' + badge + '</div>' +
       '<div class="sticker-flag">' + s.flag + '</div>' +
-      '<div class="sticker-num">#' + num3 + '</div>' +
-      '<div class="sticker-name">' + s.name + '</div>' +
+      '<div class="sticker-code">' + code + '</div>' +
+      '<div class="sticker-name">' + posName + '</div>' +
     '</div>';
   }).join('');
 }
@@ -1899,18 +1893,16 @@ function renderCollection() {
   if (countEl) countEl.textContent = 'Mostrando ' + filtered.length + ' cromo' + (filtered.length!==1?'s':'') + (currentCountry!=='Todos'?' de '+currentCountry:'');
   grid.innerHTML = filtered.map(s => {
     const state = cardStates[s.num] || '';
-    const num3 = String(s.num).padStart(3,'0');
     const codeParts = s.name ? s.name.split(' ') : [];
     const code = codeParts[0] || '';
     const posName = codeParts.slice(1).join(' ');
     return '<div class="sticker-card ' + state + '" onclick="toggleCard(' + s.num + ')">' +
       '<div class="sticker-card-top">' +
-      (state ? '<div class="sticker-badge">' + (state==='have'?'✓':'★') + '</div>' : '') +
+      (state ? '<div class="sticker-badge">' + (state==='have'?'🔁':'★') + '</div>' : '') +
       '<div class="sticker-flag">' + s.flag + '</div>' +
       '<div class="sticker-code">' + code + '</div>' +
       '</div>' +
       '<div class="sticker-card-bottom">' +
-      '<div class="sticker-num">#' + num3 + '</div>' +
       '<div class="sticker-name">' + posName + '</div>' +
       '</div>' +
       '</div>';
@@ -1955,7 +1947,7 @@ function switchCromosTab(tab, btn) {
   document.getElementById('panel-repetidos').style.display = 'none';
   document.getElementById('panel-faltantes').style.display = 'none';
   // Reset tab styles
-  ['tab-all','tab-todos','tab-repetidos','tab-faltantes'].forEach(id => {
+  ['tab-all','tab-repetidos','tab-faltantes'].forEach(id => {
     const b = document.getElementById(id);
     if (b) { b.style.background = 'none'; b.style.color = 'var(--white)'; }
   });
@@ -1964,10 +1956,6 @@ function switchCromosTab(tab, btn) {
   if (tab === 'all') {
     document.getElementById('panel-todos').style.display = 'block';
     currentFilter = 'all';
-    renderCollection();
-  } else if (tab === 'todos') {
-    document.getElementById('panel-todos').style.display = 'block';
-    currentFilter = 'none';
     renderCollection();
   } else if (tab === 'repetidos') {
     document.getElementById('panel-repetidos').style.display = 'block';
@@ -2076,7 +2064,7 @@ function traderCard(t, showMatch) {
   const profileUrl = window.location.origin + window.location.pathname + '?user=' + (t.username || t.name);
   const matchHTML = match ? (function() {
     if (match.matchPairs === 0) {
-      return '<div style="margin:10px 0;padding:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;font-size:12px;color:var(--gray);">Sin match directo de intercambio</div>';
+      return '<div style="margin:10px 0;padding:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;font-size:12px;color:var(--gray);">Sin intercambios posibles por ahora</div>';
     }
     const pairs = Math.min(match.iCanGive.length, match.iCanGet.length);
     let html = '<div style="margin:10px 0;padding:10px;background:rgba(82,224,156,.06);border:1px solid rgba(82,224,156,.3);border-radius:8px;">';
@@ -2095,25 +2083,19 @@ function traderCard(t, showMatch) {
     html += '</div>';
     return html;
   })() : '';
-  const haveLabel = t.have.slice(0,4).map(h=>`<span class="tag have">✓ ${h}</span>`).join('') + (t.have.length>4?`<span style="font-size:10px;color:var(--gray);"> +${t.have.length-4} más</span>`:'');
-  const wantLabel = t.want.slice(0,3).map(w=>`<span class="tag want">★ ${w}</span>`).join('') + (t.want.length>3?`<span style="font-size:10px;color:var(--gray);"> +${t.want.length-3} más</span>`:'');
   return `<div class="trader-card" id="user-${t.username||t.name}">
     <div class="trader-top">
       <div class="trader-avatar">${t.emoji}</div>
       <div style="flex:1">
         <div class="trader-name" style="font-size:17px;">${t.name}</div>
         <div style="font-size:13px;color:var(--gold);font-weight:700;">${username}</div>
-        <div class="trader-location" style="margin-top:3px;">📍 ${t.city} · 📌 ${t.punto||'Quicentro'}</div>
+        <div class="trader-location" style="margin-top:3px;">📌 ${t.punto||'Quicentro Shopping – Quito'}</div>
       </div>
       <button onclick="copyUrl('${profileUrl}','${t.name}')" title="Copiar link del perfil"
         style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:var(--gray);padding:6px 10px;border-radius:8px;cursor:pointer;font-size:12px;white-space:nowrap;">
         🔗 Link
       </button>
     </div>
-    <div style="font-size:11px;color:var(--gray);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Repetidos (${t.have.length})</div>
-    <div class="trader-tags" style="margin-bottom:8px;">${haveLabel}</div>
-    <div style="font-size:11px;color:var(--gray);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;">Faltantes (${t.want.length})</div>
-    <div class="trader-tags" style="margin-bottom:6px;">${wantLabel}</div>
     ${matchHTML}
     <div class="trader-actions" style="margin-top:8px;">
       <button class="btn-sm btn-propose" onclick="proposeTrader('${t.name}','${t.supaId||''}')">📤 Proponer Intercambio</button>
@@ -2168,9 +2150,14 @@ async function renderTraders() {
   // Only real users - no test data
   let list = [...realUsers];
 
-  if (activeCity) {
-    const q = activeCity.toLowerCase();
-    list = list.filter(t => (t.city||'').toLowerCase().includes(q) || (t.cities||[]).some(c => c.toLowerCase().includes(q)));
+  // Filter by name/username search
+  const searchInput = document.getElementById('trader-search-input');
+  const q = searchInput ? searchInput.value.trim().toLowerCase().replace(/^[@#]/,'') : '';
+  if (q) {
+    list = list.filter(t =>
+      (t.name||'').toLowerCase().includes(q) ||
+      (t.username||'').toLowerCase().includes(q)
+    );
   }
 
   // Sort by match score (most matches first)
@@ -2180,12 +2167,12 @@ async function renderTraders() {
   const statTraders = document.getElementById('stat-traders');
   if (statTraders) statTraders.textContent = list.length;
 
-  if (status) status.textContent = activeCity
-    ? list.length + ' coleccionista' + (list.length>1?'s':'') + ' cerca de "' + activeCity + '"'
-    : list.length + ' coleccionista' + (list.length>1?'s':'')+' registrado'+(list.length>1?'s':'');
+  if (status) status.textContent = q
+    ? list.length + ' coleccionista' + (list.length===1?'':'s') + ' coinciden con "' + q + '"'
+    : list.length + ' coleccionista' + (list.length===1?'':'s')+' registrado'+(list.length===1?'':'s');
 
   if (!list.length) {
-    grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🌍</div><div>No hay coleccionistas en <strong>' + activeCity + '</strong>.</div></div>';
+    grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🔍</div><div>' + (q ? 'No hay coleccionistas que coincidan con <strong>' + q + '</strong>.' : 'Aún no hay coleccionistas registrados.') + '</div></div>';
     return;
   }
   window._lastTraderList = list;
@@ -2425,12 +2412,15 @@ async function runSearch() {
     html += '<div class="card-grid" style="margin-bottom:28px;">';
     stickerMatches.forEach(s => {
       const state = cardStates[s.num] || '';
-      const badge = state === 'have' ? '<div class="sticker-badge">✓ REPETIDO</div>' : state === 'want' ? '<div class="sticker-badge">★ ME FALTA</div>' : '';
+      const badge = state === 'have' ? '<div class="sticker-badge">🔁 REPETIDO</div>' : state === 'want' ? '<div class="sticker-badge">★ ME FALTA</div>' : '';
+      const codeParts = s.name ? s.name.split(' ') : [];
+      const code = codeParts[0] || '';
+      const posName = codeParts.slice(1).join(' ');
       html += `<div class="sticker-card ${state}" onclick="toggleCard(${s.num});runSearch()">
         ${badge}
         <div class="sticker-flag">${s.flag}</div>
-        <div class="sticker-num">#${String(s.num).padStart(3,'0')}</div>
-        <div class="sticker-name">${s.name}</div>
+        <div class="sticker-code">${code}</div>
+        <div class="sticker-name">${posName}</div>
       </div>`;
     });
     html += '</div>';
@@ -2807,6 +2797,7 @@ async function handleAuth() {
         if (crs) { cardStates = {}; crs.forEach(c => { cardStates[c.num] = c.estado; }); }
         document.getElementById('profile-overlay').style.display = 'none';
         updateNavProfile(); buildCountryFilter(); renderCollection();
+        showSection('collection', document.querySelectorAll('.nav-links button')[0]);
         showToast('¡Bienvenido de vuelta, ' + userProfile.name + '! 👋');
       } else {
         goToStep2();
@@ -2958,12 +2949,14 @@ async function onboardingToggle(num) {
 
 function finishOnboarding() {
   document.getElementById('onboarding-overlay').style.display = 'none';
-  showToast('¡Genial! Ahora puedes ver todos los cromos del Mundial 🏆');
+  showSection('collection', document.querySelectorAll('.nav-links button')[0]);
   renderCollection();
+  showToast('¡Genial! Aquí están tus cromos del Mundial 🏆');
 }
 
 function skipOnboarding() {
   document.getElementById('onboarding-overlay').style.display = 'none';
+  showSection('collection', document.querySelectorAll('.nav-links button')[0]);
   renderCollection();
 }
 
