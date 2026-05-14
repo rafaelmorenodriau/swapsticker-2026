@@ -161,9 +161,10 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    padding: 8px 6px 4px;
+    padding: 8px 6px;
     position: relative;
   }
+  .sticker-flag-mini { font-size: 22px; margin-bottom: 4px; font-family: "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif; line-height: 1; }
   .sticker-card.have .sticker-card-top { background: rgba(82,224,156,.08); }
   .sticker-card.want .sticker-card-top { background: rgba(245,197,24,.08); }
   .sticker-card-bottom {
@@ -177,9 +178,9 @@
   }
   .sticker-card.have .sticker-num { color: var(--success); }
   .sticker-card.want .sticker-num { color: var(--gold); }
-  .sticker-name { font-size: 9px; color: var(--gray); line-height: 1.2; margin-top: 1px; }
-  .sticker-flag { font-size: 32px; font-family: "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif; line-height: 1; }
-  .sticker-code { font-size: 10px; font-weight: 700; color: rgba(255,255,255,.3); margin-top: 2px; letter-spacing: 1px; }
+  .sticker-name { font-size: 10px; color: var(--white); line-height: 1.2; font-weight: 600; padding: 2px; }
+  .sticker-flag { display:none; }
+  .sticker-code { font-size: 22px; font-weight: 900; color: var(--gold); letter-spacing: 1px; font-family: "Bebas Neue", sans-serif; }
   .sticker-badge {
     position: absolute; top: 4px; right: 4px;
     font-size: 9px; font-weight: 700;
@@ -694,7 +695,7 @@
       </div>
 
       <div class="modal-row">
-        <label>Tu Nombre</label>
+        <label>Usuario</label>
         <input type="text" id="p-loginname" placeholder="ej. mateo" maxlength="20" autocomplete="off"
           style="text-transform:lowercase;" oninput="this.value=this.value.toLowerCase().replace(/[^a-z0-9_]/g,'');">
       </div>
@@ -1944,19 +1945,15 @@ function renderCollection() {
   if (countEl) countEl.textContent = 'Mostrando ' + filtered.length + ' cromo' + (filtered.length!==1?'s':'') + (currentCountry!=='Todos'?' de '+currentCountry:'');
   grid.innerHTML = filtered.map(s => {
     const state = cardStates[s.num] || '';
-    const num3 = String(s.num).padStart(3,'0');
-    const cnStr = String(s.cn).padStart(2,'0');
-    const code = s.code + '-' + cnStr;
-    const posName = s.name;
+    const albumCode = s.code + ' ' + s.cn;
     return '<div class="sticker-card ' + state + '" onclick="toggleCard(' + s.num + ')">' +
       '<div class="sticker-card-top">' +
       (state ? '<div class="sticker-badge">' + (state==='have'?'✓':'★') + '</div>' : '') +
-      '<div class="sticker-flag">' + s.flag + '</div>' +
-      '<div class="sticker-code">' + code + '</div>' +
+      '<div class="sticker-flag-mini">' + s.flag + '</div>' +
+      '<div class="sticker-code">' + albumCode + '</div>' +
       '</div>' +
       '<div class="sticker-card-bottom">' +
-      '<div class="sticker-num">#' + num3 + '</div>' +
-      '<div class="sticker-name">' + posName + '</div>' +
+      '<div class="sticker-name">' + s.name + '</div>' +
       '</div>' +
       '</div>';
   }).join('');
@@ -2761,8 +2758,8 @@ async function handleAuth() {
   const name = document.getElementById('p-loginname').value.trim().toLowerCase();
   const pin = getPinValue('pin');
 
-  if (!name) { errEl.textContent = '⚠️ Escribe tu nombre.'; return; }
-  if (name.length < 2) { errEl.textContent = '⚠️ Nombre muy corto (mínimo 2 letras).'; return; }
+  if (!name) { errEl.textContent = '⚠️ Escribe tu usuario.'; return; }
+  if (name.length < 2) { errEl.textContent = '⚠️ Usuario muy corto (mínimo 2 letras).'; return; }
   if (pin.length !== 4) { errEl.textContent = '⚠️ Ingresa los 4 dígitos del PIN.'; return; }
 
   btn.textContent = '⏳ Cargando...'; btn.disabled = true;
@@ -2786,7 +2783,7 @@ async function handleAuth() {
       // Verificar si ya existe el username
       const existing = await supaFetch('perfiles', { method: 'SELECT', eq: { username: name } });
       if (existing && existing.length > 0) {
-        errEl.textContent = '⚠️ Ese nombre ya existe. Prueba otro (ej: ' + name + '2)';
+        errEl.textContent = '⚠️ Ese usuario ya existe. Prueba otro (ej: ' + name + '2)';
         btn.disabled = false; btn.textContent = 'Crear Cuenta →'; return;
       }
 
@@ -2817,7 +2814,7 @@ async function handleAuth() {
       // SIGN IN: buscar perfil por username y comparar hash
       const perfiles = await supaFetch('perfiles', { method: 'SELECT', eq: { username: name } });
       if (!perfiles || perfiles.length === 0) {
-        errEl.textContent = '⚠️ No existe un usuario con ese nombre.';
+        errEl.textContent = '⚠️ No existe ese usuario.';
         clearPinBoxes('pin');
         document.getElementById('pin-1').focus();
         btn.disabled = false; btn.textContent = 'Iniciar Sesión →'; return;
@@ -3031,19 +3028,15 @@ function renderOnboardingGrid() {
   const ecuStickers = STICKERS.filter(s => s.country === 'Ecuador');
   grid.innerHTML = ecuStickers.map(s => {
     const state = cardStates[s.num] || '';
-    const num3 = String(s.num).padStart(3,'0');
-    const cnStr = String(s.cn).padStart(2,'0');
-    const code = s.code + '-' + cnStr;
-    const posName = s.name;
+    const albumCode = s.code + ' ' + s.cn;
     return '<div class="sticker-card ' + state + '" onclick="onboardingToggle(' + s.num + ')">' +
       '<div class="sticker-card-top">' +
       (state ? '<div class="sticker-badge">' + (state==='have'?'✓':'★') + '</div>' : '') +
-      '<div class="sticker-flag">' + s.flag + '</div>' +
-      '<div class="sticker-code">' + code + '</div>' +
+      '<div class="sticker-flag-mini">' + s.flag + '</div>' +
+      '<div class="sticker-code">' + albumCode + '</div>' +
       '</div>' +
       '<div class="sticker-card-bottom">' +
-      '<div class="sticker-num">#' + num3 + '</div>' +
-      '<div class="sticker-name">' + posName + '</div>' +
+      '<div class="sticker-name">' + s.name + '</div>' +
       '</div>' +
       '</div>';
   }).join('');
