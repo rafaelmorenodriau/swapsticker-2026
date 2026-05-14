@@ -14,7 +14,7 @@
     --pitch-mid: #0F3D24;
     --pitch-light: #1A5C38;
     --white: #F8F8F2;
-    --gray: #8A8A8A;
+    --gray: #D8D8D8;
     --card-bg: #111C14;
     --danger: #E05252;
     --success: #52E09C;
@@ -161,10 +161,9 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    padding: 8px 6px;
+    padding: 8px 6px 4px;
     position: relative;
   }
-  .sticker-flag-mini { font-size: 22px; margin-bottom: 4px; font-family: "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif; line-height: 1; }
   .sticker-card.have .sticker-card-top { background: rgba(82,224,156,.08); }
   .sticker-card.want .sticker-card-top { background: rgba(245,197,24,.08); }
   .sticker-card-bottom {
@@ -178,9 +177,9 @@
   }
   .sticker-card.have .sticker-num { color: var(--success); }
   .sticker-card.want .sticker-num { color: var(--gold); }
-  .sticker-name { font-size: 10px; color: var(--white); line-height: 1.2; font-weight: 600; padding: 2px; }
-  .sticker-flag { display:none; }
-  .sticker-code { font-size: 22px; font-weight: 900; color: var(--gold); letter-spacing: 1px; font-family: "Bebas Neue", sans-serif; }
+  .sticker-name { font-size: 9px; color: var(--gray); line-height: 1.2; margin-top: 1px; }
+  .sticker-flag { font-size: 32px; font-family: "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif; line-height: 1; }
+  .sticker-code { font-size: 10px; font-weight: 700; color: rgba(255,255,255,.3); margin-top: 2px; letter-spacing: 1px; }
   .sticker-badge {
     position: absolute; top: 4px; right: 4px;
     font-size: 9px; font-weight: 700;
@@ -475,30 +474,28 @@
       <div class="legend-item"><div class="legend-dot want"></div> Me falta</div>
       <div class="legend-item"><div class="legend-dot none"></div> Sin marcar</div>
     </div>
-    <!-- TABS: Mis Cromos / Repetidos / Faltantes -->
-    <div style="display:flex;background:rgba(255,255,255,.05);border-radius:10px;padding:4px;margin-bottom:20px;gap:4px;">
+    <!-- TABS UNIFICADAS: Todos / Sin marcar / Repetidos / Faltantes -->
+    <div style="display:flex;background:rgba(255,255,255,.05);border-radius:10px;padding:3px;margin-bottom:18px;gap:3px;">
+      <button id="tab-all" onclick="switchCromosTab('all',this)"
+        style="flex:1;padding:8px 4px;border:none;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:.2s;background:none;color:var(--white);">
+        📋 Todos
+      </button>
       <button id="tab-todos" onclick="switchCromosTab('todos',this)"
-        style="flex:1;padding:9px;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:.2s;background:var(--gold);color:var(--pitch);">
-        📋 Mis Cromos
+        style="flex:1;padding:8px 4px;border:none;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:.2s;background:var(--gold);color:var(--pitch);">
+        ⚪ Sin marcar
       </button>
       <button id="tab-repetidos" onclick="switchCromosTab('repetidos',this)"
-        style="flex:1;padding:9px;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:.2s;background:none;color:var(--gray);">
+        style="flex:1;padding:8px 4px;border:none;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:.2s;background:none;color:var(--white);">
         🔁 Repetidos
       </button>
       <button id="tab-faltantes" onclick="switchCromosTab('faltantes',this)"
-        style="flex:1;padding:9px;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:.2s;background:none;color:var(--gray);">
+        style="flex:1;padding:8px 4px;border:none;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:.2s;background:none;color:var(--white);">
         ⭐ Faltantes
       </button>
     </div>
 
     <!-- PANEL: Mis Cromos (todos/sin marcar) -->
     <div id="panel-todos">
-    <div class="filter-bar">
-      <button class="filter-btn" onclick="filterCards('all', this)">Todos</button>
-      <button class="filter-btn" onclick="filterCards('have', this)">Repetido</button>
-      <button class="filter-btn" onclick="filterCards('want', this)">Me falta</button>
-      <button class="filter-btn active" onclick="filterCards('none', this)">Sin marcar</button>
-    </div>
 
     <!-- FILTRO POR PAÍS -->
     <div style="margin-bottom:16px;">
@@ -680,12 +677,12 @@
       <div id="step-dot-2" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.1);color:var(--gray);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;">2</div>
     </div>
 
-    <!-- STEP 1: LOGIN -->
+    <!-- STEP 1: NOMBRE + PIN -->
     <div id="step-1">
       <div style="text-align:center;margin-bottom:20px;">
         <div style="font-size:44px;margin-bottom:8px;">🏆</div>
         <h2 style="font-family:Bebas Neue,sans-serif;font-size:26px;">Bienvenido a <span style="color:var(--gold)">Cromos.app</span></h2>
-        <p style="font-size:13px;color:var(--gray);margin-top:6px;">Inicia sesión o crea tu cuenta para empezar a intercambiar.</p>
+        <p style="font-size:13px;color:var(--white);margin-top:6px;">Inicia sesión o crea tu cuenta para empezar a intercambiar.</p>
       </div>
 
       <!-- TABS -->
@@ -693,37 +690,48 @@
         <button id="tab-signin" onclick="switchTab('signin')"
           style="flex:1;padding:9px;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:.2s;background:var(--gold);color:var(--pitch);">Iniciar Sesión</button>
         <button id="tab-register" onclick="switchTab('register')"
-          style="flex:1;padding:9px;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:.2s;background:none;color:var(--gray);">Crear Cuenta</button>
+          style="flex:1;padding:9px;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:.2s;background:none;color:var(--white);">Crear Cuenta</button>
       </div>
 
-      <div class="modal-row"><label>Correo electrónico</label><input type="email" id="p-email" placeholder="tú@correo.com"></div>
       <div class="modal-row">
-        <label>Contraseña</label>
-        <div style="position:relative;">
-          <input type="password" id="p-password" placeholder="Ingresa tu contraseña" style="padding-right:44px;">
-          <button onclick="togglePwd()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--gray);cursor:pointer;font-size:16px;" id="pwd-eye">👁</button>
-        </div>
-      </div>
-      <div class="modal-row" id="confirm-row" style="display:none;">
-        <label>Confirmar Contraseña</label>
-        <input type="password" id="p-confirm" placeholder="Repite tu contraseña">
+        <label>Tu Nombre</label>
+        <input type="text" id="p-loginname" placeholder="ej. mateo" maxlength="20" autocomplete="off"
+          style="text-transform:lowercase;" oninput="this.value=this.value.toLowerCase().replace(/[^a-z0-9_]/g,'');">
       </div>
 
-      <div id="auth-error" style="font-size:12px;color:var(--danger);margin-bottom:10px;min-height:16px;text-align:center;"></div>
+      <div class="modal-row">
+        <label>PIN (4 dígitos)</label>
+        <div id="pin-boxes" style="display:flex;gap:8px;justify-content:center;margin-top:6px;">
+          <input type="tel" inputmode="numeric" maxlength="1" id="pin-1" class="pin-input"
+            style="width:52px;height:62px;text-align:center;font-size:26px;font-weight:700;font-family:'DM Sans',sans-serif;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:var(--white);outline:none;">
+          <input type="tel" inputmode="numeric" maxlength="1" id="pin-2" class="pin-input"
+            style="width:52px;height:62px;text-align:center;font-size:26px;font-weight:700;font-family:'DM Sans',sans-serif;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:var(--white);outline:none;">
+          <input type="tel" inputmode="numeric" maxlength="1" id="pin-3" class="pin-input"
+            style="width:52px;height:62px;text-align:center;font-size:26px;font-weight:700;font-family:'DM Sans',sans-serif;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:var(--white);outline:none;">
+          <input type="tel" inputmode="numeric" maxlength="1" id="pin-4" class="pin-input"
+            style="width:52px;height:62px;text-align:center;font-size:26px;font-weight:700;font-family:'DM Sans',sans-serif;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:var(--white);outline:none;">
+        </div>
+        <div id="pin-hint" style="font-size:11px;color:var(--white);text-align:center;margin-top:8px;display:none;">
+          💡 Sugerencia: usa tu año de nacimiento (ej. 2015)
+        </div>
+      </div>
+
+      <div class="modal-row" id="confirm-pin-row" style="display:none;">
+        <label>Confirmar PIN</label>
+        <div id="pin-boxes-confirm" style="display:flex;gap:8px;justify-content:center;margin-top:6px;">
+          <input type="tel" inputmode="numeric" maxlength="1" id="cpin-1" class="cpin-input"
+            style="width:52px;height:62px;text-align:center;font-size:26px;font-weight:700;font-family:'DM Sans',sans-serif;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:var(--white);outline:none;">
+          <input type="tel" inputmode="numeric" maxlength="1" id="cpin-2" class="cpin-input"
+            style="width:52px;height:62px;text-align:center;font-size:26px;font-weight:700;font-family:'DM Sans',sans-serif;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:var(--white);outline:none;">
+          <input type="tel" inputmode="numeric" maxlength="1" id="cpin-3" class="cpin-input"
+            style="width:52px;height:62px;text-align:center;font-size:26px;font-weight:700;font-family:'DM Sans',sans-serif;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:var(--white);outline:none;">
+          <input type="tel" inputmode="numeric" maxlength="1" id="cpin-4" class="cpin-input"
+            style="width:52px;height:62px;text-align:center;font-size:26px;font-weight:700;font-family:'DM Sans',sans-serif;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:var(--white);outline:none;">
+        </div>
+      </div>
+
+      <div id="auth-error" style="font-size:12px;color:var(--danger);margin-bottom:10px;min-height:16px;text-align:center;margin-top:12px;"></div>
       <button class="btn-gold" style="width:100%;padding:13px;font-size:15px;" id="auth-btn" onclick="handleAuth()">Iniciar Sesión →</button>
-      <p id="forgot-link" style="font-size:12px;color:var(--gold);text-align:center;margin-top:12px;cursor:pointer;text-decoration:underline;" onclick="showForgotPassword()">¿Olvidaste tu contraseña?</p>
-
-      <!-- FORGOT PASSWORD PANEL -->
-      <div id="forgot-panel" style="display:none;margin-top:16px;padding:16px;background:rgba(255,255,255,.05);border-radius:10px;border:1px solid rgba(255,255,255,.1);">
-        <div style="font-size:14px;font-weight:600;margin-bottom:8px;">Restablecer contraseña</div>
-        <p style="font-size:12px;color:var(--gray);margin-bottom:12px;">Te enviaremos un correo para restablecer tu contraseña.</p>
-        <input type="email" id="forgot-email" placeholder="tú@correo.com" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:10px 12px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;margin-bottom:10px;">
-        <div id="forgot-msg" style="font-size:12px;min-height:16px;margin-bottom:8px;text-align:center;"></div>
-        <div style="display:flex;gap:8px;">
-          <button class="btn-cancel" onclick="hideForgotPassword()" style="flex:1;padding:10px;">Cancelar</button>
-          <button class="btn-gold" onclick="sendResetEmail()" style="flex:1;padding:10px;">Enviar correo 📧</button>
-        </div>
-      </div>
     </div>
 
     <!-- STEP 2: PROFILE -->
@@ -731,15 +739,14 @@
       <div style="text-align:center;margin-bottom:20px;">
         <div style="font-size:48px;margin-bottom:8px;" id="profile-emoji-preview">⚽</div>
         <h2 style="font-family:Bebas Neue,sans-serif;font-size:24px;">Configura tu <span style="color:var(--gold)">Perfil</span></h2>
-        <p style="font-size:13px;color:var(--gray);margin-top:4px;">Para que otros coleccionistas sepan con quién intercambian.</p>
+        <p style="font-size:13px;color:var(--white);margin-top:4px;">Para que otros coleccionistas sepan con quién intercambian.</p>
       </div>
-      <div class="modal-row"><label>Tu Nombre</label><input type="text" id="p-name" placeholder="ej. Daniela" maxlength="30"></div>
-      <div class="modal-row"><label>Usuario</label>
-        <div style="position:relative;">
-          <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--gray);font-size:14px;">@</span>
-          <input type="text" id="p-username" placeholder="ej. daniela_stickers" maxlength="20" style="padding-left:28px;">
-        </div>
+      <div class="modal-row">
+        <label>Tu Nombre Completo (opcional)</label>
+        <input type="text" id="p-name" placeholder="ej. Mateo Rodríguez" maxlength="30">
+        <div style="font-size:11px;color:var(--white);margin-top:6px;">Tu usuario será <strong>@<span id="username-preview">tu_nombre</span></strong></div>
       </div>
+      <input type="hidden" id="p-username" value="">
       <div class="modal-row">
         <label>Tu Punto de Encuentro Preferido</label>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;">
@@ -747,13 +754,13 @@
             style="border:2px solid rgba(245,197,24,.3);border-radius:10px;padding:12px 10px;cursor:pointer;text-align:center;transition:.2s;background:rgba(245,197,24,.07);">
             <div style="font-size:22px;">🏬</div>
             <div style="font-size:12px;font-weight:600;margin-top:4px;">Quicentro</div>
-            <div style="font-size:10px;color:var(--gray);">Quito</div>
+            <div style="font-size:10px;color:var(--white);">Quito</div>
           </div>
           <div id="punto-2" onclick="selectPunto('Scala Shopping – Cumbayá')"
             style="border:2px solid rgba(255,255,255,.1);border-radius:10px;padding:12px 10px;cursor:pointer;text-align:center;transition:.2s;">
             <div style="font-size:22px;">🏘️</div>
             <div style="font-size:12px;font-weight:600;margin-top:4px;">Scala</div>
-            <div style="font-size:10px;color:var(--gray);">Cumbayá</div>
+            <div style="font-size:10px;color:var(--white);">Cumbayá</div>
           </div>
         </div>
         <input type="hidden" id="p-punto" value="Quicentro Shopping – Quito">
@@ -762,6 +769,43 @@
       <button class="btn-gold" style="width:100%;padding:13px;margin-top:10px;font-size:15px;" onclick="saveProfile()">¡A intercambiar! 🚀</button>
     </div>
 
+  </div>
+</div>
+
+<!-- ── ONBOARDING ECUADOR OVERLAY ── -->
+<div id="onboarding-overlay" style="display:none;position:fixed;inset:0;background:var(--pitch);z-index:150;overflow-y:auto;padding:24px 16px;">
+  <div style="max-width:680px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:24px;">
+      <div style="font-size:54px;margin-bottom:8px;">🇪🇨</div>
+      <h2 style="font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:2px;color:var(--white);margin-bottom:8px;">¡Empecemos por Ecuador!</h2>
+      <p style="color:var(--white);font-size:14px;line-height:1.5;max-width:480px;margin:0 auto;">
+        Te enseñamos cómo funciona la app marcando los cromos de Ecuador.<br>
+        <strong style="color:var(--gold);">Toca un cromo:</strong>
+        <span style="color:var(--success);">1 vez = Repetido ✓</span> ·
+        <span style="color:var(--gold);">2 veces = Me falta ★</span> ·
+        3 veces = Borrar
+      </p>
+    </div>
+
+    <div style="background:rgba(245,197,24,.08);border:1px solid rgba(245,197,24,.3);border-radius:12px;padding:14px 16px;margin-bottom:20px;display:flex;align-items:center;gap:12px;">
+      <div style="font-size:24px;">💡</div>
+      <div style="font-size:13px;color:var(--white);line-height:1.4;flex:1;">
+        Marca los cromos que <strong style="color:var(--success);">tienes repetidos</strong> y los que <strong style="color:var(--gold);">te faltan</strong>. Después podrás hacer lo mismo con los demás equipos.
+      </div>
+    </div>
+
+    <div id="onboarding-grid" class="card-grid" style="margin-bottom:24px;"></div>
+
+    <div id="onboarding-progress" style="text-align:center;margin-bottom:18px;font-size:13px;color:var(--white);"></div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;padding-bottom:30px;">
+      <button onclick="finishOnboarding()" class="btn-gold" style="padding:14px 32px;font-size:15px;">
+        ¡Listo! Ver todo el álbum →
+      </button>
+      <button onclick="skipOnboarding()" class="btn-outline" style="padding:14px 28px;font-size:14px;">
+        Saltar tutorial
+      </button>
+    </div>
   </div>
 </div>
 
@@ -1900,15 +1944,19 @@ function renderCollection() {
   if (countEl) countEl.textContent = 'Mostrando ' + filtered.length + ' cromo' + (filtered.length!==1?'s':'') + (currentCountry!=='Todos'?' de '+currentCountry:'');
   grid.innerHTML = filtered.map(s => {
     const state = cardStates[s.num] || '';
-    const albumCode = s.code + ' ' + s.cn;
+    const num3 = String(s.num).padStart(3,'0');
+    const cnStr = String(s.cn).padStart(2,'0');
+    const code = s.code + '-' + cnStr;
+    const posName = s.name;
     return '<div class="sticker-card ' + state + '" onclick="toggleCard(' + s.num + ')">' +
       '<div class="sticker-card-top">' +
       (state ? '<div class="sticker-badge">' + (state==='have'?'✓':'★') + '</div>' : '') +
-      '<div class="sticker-flag-mini">' + s.flag + '</div>' +
-      '<div class="sticker-code">' + albumCode + '</div>' +
+      '<div class="sticker-flag">' + s.flag + '</div>' +
+      '<div class="sticker-code">' + code + '</div>' +
       '</div>' +
       '<div class="sticker-card-bottom">' +
-      '<div class="sticker-name">' + s.name + '</div>' +
+      '<div class="sticker-num">#' + num3 + '</div>' +
+      '<div class="sticker-name">' + posName + '</div>' +
       '</div>' +
       '</div>';
   }).join('');
@@ -1923,23 +1971,19 @@ async function toggleCard(num) {
   else delete cardStates[num];
 
   // Save to Supabase
-  if (sb) {
+  if (sb && currentUserId) {
     try {
-      const { data: { session } } = await sb.auth.getSession();
-      const uid = session?.user?.id || currentUserId;
-      if (uid) {
-        currentUserId = uid;
-        if (cardStates[num]) {
-          const { error } = await sb.from('cromos').upsert({
-            user_id: uid,
-            num: num,
-            estado: cardStates[num]
-          }, { onConflict: 'user_id,num' });
-          if (error) console.log('Error guardando cromo:', error);
-        } else {
-          const { error } = await sb.from('cromos').delete().eq('user_id', uid).eq('num', num);
-          if (error) console.log('Error borrando cromo:', error);
-        }
+      const uid = currentUserId;
+      if (cardStates[num]) {
+        const { error } = await sb.from('cromos').upsert({
+          user_id: uid,
+          num: num,
+          estado: cardStates[num]
+        }, { onConflict: 'user_id,num' });
+        if (error) console.log('Error guardando cromo:', error);
+      } else {
+        const { error } = await sb.from('cromos').delete().eq('user_id', uid).eq('num', num);
+        if (error) console.log('Error borrando cromo:', error);
       }
     } catch(e) { console.log('Error en toggleCard:', e); }
   }
@@ -1952,14 +1996,19 @@ function switchCromosTab(tab, btn) {
   document.getElementById('panel-repetidos').style.display = 'none';
   document.getElementById('panel-faltantes').style.display = 'none';
   // Reset tab styles
-  ['tab-todos','tab-repetidos','tab-faltantes'].forEach(id => {
+  ['tab-all','tab-todos','tab-repetidos','tab-faltantes'].forEach(id => {
     const b = document.getElementById(id);
-    if (b) { b.style.background = 'none'; b.style.color = 'var(--gray)'; }
+    if (b) { b.style.background = 'none'; b.style.color = 'var(--white)'; }
   });
   // Activate selected
   if (btn) { btn.style.background = 'var(--gold)'; btn.style.color = 'var(--pitch)'; }
-  if (tab === 'todos') {
+  if (tab === 'all') {
     document.getElementById('panel-todos').style.display = 'block';
+    currentFilter = 'all';
+    renderCollection();
+  } else if (tab === 'todos') {
+    document.getElementById('panel-todos').style.display = 'block';
+    currentFilter = 'none';
     renderCollection();
   } else if (tab === 'repetidos') {
     document.getElementById('panel-repetidos').style.display = 'block';
@@ -1973,7 +2022,7 @@ function switchCromosTab(tab, btn) {
 function filterCards(f, btn) {
   currentFilter = f;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+  if (btn) btn.classList.add('active');
   renderCollection();
 }
 
@@ -2230,8 +2279,8 @@ async function renderMeetings() {
   }
 
   try {
-    const { data: { session } } = await sb.auth.getSession();
-    const uid = session?.user?.id || currentUserId;
+    const uid = currentUserId;
+    if (!uid) return;
 
     if (!cachedUsers.length) {
       const u = await supaFetch('perfiles', { method: 'SELECT' });
@@ -2418,21 +2467,17 @@ async function runSearch() {
     stickerMatches.forEach(s => {
       const state = cardStates[s.num] || '';
       const badge = state === 'have' ? '<div class="sticker-badge">✓ REPETIDO</div>' : state === 'want' ? '<div class="sticker-badge">★ ME FALTA</div>' : '';
-      const albumCode = s.code + ' ' + s.cn;
-      html += '<div class="sticker-card ' + state + '" onclick="toggleCard(' + s.num + ');runSearch()">' +
-        '<div class="sticker-card-top">' + badge +
-        '<div class="sticker-flag">' + s.flag + '</div>' +
-        '<div class="sticker-code">' + albumCode + '</div>' +
-        '</div>' +
-        '<div class="sticker-card-bottom">' +
-        '<div class="sticker-name">' + s.name + '</div>' +
-        '</div>' +
-        '</div>';
+      html += `<div class="sticker-card ${state}" onclick="toggleCard(${s.num});runSearch()">
+        ${badge}
+        <div class="sticker-flag">${s.flag}</div>
+        <div class="sticker-num">#${String(s.num).padStart(3,'0')}</div>
+        <div class="sticker-name">${s.name}</div>
+      </div>`;
     });
     html += '</div>';
 
     // Who has this sticker?
-    const whoHas = (window._lastTraderList || []).filter(t => t.haveNums && stickerMatches.some(s => t.haveNums.includes(s.num)));
+    const whoHas = TRADERS.filter(t => t.haveNums && stickerMatches.some(s => t.haveNums.includes(s.num)));
     if (whoHas.length) {
       html += '<div style="font-family:Bebas Neue,sans-serif;font-size:18px;margin-bottom:10px;">¿Quién lo tiene? <span style="color:var(--success)">(' + whoHas.length + ')</span></div>';
       html += '<div class="traders-grid">' + whoHas.map(t => traderCard(t, true)).join('') + '</div>';
@@ -2489,8 +2534,7 @@ async function searchPartners() {
     if (u) cachedUsers = u;
   }
 
-  const { data: { session } } = await sb.auth.getSession();
-  const myId = session?.user?.id || currentUserId;
+  const myId = currentUserId;
 
   const matches = cachedUsers.filter(u =>
     u.id !== myId &&
@@ -2579,8 +2623,7 @@ async function confirmMeeting() {
   if (!sb) { errEl.textContent = '⚠️ Error de conexión.'; return; }
 
   try {
-    const { data: { session } } = await sb.auth.getSession();
-    const uid = session?.user?.id || currentUserId;
+    const uid = currentUserId;
     if (!uid) { errEl.textContent = '⚠️ Inicia sesión primero.'; return; }
 
     const { error } = await sb.from('encuentros').insert({
@@ -2612,9 +2655,7 @@ function setLocation() {
 
 // ── LOGOUT ──
 async function logOut() {
-  if (!sb) return;
-  await sb.auth.signOut();
-  try { localStorage.removeItem('ss_uid'); localStorage.removeItem('ss_email'); localStorage.removeItem('ss_session'); } catch(e){}
+  try { localStorage.removeItem('ss_uid'); localStorage.removeItem('ss_username'); localStorage.removeItem('ss_email'); localStorage.removeItem('ss_session'); } catch(e){}
   currentUserId = null;
   userProfile = { name:'', username:'', city:'', whatsapp:'', emoji:'⚽' };
   cardStates = {};
@@ -2624,36 +2665,212 @@ async function logOut() {
   showToast('¡Hasta luego! 👋');
 }
 
-// ── FORGOT PASSWORD ──
-function showForgotPassword() {
-  document.getElementById('forgot-panel').style.display = 'block';
-  document.getElementById('forgot-link').style.display = 'none';
-  const email = document.getElementById('p-email').value;
-  if (email) document.getElementById('forgot-email').value = email;
+// ── PIN HELPERS ──
+// Hash simple del PIN combinando con un "secreto" fijo. No es bancario pero está bien para cromos.
+async function hashPin(name, pin) {
+  const text = 'cromos_app_2026_' + name.toLowerCase() + '_' + pin;
+  const buf = new TextEncoder().encode(text);
+  const hashBuf = await crypto.subtle.digest('SHA-256', buf);
+  return Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
 
-function hideForgotPassword() {
-  document.getElementById('forgot-panel').style.display = 'none';
-  document.getElementById('forgot-link').style.display = 'block';
-  document.getElementById('forgot-msg').textContent = '';
-}
-
-async function sendResetEmail() {
-  const email = document.getElementById('forgot-email').value.trim();
-  const msgEl = document.getElementById('forgot-msg');
-  if (!email) { msgEl.style.color = 'var(--danger)'; msgEl.textContent = '⚠️ Ingresa tu correo.'; return; }
-  if (!sb) { msgEl.style.color = 'var(--danger)'; msgEl.textContent = '⚠️ Error de conexión.'; return; }
-  msgEl.style.color = 'var(--gray)'; msgEl.textContent = 'Enviando...';
-  const { error } = await sb.auth.resetPasswordForEmail(email, {
-    redirectTo: window.location.origin + window.location.pathname
-  });
-  if (error) {
-    msgEl.style.color = 'var(--danger)';
-    msgEl.textContent = '⚠️ ' + error.message;
-  } else {
-    msgEl.style.color = 'var(--success)';
-    msgEl.textContent = '✅ ¡Correo enviado! Revisa tu bandeja.';
+function getPinValue(prefix) {
+  // prefix = 'pin' o 'cpin'
+  let val = '';
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById(prefix + '-' + i);
+    val += (el && el.value) ? el.value : '';
   }
+  return val;
+}
+
+function clearPinBoxes(prefix) {
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById(prefix + '-' + i);
+    if (el) el.value = '';
+  }
+}
+
+function setupPinBoxes(prefix) {
+  // Configura autoavance y borrar con backspace en las cajitas
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById(prefix + '-' + i);
+    if (!el || el._setup) continue;
+    el._setup = true;
+    el.addEventListener('input', function(e) {
+      // Solo dígitos
+      this.value = this.value.replace(/[^0-9]/g, '');
+      if (this.value.length === 1 && i < 4) {
+        const next = document.getElementById(prefix + '-' + (i + 1));
+        if (next) next.focus();
+      }
+      // Si está en la última y completó, intentar auth
+      if (i === 4 && this.value.length === 1) {
+        // Solo en modo "iniciar sesión" para mejor UX
+        if (prefix === 'pin' && currentTab === 'signin' && document.getElementById('p-loginname').value.trim()) {
+          setTimeout(() => handleAuth(), 100);
+        }
+      }
+    });
+    el.addEventListener('keydown', function(e) {
+      if (e.key === 'Backspace' && !this.value && i > 1) {
+        const prev = document.getElementById(prefix + '-' + (i - 1));
+        if (prev) { prev.focus(); prev.value = ''; }
+      }
+    });
+    el.addEventListener('paste', function(e) {
+      e.preventDefault();
+      const paste = (e.clipboardData || window.clipboardData).getData('text').replace(/[^0-9]/g, '').slice(0, 4);
+      for (let j = 0; j < paste.length && j < 4; j++) {
+        const box = document.getElementById(prefix + '-' + (j + 1));
+        if (box) box.value = paste[j];
+      }
+      const focusIdx = Math.min(paste.length + 1, 4);
+      const focusEl = document.getElementById(prefix + '-' + focusIdx);
+      if (focusEl) focusEl.focus();
+    });
+  }
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  const isRegister = tab === 'register';
+  document.getElementById('confirm-pin-row').style.display = isRegister ? 'block' : 'none';
+  document.getElementById('pin-hint').style.display = isRegister ? 'block' : 'none';
+  document.getElementById('auth-btn').textContent = isRegister ? 'Crear Cuenta →' : 'Iniciar Sesión →';
+  const ts = document.getElementById('tab-signin');
+  const tr = document.getElementById('tab-register');
+  ts.style.background = isRegister ? 'none' : 'var(--gold)';
+  ts.style.color = isRegister ? 'var(--white)' : 'var(--pitch)';
+  tr.style.background = isRegister ? 'var(--gold)' : 'none';
+  tr.style.color = isRegister ? 'var(--pitch)' : 'var(--white)';
+  document.getElementById('auth-error').textContent = '';
+  // Setup pin boxes cuando se muestra
+  setupPinBoxes('pin');
+  if (isRegister) setupPinBoxes('cpin');
+  // Limpiar PINs al cambiar de tab
+  clearPinBoxes('pin');
+  clearPinBoxes('cpin');
+}
+
+async function handleAuth() {
+  const errEl = document.getElementById('auth-error');
+  const btn = document.getElementById('auth-btn');
+  errEl.textContent = '';
+
+  const name = document.getElementById('p-loginname').value.trim().toLowerCase();
+  const pin = getPinValue('pin');
+
+  if (!name) { errEl.textContent = '⚠️ Escribe tu nombre.'; return; }
+  if (name.length < 2) { errEl.textContent = '⚠️ Nombre muy corto (mínimo 2 letras).'; return; }
+  if (pin.length !== 4) { errEl.textContent = '⚠️ Ingresa los 4 dígitos del PIN.'; return; }
+
+  btn.textContent = '⏳ Cargando...'; btn.disabled = true;
+
+  try {
+    const pinHash = await hashPin(name, pin);
+
+    if (currentTab === 'register') {
+      const cpin = getPinValue('cpin');
+      if (cpin.length !== 4) {
+        errEl.textContent = '⚠️ Confirma tu PIN.';
+        btn.disabled = false; btn.textContent = 'Crear Cuenta →'; return;
+      }
+      if (pin !== cpin) {
+        errEl.textContent = '⚠️ Los PIN no coinciden.';
+        clearPinBoxes('cpin');
+        document.getElementById('cpin-1').focus();
+        btn.disabled = false; btn.textContent = 'Crear Cuenta →'; return;
+      }
+
+      // Verificar si ya existe el username
+      const existing = await supaFetch('perfiles', { method: 'SELECT', eq: { username: name } });
+      if (existing && existing.length > 0) {
+        errEl.textContent = '⚠️ Ese nombre ya existe. Prueba otro (ej: ' + name + '2)';
+        btn.disabled = false; btn.textContent = 'Crear Cuenta →'; return;
+      }
+
+      // Crear ID único
+      const newUserId = 'u_' + name + '_' + Date.now().toString(36);
+      currentUserId = newUserId;
+
+      // Guardar perfil con PIN hash (todavía sin nombre completo, eso va en Step 2)
+      const { error } = await sb.from('perfiles').upsert({
+        id: newUserId,
+        username: name,
+        nombre: name,
+        pin_hash: pinHash,
+        emoji: '⚽',
+        punto: 'Quicentro Shopping – Quito'
+      });
+      if (error) {
+        errEl.textContent = '⚠️ Error al crear cuenta: ' + error.message;
+        btn.disabled = false; btn.textContent = 'Crear Cuenta →'; return;
+      }
+
+      try { localStorage.setItem('ss_uid', newUserId); localStorage.setItem('ss_username', name); } catch(e){}
+      userProfile = { name: name, username: name, emoji: '⚽', punto: 'Quicentro Shopping – Quito', city: 'Quicentro Shopping – Quito' };
+      btn.disabled = false;
+      goToStep2();
+
+    } else {
+      // SIGN IN: buscar perfil por username y comparar hash
+      const perfiles = await supaFetch('perfiles', { method: 'SELECT', eq: { username: name } });
+      if (!perfiles || perfiles.length === 0) {
+        errEl.textContent = '⚠️ No existe un usuario con ese nombre.';
+        clearPinBoxes('pin');
+        document.getElementById('pin-1').focus();
+        btn.disabled = false; btn.textContent = 'Iniciar Sesión →'; return;
+      }
+      const p = perfiles[0];
+      if (p.pin_hash !== pinHash) {
+        errEl.textContent = '⚠️ PIN incorrecto.';
+        clearPinBoxes('pin');
+        document.getElementById('pin-1').focus();
+        btn.disabled = false; btn.textContent = 'Iniciar Sesión →'; return;
+      }
+
+      currentUserId = p.id;
+      try { localStorage.setItem('ss_uid', p.id); localStorage.setItem('ss_username', name); } catch(e){}
+      userProfile = { name: p.nombre || p.username, username: p.username, emoji: p.emoji || '⚽', punto: p.punto || 'Quicentro Shopping – Quito', city: p.punto || 'Quicentro Shopping – Quito' };
+      selectedEmoji = userProfile.emoji;
+
+      // Cargar cromos
+      const crs = await supaFetch('cromos', { method: 'SELECT', eq: { user_id: currentUserId } });
+      cardStates = {};
+      if (crs) crs.forEach(c => { cardStates[c.num] = c.estado; });
+
+      document.getElementById('profile-overlay').style.display = 'none';
+      updateNavProfile(); buildCountryFilter(); renderCollection();
+      showToast('¡Bienvenido de vuelta, ' + userProfile.name + '! 👋');
+      btn.disabled = false; btn.textContent = 'Iniciar Sesión →';
+    }
+  } catch(e) {
+    errEl.textContent = '⚠️ Error: ' + (e.message || e);
+    btn.disabled = false;
+    btn.textContent = currentTab === 'register' ? 'Crear Cuenta →' : 'Iniciar Sesión →';
+  }
+}
+
+function goToStep2() {
+  document.getElementById('step-1').style.display = 'none';
+  document.getElementById('step-2').style.display = 'block';
+  const d1 = document.getElementById('step-dot-1');
+  const d2 = document.getElementById('step-dot-2');
+  const sl = document.getElementById('step-line');
+  if(d1){ d1.style.background='rgba(255,255,255,.2)'; d1.style.color='var(--white)'; }
+  if(d2){ d2.style.background='var(--gold)'; d2.style.color='var(--pitch)'; }
+  if(sl){ sl.style.background='var(--gold)'; }
+  // Pre-rellenar campos en Step 2 usando lo capturado en Step 1
+  const loginName = document.getElementById('p-loginname').value.trim().toLowerCase();
+  const nameEl = document.getElementById('p-name');
+  const userEl = document.getElementById('p-username');
+  if (userEl) userEl.value = loginName;
+  if (nameEl && !nameEl.value) nameEl.value = loginName.charAt(0).toUpperCase() + loginName.slice(1);
+  const prev = document.getElementById('username-preview');
+  if (prev) prev.textContent = loginName;
+  // Si cambia el nombre, el username se queda fijo (es el del PIN)
+  initProfileModal();
 }
 
 // ── TOAST ──
@@ -2733,101 +2950,6 @@ function showLoginFromWelcome() {
   initProfileModal();
 }
 
-function switchTab(tab) {
-  currentTab = tab;
-  const isRegister = tab === 'register';
-  document.getElementById('confirm-row').style.display = isRegister ? 'block' : 'none';
-  document.getElementById('auth-btn').textContent = isRegister ? 'Crear Cuenta →' : 'Iniciar Sesión →';
-  const ts = document.getElementById('tab-signin');
-  const tr = document.getElementById('tab-register');
-  ts.style.background = isRegister ? 'none' : 'var(--gold)';
-  ts.style.color = isRegister ? 'var(--gray)' : 'var(--pitch)';
-  tr.style.background = isRegister ? 'var(--gold)' : 'none';
-  tr.style.color = isRegister ? 'var(--pitch)' : 'var(--gray)';
-  document.getElementById('auth-error').textContent = '';
-}
-
-function togglePwd() {
-  showingPwd = !showingPwd;
-  const inp = document.getElementById('p-password');
-  inp.type = showingPwd ? 'text' : 'password';
-  document.getElementById('pwd-eye').textContent = showingPwd ? '🙈' : '👁';
-}
-
-async function handleAuth() {
-  const email = document.getElementById('p-email').value.trim().toLowerCase();
-  const pwd = document.getElementById('p-password').value;
-  const errEl = document.getElementById('auth-error');
-  const btn = document.getElementById('auth-btn');
-  errEl.textContent = '';
-
-  if (!email || !pwd) { errEl.textContent = '⚠️ Ingresa tu correo y contraseña.'; return; }
-  if (!email.includes('@') || !email.includes('.')) { errEl.textContent = '⚠️ Correo inválido.'; return; }
-  if (pwd.length < 6) { errEl.textContent = '⚠️ Mínimo 6 caracteres.'; return; }
-
-  btn.textContent = '⏳ Cargando...'; btn.disabled = true;
-
-  try {
-    if (currentTab === 'register') {
-      const confirm = document.getElementById('p-confirm').value;
-      if (pwd !== confirm) { errEl.textContent = '⚠️ Las contraseñas no coinciden.'; btn.disabled=false; btn.textContent='Crear Cuenta →'; return; }
-
-      const { data, error } = await sb.auth.signUp({ email, password: pwd });
-      if (error) { errEl.textContent = '⚠️ ' + error.message; btn.disabled=false; btn.textContent='Crear Cuenta →'; return; }
-
-      const session = data.session?.access_token;
-      const uid = data.user?.id;
-
-      if (!uid) { errEl.textContent = '⚠️ Error al crear cuenta. Intenta de nuevo.'; btn.disabled=false; btn.textContent='Crear Cuenta →'; return; }
-
-      currentUserId = uid;
-      try { localStorage.setItem('ss_uid', uid); localStorage.setItem('ss_email', email); } catch(e){}
-      btn.disabled=false;
-      goToStep2();
-
-    } else {
-      const { data, error } = await sb.auth.signInWithPassword({ email, password: pwd });
-      if (error) { errEl.textContent = '⚠️ Correo o contraseña incorrectos.'; btn.disabled=false; btn.textContent='Iniciar Sesión →'; return; }
-
-      currentUserId = data.user?.id;
-      try { localStorage.setItem('ss_uid', currentUserId); localStorage.setItem('ss_email', email); } catch(e){}
-
-      // Load profile from Supabase
-      const perfil = await supaFetch('perfiles', { method: 'SELECT', eq: { id: currentUserId } });
-      if (perfil && perfil.length > 0) {
-        const p = perfil[0];
-        userProfile = { name: p.nombre, username: p.username, emoji: p.emoji, punto: p.punto, city: p.punto };
-        selectedEmoji = userProfile.emoji;
-        // Load cromos
-        const crs = await supaFetch('cromos', { method: 'SELECT', eq: { user_id: currentUserId } });
-        if (crs) { cardStates = {}; crs.forEach(c => { cardStates[c.num] = c.estado; }); }
-        document.getElementById('profile-overlay').style.display = 'none';
-        updateNavProfile(); buildCountryFilter(); renderCollection();
-        showToast('¡Bienvenido de vuelta, ' + userProfile.name + '! 👋');
-      } else {
-        goToStep2();
-      }
-      btn.disabled=false;
-    }
-  } catch(e) {
-    errEl.textContent = '⚠️ Error: ' + e.message;
-    btn.disabled=false;
-    btn.textContent = currentTab === 'register' ? 'Crear Cuenta →' : 'Iniciar Sesión →';
-  }
-}
-
-function goToStep2() {
-  document.getElementById('step-1').style.display = 'none';
-  document.getElementById('step-2').style.display = 'block';
-  const d1 = document.getElementById('step-dot-1');
-  const d2 = document.getElementById('step-dot-2');
-  const sl = document.getElementById('step-line');
-  if(d1){ d1.style.background='rgba(255,255,255,.2)'; d1.style.color='var(--gray)'; }
-  if(d2){ d2.style.background='var(--gold)'; d2.style.color='var(--pitch)'; }
-  if(sl){ sl.style.background='var(--gold)'; }
-  initProfileModal();
-}
-
 // ── PROFILE ──
 let userProfile = { name:'', username:'', city:'', whatsapp:'', emoji:'⚽' };
 let selectedEmoji = '⚽';
@@ -2867,70 +2989,158 @@ async function saveProfile() {
   const name = document.getElementById('p-name').value.trim();
   const username = document.getElementById('p-username').value.trim();
   const punto = document.getElementById('p-punto') ? document.getElementById('p-punto').value : 'Quicentro Shopping – Quito';
-  if (!name || !username) { showToast('¡Por favor ingresa tu nombre y usuario!'); return; }
-  userProfile = { name, username, punto, city: punto, whatsapp: '', emoji: selectedEmoji };
-  if (currentUserId && accounts[currentUserId]) {
-    accounts[currentUserId].profile = userProfile;
-    try { localStorage.setItem('ss_accounts', JSON.stringify(accounts)); } catch(e){}
-  }
+  if (!username) { showToast('⚠️ Error: falta el usuario.'); return; }
+  // Si no escribió nombre completo, usamos el username con mayúscula
+  const displayName = name || (username.charAt(0).toUpperCase() + username.slice(1));
+  userProfile = { name: displayName, username, punto, city: punto, whatsapp: '', emoji: selectedEmoji };
   // Save to Supabase
-  if (sb) {
+  if (sb && currentUserId) {
     try {
-      // Get fresh session to make sure we have the right user ID
-      const { data: { session } } = await sb.auth.getSession();
-      const uid = session?.user?.id || currentUserId;
-      if (uid) {
-        currentUserId = uid;
-        const { error } = await sb.from('perfiles').upsert({
-          id: uid,
-          username: username,
-          nombre: name,
-          emoji: selectedEmoji,
-          punto: punto
-        });
-        if (error) console.log('Error guardando perfil:', error);
-        else console.log('Perfil guardado ✓');
-      } else {
-        console.log('No hay sesión activa');
-      }
+      const { error } = await sb.from('perfiles').upsert({
+        id: currentUserId,
+        username: username,
+        nombre: displayName,
+        emoji: selectedEmoji,
+        punto: punto
+      });
+      if (error) console.log('Error guardando perfil:', error);
+      else console.log('Perfil guardado ✓');
     } catch(e) { console.log('Error en saveProfile:', e); }
   }
   document.getElementById('profile-overlay').style.display = 'none';
   updateNavProfile();
   buildCountryFilter();
   renderCollection();
-  showToast('¡Bienvenido, ' + name + '! 🎉');
+  showToast('¡Bienvenido, ' + displayName + '! 🎉');
+  // Mostrar onboarding de Ecuador (solo la primera vez)
+  setTimeout(() => { startOnboarding(); }, 600);
+}
+
+// ── ONBOARDING ECUADOR ──
+function startOnboarding() {
+  const overlay = document.getElementById('onboarding-overlay');
+  if (!overlay) return;
+  overlay.style.display = 'block';
+  renderOnboardingGrid();
+  window.scrollTo(0, 0);
+}
+
+function renderOnboardingGrid() {
+  const grid = document.getElementById('onboarding-grid');
+  if (!grid) return;
+  const ecuStickers = STICKERS.filter(s => s.country === 'Ecuador');
+  grid.innerHTML = ecuStickers.map(s => {
+    const state = cardStates[s.num] || '';
+    const num3 = String(s.num).padStart(3,'0');
+    const cnStr = String(s.cn).padStart(2,'0');
+    const code = s.code + '-' + cnStr;
+    const posName = s.name;
+    return '<div class="sticker-card ' + state + '" onclick="onboardingToggle(' + s.num + ')">' +
+      '<div class="sticker-card-top">' +
+      (state ? '<div class="sticker-badge">' + (state==='have'?'✓':'★') + '</div>' : '') +
+      '<div class="sticker-flag">' + s.flag + '</div>' +
+      '<div class="sticker-code">' + code + '</div>' +
+      '</div>' +
+      '<div class="sticker-card-bottom">' +
+      '<div class="sticker-num">#' + num3 + '</div>' +
+      '<div class="sticker-name">' + posName + '</div>' +
+      '</div>' +
+      '</div>';
+  }).join('');
+  // Actualizar contador de progreso
+  const marked = ecuStickers.filter(s => cardStates[s.num]).length;
+  const progEl = document.getElementById('onboarding-progress');
+  if (progEl) {
+    if (marked === 0) {
+      progEl.innerHTML = '👆 Toca los cromos de Ecuador para marcarlos';
+    } else {
+      progEl.innerHTML = '✨ Has marcado <strong style="color:var(--gold);">' + marked + '</strong> de 20 cromos de Ecuador';
+    }
+  }
+}
+
+async function onboardingToggle(num) {
+  await toggleCard(num);
+  renderOnboardingGrid();
+}
+
+function finishOnboarding() {
+  document.getElementById('onboarding-overlay').style.display = 'none';
+  showToast('¡Genial! Ahora puedes ver todos los cromos del Mundial 🏆');
+  renderCollection();
+}
+
+function skipOnboarding() {
+  document.getElementById('onboarding-overlay').style.display = 'none';
+  renderCollection();
 }
 
 function updateNavProfile() {
   const el = document.getElementById('nav-profile');
-  if (el && userProfile.username) {
-    el.innerHTML = userProfile.emoji + ' <strong>@' + userProfile.username + '</strong>';
-  } else if (el) {
-    el.innerHTML = '⚽ <strong>Mi Perfil</strong>';
+  if (el) el.innerHTML = userProfile.emoji + ' <strong>' + userProfile.name + '</strong> <span style="color:var(--gray);font-size:11px;">@' + userProfile.username + '</span>';
+}
+
+// ── PUBLIC PROFILE LINK (?user=username) ──
+async function openPublicProfile(username) {
+  if (!sb) return false;
+  // Buscar usuario por username (case-insensitive)
+  const allProfiles = await supaFetch('perfiles', { method: 'SELECT' });
+  if (!allProfiles || allProfiles.length === 0) return false;
+  const target = allProfiles.find(p => (p.username||'').toLowerCase() === username.toLowerCase());
+  if (!target) {
+    showToast('No se encontró el coleccionista @' + username);
+    return false;
   }
+  // Cargar sus cromos
+  const cromos = await supaFetch('cromos', { method: 'SELECT', eq: { user_id: target.id } });
+  const haveNums = cromos ? cromos.filter(c => c.estado === 'have').map(c => c.num) : [];
+  const wantNums = cromos ? cromos.filter(c => c.estado === 'want').map(c => c.num) : [];
+  const haveLabels = haveNums.slice(0,6).map(n => { const s = STICKERS.find(x => x.num===n); return s ? '#'+n+' '+s.name : '#'+n; });
+  const wantLabels = wantNums.slice(0,5).map(n => { const s = STICKERS.find(x => x.num===n); return s ? '#'+n+' '+s.name : '#'+n; });
+  const traderObj = {
+    name: target.nombre || target.username,
+    username: target.username,
+    emoji: target.emoji || '⚽',
+    city: target.punto || 'Quito',
+    punto: target.punto || 'Quicentro Shopping – Quito',
+    haveNums, wantNums,
+    have: haveLabels, want: wantLabels,
+    isReal: true, supaId: target.id
+  };
+  // Saltar a sección Coleccionistas y mostrar SOLO ese perfil
+  showSection('traders', document.querySelectorAll('.nav-links button')[1]);
+  const grid = document.getElementById('traders-grid');
+  const status = document.getElementById('city-status');
+  if (status) status.textContent = 'Perfil público de @' + target.username;
+  if (grid) {
+    window._lastTraderList = [traderObj];
+    grid.innerHTML = '<div style="grid-column:1/-1;margin-bottom:14px;"><button onclick="renderTraders()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:var(--white);padding:8px 14px;border-radius:999px;font-size:12px;cursor:pointer;">← Ver todos los coleccionistas</button></div>' + traderCard(traderObj, !!currentUserId);
+  }
+  return true;
 }
 
 // ── INIT ──
 (async function() {
   try {
     if (sb) {
-      const { data: { session } } = await sb.auth.getSession();
-      if (session && session.user) {
-        currentUserId = session.user.id;
-        const perfil = await supaFetch('perfiles', { method: 'SELECT', eq: { id: currentUserId } });
+      // Verificar sesión guardada en localStorage
+      let savedUid = null;
+      try { savedUid = localStorage.getItem('ss_uid'); } catch(e){}
+      if (savedUid) {
+        // Verificar que el perfil siga existiendo en Supabase
+        const perfil = await supaFetch('perfiles', { method: 'SELECT', eq: { id: savedUid } });
         if (perfil && perfil.length > 0) {
           const p = perfil[0];
-          userProfile = { name: p.nombre, username: p.username, emoji: p.emoji, punto: p.punto, city: p.punto };
+          currentUserId = savedUid;
+          userProfile = { name: p.nombre, username: p.username, emoji: p.emoji || '⚽', punto: p.punto, city: p.punto };
           selectedEmoji = userProfile.emoji;
           const crs = await supaFetch('cromos', { method: 'SELECT', eq: { user_id: currentUserId } });
           if (crs) { cardStates = {}; crs.forEach(c => { cardStates[c.num] = c.estado; }); }
           updateNavProfile();
           document.getElementById('welcome-screen').style.display = 'none';
         } else {
-          document.getElementById('welcome-screen').style.display = 'none';
-          document.getElementById('profile-overlay').style.display = 'flex';
-          initProfileModal();
+          // Perfil borrado o no existe: limpiar y mostrar welcome
+          try { localStorage.removeItem('ss_uid'); localStorage.removeItem('ss_username'); } catch(e){}
         }
       }
     }
@@ -2938,6 +3148,19 @@ function updateNavProfile() {
   initProfileModal();
   buildCountryFilter();
   renderCollection();
+  // Configurar las cajitas del PIN (cuando se abra el modal estarán listas)
+  setupPinBoxes('pin');
+  setupPinBoxes('cpin');
+
+  // Si la URL tiene ?user=username, abrir ese perfil
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const userParam = params.get('user');
+    if (userParam) {
+      // Esperar un poquito para que terminé de renderizar todo
+      setTimeout(() => { openPublicProfile(userParam); }, 300);
+    }
+  } catch(e) { console.log('URL parse error:', e); }
 })();
 </script>
 </body>
